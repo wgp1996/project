@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectTypePostMapper">
+    
+    <resultMap type="ProjectTypePost" id="ProjectTypeResult">
+        <result property="projectTypeId"    column="project_type_id"    />
+        <result property="projectTypePid"    column="project_type_pid"    />
+        <result property="projectTypeName"    column="project_type_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="type"    column="type"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectName"    column="project_name"    />
+    </resultMap>
+
+    <sql id="selectProjectTypeVo">
+        select * from project_type_post
+    </sql>
+    <sql id="selectProjectTypeVoByRole">
+        select a.* from project_type_post a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+    <select id="selectProjectTypeList" parameterType="ProjectType" resultMap="ProjectTypeResult">
+        <include refid="selectProjectTypeVoByRole"/>
+        <where>  
+            <if test="projectTypePid != null "> and project_type_pid = #{projectTypePid}</if>
+            <if test="projectTypeName != null  and projectTypeName != ''"> and project_type_name like concat('%', #{projectTypeName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            and `type` =0
+            ${dataScope}
+        </where>
+        order by a.project_type_pid, a.order_num
+    </select>
+    
+    <select id="selectProjectTypeById" parameterType="Integer" resultMap="ProjectTypeResult">
+        <include refid="selectProjectTypeVo"/>
+        where project_type_id = #{projectTypeId}
+    </select>
+
+    <select id="selectProjectTypeByPid" parameterType="Integer" resultMap="ProjectTypeResult">
+        <include refid="selectProjectTypeVoByRole"/>
+        where a.project_type_pid = #{projectTypePid}
+        ${dataScope}
+    </select>
+
+    <select id="selectProjectTypeByName"  resultMap="ProjectTypeResult">
+        <include refid="selectProjectTypeVo"/>
+        where project_type_name = #{name} and project_code=#{code}
+        <if test="id!=-1">
+            and project_type_id != #{id}
+        </if>
+    </select>
+    <!--查询是否存在子类-->
+    <select id="hasChildProjectTypeById" parameterType="int" resultType="int">
+		select count(1) from project_type_post
+		where `type` = '0' and project_type_pid = #{id}
+	</select>
+    <select id="checkProjectTypeNameUnique" resultMap="ProjectTypeResult">
+        <include refid="selectProjectTypeVo"/>
+        where project_type_name=#{name } and project_type_pid = #{pid}
+    </select>
+        
+    <insert id="insertProjectType" parameterType="ProjectTypePost" useGeneratedKeys="true" keyProperty="projectTypeId">
+        insert into project_type_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectTypePid != null ">project_type_pid,</if>
+            <if test="projectTypeName != null  and projectTypeName != ''">project_type_name,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="type != null ">type,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectTypePid != null ">#{projectTypePid},</if>
+            <if test="projectTypeName != null  and projectTypeName != ''">#{projectTypeName},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="type != null ">#{type},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateProjectType" parameterType="ProjectTypePost">
+        update project_type_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectTypePid != null ">project_type_pid = #{projectTypePid},</if>
+            <if test="projectTypeName != null  and projectTypeName != ''">project_type_name = #{projectTypeName},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="type != null ">type = #{type},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            update_time = sysdate()
+        </trim>
+        where project_type_id = #{projectTypeId}
+    </update>
+
+    <delete id="deleteProjectTypeById" parameterType="Integer">
+        delete from project_type_post where project_type_id = #{projectTypeId}
+    </delete>
+
+    <delete id="deleteProjectTypeByIds" parameterType="String">
+        delete from project_type_post where project_type_id in
+        <foreach item="projectTypeId" collection="array" open="(" separator="," close=")">
+            #{projectTypeId}
+        </foreach>
+    </delete>
+    
+</mapper>

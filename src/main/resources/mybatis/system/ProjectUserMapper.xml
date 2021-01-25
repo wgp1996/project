@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectUserMapper">
+    
+    <resultMap type="ProjectUser" id="ProjectUserResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectPost"    column="project_post"    />
+        <result property="projectPostName"    column="project_post_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectProjectUserVo">
+        select id, user_name, user_code, project_name, project_code, project_post, project_post_name, create_by, create_time, update_by, update_time, remark from project_user
+    </sql>
+
+    <select id="selectProjectUserList" parameterType="ProjectUser" resultMap="ProjectUserResult">
+        <include refid="selectProjectUserVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectPost != null  and projectPost != ''"> and project_post = #{projectPost}</if>
+            <if test="projectPostName != null  and projectPostName != ''"> and project_post_name like concat('%', #{projectPostName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectUserById" parameterType="Integer" resultMap="ProjectUserResult">
+        <include refid="selectProjectUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectUser" parameterType="ProjectUser">
+        insert into project_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="userCode != null  and userCode != ''">user_code,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectPost != null  and projectPost != ''">project_post,</if>
+            <if test="projectPostName != null  and projectPostName != ''">project_post_name,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="userCode != null  and userCode != ''">#{userCode},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectPost != null  and projectPost != ''">#{projectPost},</if>
+            <if test="projectPostName != null  and projectPostName != ''">#{projectPostName},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectUser" parameterType="ProjectUser">
+        update project_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="userCode != null  and userCode != ''">user_code = #{userCode},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectPost != null  and projectPost != ''">project_post = #{projectPost},</if>
+            <if test="projectPostName != null  and projectPostName != ''">project_post_name = #{projectPostName},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectUserById" parameterType="Integer">
+        delete from project_user where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectUserByIds" parameterType="String">
+        delete from project_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectInfoMapper">
+    
+    <resultMap type="ProjectInfo" id="ProjectInfoResult">
+        <result property="id"    column="id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectNameJc"    column="project_name_jc"    />
+        <result property="projectType"    column="project_type"    />
+        <result property="projectManagerName"    column="project_manager_name"    />
+        <result property="projectManagerCode"    column="project_manager_code"    />
+        <result property="projectStartTime"    column="project_start_time"    />
+        <result property="projectEndTime"    column="project_end_time"    />
+        <result property="ysStatus"    column="ys_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectProjectInfoVo">
+        select id, project_name, project_code, project_name_jc, project_type, project_manager_name, project_manager_code, project_start_time, project_end_time, ys_status, create_by, create_time, update_by, update_time, remark from project_info
+    </sql>
+    <sql id="selectProjectInfoVoByRole">
+        select a.* from project_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectProjectInfoList" parameterType="ProjectInfo" resultMap="ProjectInfoResult">
+        <include refid="selectProjectInfoVoByRole"/>
+        <where>  
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectNameJc != null  and projectNameJc != ''"> and project_name_jc = #{projectNameJc}</if>
+            <if test="projectType != null  and projectType != ''"> and project_type = #{projectType}</if>
+            <if test="projectManagerName != null  and projectManagerName != ''"> and project_manager_name like concat('%', #{projectManagerName}, '%')</if>
+            <if test="projectManagerCode != null  and projectManagerCode != ''"> and project_manager_code = #{projectManagerCode}</if>
+            <if test="projectStartTime != null  and projectStartTime != ''"> and project_start_time = #{projectStartTime}</if>
+            <if test="projectEndTime != null  and projectEndTime != ''"> and project_end_time = #{projectEndTime}</if>
+            <if test="ysStatus != null "> and ys_status = #{ysStatus}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectProjectInfoById" parameterType="Integer" resultMap="ProjectInfoResult">
+        <include refid="selectProjectInfoVo"/>
+        where id = #{id}
+    </select>
+    <select id="checkProjectCode"  resultType="Integer">
+        select count(id) from project_info
+        where project_code = #{projectCode}
+        <if test="id!=-1">
+            and id != #{id}
+        </if>
+    </select>
+    <insert id="insertProjectInfo" parameterType="ProjectInfo">
+        insert into project_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectNameJc != null  and projectNameJc != ''">project_name_jc,</if>
+            <if test="projectType != null  and projectType != ''">project_type,</if>
+            <if test="projectManagerName != null  and projectManagerName != ''">project_manager_name,</if>
+            <if test="projectManagerCode != null  and projectManagerCode != ''">project_manager_code,</if>
+            <if test="projectStartTime != null  and projectStartTime != ''">project_start_time,</if>
+            <if test="projectEndTime != null  and projectEndTime != ''">project_end_time,</if>
+            <if test="ysStatus != null ">ys_status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectNameJc != null  and projectNameJc != ''">#{projectNameJc},</if>
+            <if test="projectType != null  and projectType != ''">#{projectType},</if>
+            <if test="projectManagerName != null  and projectManagerName != ''">#{projectManagerName},</if>
+            <if test="projectManagerCode != null  and projectManagerCode != ''">#{projectManagerCode},</if>
+            <if test="projectStartTime != null  and projectStartTime != ''">#{projectStartTime},</if>
+            <if test="projectEndTime != null  and projectEndTime != ''">#{projectEndTime},</if>
+            <if test="ysStatus != null ">#{ysStatus},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectInfo" parameterType="ProjectInfo">
+        update project_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectNameJc != null  and projectNameJc != ''">project_name_jc = #{projectNameJc},</if>
+            <if test="projectType != null  and projectType != ''">project_type = #{projectType},</if>
+            <if test="projectManagerName != null  and projectManagerName != ''">project_manager_name = #{projectManagerName},</if>
+            <if test="projectManagerCode != null  and projectManagerCode != ''">project_manager_code = #{projectManagerCode},</if>
+            <if test="projectStartTime != null  and projectStartTime != ''">project_start_time = #{projectStartTime},</if>
+            <if test="projectEndTime != null  and projectEndTime != ''">project_end_time = #{projectEndTime},</if>
+            <if test="ysStatus != null ">ys_status = #{ysStatus},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectInfoById" parameterType="Integer">
+        delete from project_info where id = #{id}
+    </delete>
+    <select id="checkProjectChild"  resultType="Integer">
+        select (select count(id) from project_user
+        where project_code in(
+            select project_code from project_info where id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        ))+(
+            (select count(project_code) from project_type_post
+            where project_code in(
+            select project_code from project_info where id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+            ))
+        )+(
+        (select count(id) from project_budget
+        where project_code in(
+        select project_code from project_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ))
+        )
+    </select>
+    <delete id="deleteProjectInfoByIds" parameterType="String">
+        delete from project_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectBudgetMapper">
+    
+    <resultMap type="ProjectBudget" id="ProjectBudgetResult">
+        <result property="id"    column="id"    />
+        <result property="budgetSr"    column="budget_sr"    />
+        <result property="budgetSrFrom"    column="budget_sr_from"    />
+        <result property="budgetRate"    column="budget_rate"    />
+        <result property="budgetProfit"    column="budget_profit"    />
+        <result property="budgetXxRate"    column="budget_xx_rate"    />
+        <result property="budgetTaxes"    column="budget_taxes"    />
+        <result property="budgetCost"    column="budget_cost"    />
+        <result property="budgetNetProfit"    column="budget_net_profit"    />
+        <result property="costBudget"    column="cost_budget"    />
+        <result property="labourBudget"    column="labour_budget"    />
+        <result property="labourBudgetFrom"    column="labour_budget_from"    />
+        <result property="materialBudget"    column="material_budget"    />
+        <result property="materialBudgetFrom"    column="material_budget_from"    />
+        <result property="outherBudget"    column="outher_budget"    />
+        <result property="outherBudgetFrom"    column="outher_budget_from"    />
+        <result property="indirectBudget"    column="indirect_budget"    />
+        <result property="indirectBudgetFrom"    column="indirect_budget_from"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="status"    column="status"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectName"    column="project_name"    />
+    </resultMap>
+
+    <sql id="selectProjectBudgetVo">
+        select id, budget_sr, budget_sr_from, budget_rate, budget_profit, budget_xx_rate, budget_taxes, budget_cost, budget_net_profit, cost_budget, labour_budget, labour_budget_from, material_budget, material_budget_from, outher_budget, outher_budget_from, indirect_budget, indirect_budget_from, create_by, create_time, update_by, update_time, remark, status, project_code, project_name from project_budget
+    </sql>
+
+    <sql id="selectProjectBudgetVoByRole">
+        select a.* from project_budget a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectProjectBudgetList" parameterType="ProjectBudget" resultMap="ProjectBudgetResult">
+        <include refid="selectProjectBudgetVoByRole"/>
+        <where>  
+            <if test="budgetSr != null  and budgetSr != ''"> and budget_sr = #{budgetSr}</if>
+            <if test="budgetSrFrom != null  and budgetSrFrom != ''"> and budget_sr_from = #{budgetSrFrom}</if>
+            <if test="budgetRate != null  and budgetRate != ''"> and budget_rate = #{budgetRate}</if>
+            <if test="budgetProfit != null  and budgetProfit != ''"> and budget_profit = #{budgetProfit}</if>
+            <if test="budgetXxRate != null  and budgetXxRate != ''"> and budget_xx_rate = #{budgetXxRate}</if>
+            <if test="budgetTaxes != null  and budgetTaxes != ''"> and budget_taxes = #{budgetTaxes}</if>
+            <if test="budgetCost != null  and budgetCost != ''"> and budget_cost = #{budgetCost}</if>
+            <if test="budgetNetProfit != null  and budgetNetProfit != ''"> and budget_net_profit = #{budgetNetProfit}</if>
+            <if test="costBudget != null  and costBudget != ''"> and cost_budget = #{costBudget}</if>
+            <if test="labourBudget != null  and labourBudget != ''"> and labour_budget = #{labourBudget}</if>
+            <if test="labourBudgetFrom != null  and labourBudgetFrom != ''"> and labour_budget_from = #{labourBudgetFrom}</if>
+            <if test="materialBudget != null  and materialBudget != ''"> and material_budget = #{materialBudget}</if>
+            <if test="materialBudgetFrom != null  and materialBudgetFrom != ''"> and material_budget_from = #{materialBudgetFrom}</if>
+            <if test="outherBudget != null  and outherBudget != ''"> and outher_budget = #{outherBudget}</if>
+            <if test="outherBudgetFrom != null  and outherBudgetFrom != ''"> and outher_budget_from = #{outherBudgetFrom}</if>
+            <if test="indirectBudget != null  and indirectBudget != ''"> and indirect_budget = #{indirectBudget}</if>
+            <if test="indirectBudgetFrom != null  and indirectBudgetFrom != ''"> and indirect_budget_from = #{indirectBudgetFrom}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectProjectBudgetById" parameterType="Integer" resultMap="ProjectBudgetResult">
+        <include refid="selectProjectBudgetVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectBudget" parameterType="ProjectBudget">
+        insert into project_budget
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="budgetSr != null  and budgetSr != ''">budget_sr,</if>
+            <if test="budgetSrFrom != null  and budgetSrFrom != ''">budget_sr_from,</if>
+            <if test="budgetRate != null  and budgetRate != ''">budget_rate,</if>
+            <if test="budgetProfit != null  and budgetProfit != ''">budget_profit,</if>
+            <if test="budgetXxRate != null  and budgetXxRate != ''">budget_xx_rate,</if>
+            <if test="budgetTaxes != null  and budgetTaxes != ''">budget_taxes,</if>
+            <if test="budgetCost != null  and budgetCost != ''">budget_cost,</if>
+            <if test="budgetNetProfit != null  and budgetNetProfit != ''">budget_net_profit,</if>
+            <if test="costBudget != null  and costBudget != ''">cost_budget,</if>
+            <if test="labourBudget != null  and labourBudget != ''">labour_budget,</if>
+            <if test="labourBudgetFrom != null  and labourBudgetFrom != ''">labour_budget_from,</if>
+            <if test="materialBudget != null  and materialBudget != ''">material_budget,</if>
+            <if test="materialBudgetFrom != null  and materialBudgetFrom != ''">material_budget_from,</if>
+            <if test="outherBudget != null  and outherBudget != ''">outher_budget,</if>
+            <if test="outherBudgetFrom != null  and outherBudgetFrom != ''">outher_budget_from,</if>
+            <if test="indirectBudget != null  and indirectBudget != ''">indirect_budget,</if>
+            <if test="indirectBudgetFrom != null  and indirectBudgetFrom != ''">indirect_budget_from,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="status != null ">status,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="budgetSr != null  and budgetSr != ''">#{budgetSr},</if>
+            <if test="budgetSrFrom != null  and budgetSrFrom != ''">#{budgetSrFrom},</if>
+            <if test="budgetRate != null  and budgetRate != ''">#{budgetRate},</if>
+            <if test="budgetProfit != null  and budgetProfit != ''">#{budgetProfit},</if>
+            <if test="budgetXxRate != null  and budgetXxRate != ''">#{budgetXxRate},</if>
+            <if test="budgetTaxes != null  and budgetTaxes != ''">#{budgetTaxes},</if>
+            <if test="budgetCost != null  and budgetCost != ''">#{budgetCost},</if>
+            <if test="budgetNetProfit != null  and budgetNetProfit != ''">#{budgetNetProfit},</if>
+            <if test="costBudget != null  and costBudget != ''">#{costBudget},</if>
+            <if test="labourBudget != null  and labourBudget != ''">#{labourBudget},</if>
+            <if test="labourBudgetFrom != null  and labourBudgetFrom != ''">#{labourBudgetFrom},</if>
+            <if test="materialBudget != null  and materialBudget != ''">#{materialBudget},</if>
+            <if test="materialBudgetFrom != null  and materialBudgetFrom != ''">#{materialBudgetFrom},</if>
+            <if test="outherBudget != null  and outherBudget != ''">#{outherBudget},</if>
+            <if test="outherBudgetFrom != null  and outherBudgetFrom != ''">#{outherBudgetFrom},</if>
+            <if test="indirectBudget != null  and indirectBudget != ''">#{indirectBudget},</if>
+            <if test="indirectBudgetFrom != null  and indirectBudgetFrom != ''">#{indirectBudgetFrom},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectBudget" parameterType="ProjectBudget">
+        update project_budget
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="budgetSr != null  and budgetSr != ''">budget_sr = #{budgetSr},</if>
+            <if test="budgetSrFrom != null  and budgetSrFrom != ''">budget_sr_from = #{budgetSrFrom},</if>
+            <if test="budgetRate != null  and budgetRate != ''">budget_rate = #{budgetRate},</if>
+            <if test="budgetProfit != null  and budgetProfit != ''">budget_profit = #{budgetProfit},</if>
+            <if test="budgetXxRate != null  and budgetXxRate != ''">budget_xx_rate = #{budgetXxRate},</if>
+            <if test="budgetTaxes != null  and budgetTaxes != ''">budget_taxes = #{budgetTaxes},</if>
+            <if test="budgetCost != null  and budgetCost != ''">budget_cost = #{budgetCost},</if>
+            <if test="budgetNetProfit != null  and budgetNetProfit != ''">budget_net_profit = #{budgetNetProfit},</if>
+            <if test="costBudget != null  and costBudget != ''">cost_budget = #{costBudget},</if>
+            <if test="labourBudget != null  and labourBudget != ''">labour_budget = #{labourBudget},</if>
+            <if test="labourBudgetFrom != null  and labourBudgetFrom != ''">labour_budget_from = #{labourBudgetFrom},</if>
+            <if test="materialBudget != null  and materialBudget != ''">material_budget = #{materialBudget},</if>
+            <if test="materialBudgetFrom != null  and materialBudgetFrom != ''">material_budget_from = #{materialBudgetFrom},</if>
+            <if test="outherBudget != null  and outherBudget != ''">outher_budget = #{outherBudget},</if>
+            <if test="outherBudgetFrom != null  and outherBudgetFrom != ''">outher_budget_from = #{outherBudgetFrom},</if>
+            <if test="indirectBudget != null  and indirectBudget != ''">indirect_budget = #{indirectBudget},</if>
+            <if test="indirectBudgetFrom != null  and indirectBudgetFrom != ''">indirect_budget_from = #{indirectBudgetFrom},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectBudgetById" parameterType="Integer">
+        delete from project_budget where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectBudgetByIds" parameterType="String">
+        delete from project_budget where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

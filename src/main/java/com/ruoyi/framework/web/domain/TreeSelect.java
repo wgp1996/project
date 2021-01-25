@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.ruoyi.project.system.domain.GoodsType;
-import com.ruoyi.project.system.domain.SysDept;
-import com.ruoyi.project.system.domain.SysMenu;
+import com.ruoyi.project.system.domain.*;
 
 /**
  * Treeselect树结构实体类
@@ -51,6 +49,19 @@ public class TreeSelect implements Serializable
         this.id = menu.getMenuId();
         this.label = menu.getMenuName();
         this.children = menu.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
+    }
+
+    public TreeSelect(ProjectType dept)
+    {
+        this.id = dept.getProjectTypeId().longValue();
+        this.label = dept.getProjectTypeName();
+        this.children = dept.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
+    }
+    public TreeSelect(ProjectTypePost dept)
+    {
+        this.id = dept.getProjectTypeId().longValue();
+        this.label = dept.getProjectTypeName();
+        this.children = dept.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
     }
 
     public Long getId()
