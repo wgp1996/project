@@ -8,7 +8,9 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.ProjectUser;
+import com.ruoyi.project.system.domain.SystemFile;
 import com.ruoyi.project.system.service.IProjectUserService;
+import com.ruoyi.project.system.service.ISystemFileService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +44,8 @@ public class ProjectInfoController extends BaseController
     private IProjectInfoService projectInfoService;
     @Autowired
     private IProjectUserService projectUserService;
+    @Autowired
+    private ISystemFileService systemFileService;
 
     /**
      * 查询项目建档列表
@@ -107,10 +111,11 @@ public class ProjectInfoController extends BaseController
         if(projectInfoService.checkProjectCode(projectInfo.getProjectCode(),-1)>0){
             return toAjaxByError("项目编码重复!");
         }
-        if(projectInfo.getRows()==""){
-            return  toAjaxByError("人员信息不能为空!");
-        }
-        if(projectInfo.getRows()!="") {
+//        if(projectInfo.getRows()==""){
+//            return  toAjaxByError("人员信息不能为空!");
+//        }
+        //插入人员
+        if(projectInfo.getRows()!=null&&projectInfo.getRows()!="") {
             List<ProjectUser> childList = JSONArray.parseArray(projectInfo.getRows(), ProjectUser.class);
             for (ProjectUser child : childList) {
                 child.setCreateBy(SecurityUtils.getUsername());
@@ -118,6 +123,15 @@ public class ProjectInfoController extends BaseController
                 child.setProjectName(child.getProjectName());
                 child.setCreateTime(DateUtils.getNowDate());
                 projectUserService.insertProjectUser(child);
+            }
+        }
+        //插入附件
+        if(projectInfo.getFileRows()!=null&&projectInfo.getFileRows()!="") {
+            List<SystemFile> childList = JSONArray.parseArray(projectInfo.getFileRows(), SystemFile.class);
+            for (SystemFile child : childList) {
+                child.setCode(projectInfo.getProjectCode());
+                child.setCreateBy(SecurityUtils.getUsername());
+                systemFileService.insertSystemFile(child);
             }
         }
         projectInfo.setCreateBy(SecurityUtils.getUsername());
@@ -138,7 +152,7 @@ public class ProjectInfoController extends BaseController
 //        if(projectInfo.getRows()==""){
 //            return  toAjaxByError("人员信息不能为空!");
 //        }
-        if(projectInfo.getRows()!="") {
+        if(projectInfo.getRows()!=null&&projectInfo.getRows()!="") {
             List<ProjectUser> childList = JSONArray.parseArray(projectInfo.getRows(), ProjectUser.class);
             for (ProjectUser child : childList) {
                 if (child.getId() != null) {
@@ -150,6 +164,20 @@ public class ProjectInfoController extends BaseController
                     child.setProjectName(child.getProjectName());
                     child.setCreateTime(DateUtils.getNowDate());
                     projectUserService.insertProjectUser(child);
+                }
+            }
+        }
+
+        //插入附件
+        if(projectInfo.getFileRows()!=null&&projectInfo.getFileRows()!="") {
+            List<SystemFile> childList = JSONArray.parseArray(projectInfo.getFileRows(), SystemFile.class);
+            for (SystemFile child : childList) {
+                if (child.getId() != null) {
+
+                }else{
+                    child.setCode(projectInfo.getProjectCode());
+                    child.setCreateBy(SecurityUtils.getUsername());
+                    systemFileService.insertSystemFile(child);
                 }
             }
         }

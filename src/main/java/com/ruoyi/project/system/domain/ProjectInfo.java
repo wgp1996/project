@@ -58,7 +58,17 @@ public class ProjectInfo extends BaseEntity
 
     private String rows;
 
+    private String fileRows;
+
     private List<ProjectUser> childrenList;
+
+    public String getFileRows() {
+        return fileRows;
+    }
+
+    public void setFileRows(String fileRows) {
+        this.fileRows = fileRows;
+    }
 
     public String getRows() {
         return rows;
