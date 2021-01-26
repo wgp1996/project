@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.FlowNodeMapper">
+    
+    <resultMap type="FlowNode" id="FlowNodeResult">
+        <result property="id"    column="id"    />
+        <result property="flowNo"    column="flow_no"    />
+        <result property="nodeNo"    column="node_no"    />
+        <result property="nodeNum"    column="node_num"    />
+        <result property="isRole"    column="is_role"    />
+        <result property="isRoleName"    column="is_role_name"    />
+        <result property="prId"    column="pr_id"    />
+        <result property="prName"    column="pr_name"    />
+        <result property="isEnd"    column="is_end"    />
+        <result property="isEndName"    column="is_end_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectFlowNodeVo">
+        select a.*,case a.is_role when 0 then '否' when 1 then '是' end as is_role_name
+         ,case a.is_end when 0 then '否' when 1 then '是' end as is_end_name
+         from flow_node a
+    </sql>
+
+    <select id="selectFlowNodeList" parameterType="FlowNode" resultMap="FlowNodeResult">
+        <include refid="selectFlowNodeVo"/>
+        <where>  
+            <if test="flowNo != null  and flowNo != ''"> and flow_no = #{flowNo}</if>
+            <if test="nodeNo != null  and nodeNo != ''"> and node_no = #{nodeNo}</if>
+            <if test="nodeNum != null  and nodeNum != ''"> and node_num = #{nodeNum}</if>
+            <if test="isRole != null "> and is_role = #{isRole}</if>
+            <if test="prId != null  and prId != ''"> and pr_id = #{prId}</if>
+            <if test="isEnd != null "> and is_end = #{isEnd}</if>
+        </where>
+    </select>
+    
+    <select id="selectFlowNodeById" parameterType="Integer" resultMap="FlowNodeResult">
+        <include refid="selectFlowNodeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFlowNode" parameterType="FlowNode">
+        insert into flow_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
+            <if test="nodeNo != null  and nodeNo != ''">node_no,</if>
+            <if test="nodeNum != null  and nodeNum != ''">node_num,</if>
+            <if test="isRole != null ">is_role,</if>
+            <if test="prId != null  and prId != ''">pr_id,</if>
+            <if test="prName != null  and prName != ''">pr_name,</if>
+            <if test="isEnd != null ">is_end,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
+            <if test="nodeNo != null  and nodeNo != ''">#{nodeNo},</if>
+            <if test="nodeNum != null  and nodeNum != ''">#{nodeNum},</if>
+            <if test="isRole != null ">#{isRole},</if>
+            <if test="prId != null  and prId != ''">#{prId},</if>
+            <if test="prName != null  and prName != ''">#{prName},</if>
+            <if test="isEnd != null ">#{isEnd},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFlowNode" parameterType="FlowNode">
+        update flow_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
+            <if test="nodeNo != null  and nodeNo != ''">node_no = #{nodeNo},</if>
+            <if test="nodeNum != null  and nodeNum != ''">node_num = #{nodeNum},</if>
+            <if test="isRole != null ">is_role = #{isRole},</if>
+            <if test="prId != null  and prId != ''">pr_id = #{prId},</if>
+            <if test="prName != null  and prName != ''">pr_name=#{prName},</if>
+            <if test="isEnd != null ">is_end = #{isEnd},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFlowNodeById" parameterType="Integer">
+        delete from flow_node where id = #{id}
+    </delete>
+
+    <delete id="deleteFlowNodeByIds" parameterType="String">
+        delete from flow_node where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

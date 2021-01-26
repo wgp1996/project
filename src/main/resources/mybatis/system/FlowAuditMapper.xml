@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.FlowAuditMapper">
+    
+    <resultMap type="FlowAudit" id="FlowAuditResult">
+        <result property="id"    column="id"    />
+        <result property="djId"    column="dj_id"    />
+        <result property="nodeNo"    column="node_no"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="auditInfo"    column="audit_info"    />
+        <result property="auditTime"    column="audit_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectFlowAuditVo">
+        select id, dj_id, node_no, user_id, user_name, audit_info, audit_time, create_by, create_time, update_by, update_time, remark from flow_audit
+    </sql>
+
+    <select id="selectFlowAuditList" parameterType="FlowAudit" resultMap="FlowAuditResult">
+        <include refid="selectFlowAuditVo"/>
+        <where>  
+            <if test="djId != null  and djId != ''"> and dj_id = #{djId}</if>
+            <if test="nodeNo != null  and nodeNo != ''"> and node_no = #{nodeNo}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="auditInfo != null  and auditInfo != ''"> and audit_info = #{auditInfo}</if>
+            <if test="auditTime != null  and auditTime != ''"> and audit_time = #{auditTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectFlowAuditById" parameterType="Integer" resultMap="FlowAuditResult">
+        <include refid="selectFlowAuditVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFlowAudit" parameterType="FlowAudit" useGeneratedKeys="true" keyProperty="id">
+        insert into flow_audit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="djId != null  and djId != ''">dj_id,</if>
+            <if test="nodeNo != null  and nodeNo != ''">node_no,</if>
+            <if test="userId != null  and userId != ''">user_id,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="auditInfo != null  and auditInfo != ''">audit_info,</if>
+            <if test="auditTime != null  and auditTime != ''">audit_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="djId != null  and djId != ''">#{djId},</if>
+            <if test="nodeNo != null  and nodeNo != ''">#{nodeNo},</if>
+            <if test="userId != null  and userId != ''">#{userId},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="auditInfo != null  and auditInfo != ''">#{auditInfo},</if>
+            <if test="auditTime != null  and auditTime != ''">#{auditTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFlowAudit" parameterType="FlowAudit">
+        update flow_audit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djId != null  and djId != ''">dj_id = #{djId},</if>
+            <if test="nodeNo != null  and nodeNo != ''">node_no = #{nodeNo},</if>
+            <if test="userId != null  and userId != ''">user_id = #{userId},</if>
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="auditInfo != null  and auditInfo != ''">audit_info = #{auditInfo},</if>
+            <if test="auditTime != null  and auditTime != ''">audit_time = #{auditTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFlowAuditById" parameterType="Integer">
+        delete from flow_audit where id = #{id}
+    </delete>
+
+    <delete id="deleteFlowAuditByIds" parameterType="String">
+        delete from flow_audit where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.FlowInfoMapper">
+    
+    <resultMap type="FlowInfo" id="FlowInfoResult">
+        <result property="id"    column="id"    />
+        <result property="flowName"    column="flow_name"    />
+        <result property="flowNo"    column="flow_no"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
+    </resultMap>
+
+    <sql id="selectFlowInfoVo">
+        select a.*,case a.status when 0 then '未启用' when 1 then '已启用' end as status_name from flow_info a
+    </sql>
+
+    <select id="selectFlowInfoList" parameterType="FlowInfo" resultMap="FlowInfoResult">
+        <include refid="selectFlowInfoVo"/>
+        <where>  
+            <if test="flowName != null  and flowName != ''"> and flow_name like concat('%', #{flowName}, '%')</if>
+            <if test="flowNo != null  and flowNo != ''"> and flow_no = #{flowNo}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectFlowInfoById" parameterType="Integer" resultMap="FlowInfoResult">
+        <include refid="selectFlowInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFlowInfo" parameterType="FlowInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into flow_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="flowName != null  and flowName != ''">flow_name,</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="status != null ">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="flowName != null  and flowName != ''">#{flowName},</if>
+            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="status != null ">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFlowInfo" parameterType="FlowInfo">
+        update flow_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="flowName != null  and flowName != ''">flow_name = #{flowName},</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="status != null ">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFlowInfoById" parameterType="Integer">
+        delete from flow_info where id = #{id}
+    </delete>
+
+    <delete id="deleteFlowInfoByIds" parameterType="String">
+        delete from flow_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

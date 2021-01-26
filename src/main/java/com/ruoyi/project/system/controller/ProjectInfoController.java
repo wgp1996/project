@@ -119,8 +119,8 @@ public class ProjectInfoController extends BaseController
             List<ProjectUser> childList = JSONArray.parseArray(projectInfo.getRows(), ProjectUser.class);
             for (ProjectUser child : childList) {
                 child.setCreateBy(SecurityUtils.getUsername());
-                child.setProjectCode(child.getProjectCode());
-                child.setProjectName(child.getProjectName());
+                child.setProjectCode(projectInfo.getProjectCode());
+                child.setProjectName(projectInfo.getProjectName());
                 child.setCreateTime(DateUtils.getNowDate());
                 projectUserService.insertProjectUser(child);
             }
@@ -156,12 +156,14 @@ public class ProjectInfoController extends BaseController
             List<ProjectUser> childList = JSONArray.parseArray(projectInfo.getRows(), ProjectUser.class);
             for (ProjectUser child : childList) {
                 if (child.getId() != null) {
+                    child.setProjectCode(projectInfo.getProjectCode());
+                    child.setProjectName(projectInfo.getProjectName());
                     child.setCreateBy(SecurityUtils.getUsername());
                     projectUserService.updateProjectUser(child);
                 } else {
                     child.setCreateBy(SecurityUtils.getUsername());
-                    child.setProjectCode(child.getProjectCode());
-                    child.setProjectName(child.getProjectName());
+                    child.setProjectCode(projectInfo.getProjectCode());
+                    child.setProjectName(projectInfo.getProjectName());
                     child.setCreateTime(DateUtils.getNowDate());
                     projectUserService.insertProjectUser(child);
                 }
