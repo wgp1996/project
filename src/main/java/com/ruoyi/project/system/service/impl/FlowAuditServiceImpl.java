@@ -31,7 +31,17 @@ public class FlowAuditServiceImpl implements IFlowAuditService
     {
         return flowAuditMapper.selectFlowAuditById(id);
     }
-
+    /**
+     * 根据单号跟节点查询流程信息
+     *
+     * @param djId 单号/ID
+     * @param nodeNo 节点编号
+     * @return 审批表
+     */
+    @Override
+    public FlowAudit selectFlowAuditNoAndDjId(String djId,Integer nodeNo){
+        return flowAuditMapper.selectFlowAuditNoAndDjId(djId,nodeNo);
+    }
     /**
      * 查询审批表列表
      * 
@@ -43,7 +53,13 @@ public class FlowAuditServiceImpl implements IFlowAuditService
     {
         return flowAuditMapper.selectFlowAuditList(flowAudit);
     }
-
+    /**
+            获取末级节点
+     */
+    @Override
+    public Integer getEndNode(String djId){
+        return flowAuditMapper.getEndNode(djId);
+    }
     /**
      * 新增审批表
      * 
@@ -71,6 +87,17 @@ public class FlowAuditServiceImpl implements IFlowAuditService
     }
 
     /**
+     * 根据单据ID/编码修改审批为历史流程
+     *
+     * @param djId 审批表单据ID
+     * @return 结果
+     */
+    @Override
+    public int updateFlowAuditByHistory(String  djId){
+        return flowAuditMapper.updateFlowAuditByHistory(djId);
+    }
+
+    /**
      * 批量删除审批表
      * 
      * @param ids 需要删除的审批表ID
@@ -81,7 +108,16 @@ public class FlowAuditServiceImpl implements IFlowAuditService
     {
         return flowAuditMapper.deleteFlowAuditByIds(ids);
     }
-
+    /**
+     * 根据单据ID/编码删除审批表信息
+     *
+     * @param djId 审批表单据ID
+     * @return 结果
+     */
+    @Override
+    public int deleteFlowAuditByDjId(String  djId){
+        return flowAuditMapper.deleteFlowAuditByDjId(djId);
+    }
     /**
      * 删除审批表信息
      * 

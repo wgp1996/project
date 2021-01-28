@@ -18,7 +18,14 @@ public interface FlowAuditMapper
      * @return 审批表
      */
     public FlowAudit selectFlowAuditById(Integer id);
-
+    /**
+     * 根据单号跟节点查询流程信息
+     *
+     * @param djId 单号/ID
+     * @param nodeNo 节点编号
+     * @return 审批表
+     */
+    public FlowAudit selectFlowAuditNoAndDjId(String djId,Integer nodeNo);
     /**
      * 查询审批表列表
      * 
@@ -26,6 +33,10 @@ public interface FlowAuditMapper
      * @return 审批表集合
      */
     public List<FlowAudit> selectFlowAuditList(FlowAudit flowAudit);
+    /**
+     获取末级节点
+     */
+    public Integer getEndNode(String djId);
 
     /**
      * 新增审批表
@@ -42,7 +53,13 @@ public interface FlowAuditMapper
      * @return 结果
      */
     public int updateFlowAudit(FlowAudit flowAudit);
-
+    /**
+     * 根据单据ID/编码修改审批为历史流程
+     *
+     * @param djId 审批表单据ID
+     * @return 结果
+     */
+    public int updateFlowAuditByHistory(String  djId);
     /**
      * 删除审批表
      * 
@@ -50,7 +67,13 @@ public interface FlowAuditMapper
      * @return 结果
      */
     public int deleteFlowAuditById(Integer id);
-
+    /**
+     * 根据单据ID/编码删除审批表信息
+     *
+     * @param djId 审批表单据ID
+     * @return 结果
+     */
+    public int deleteFlowAuditByDjId(String  djId);
     /**
      * 批量删除审批表
      * 

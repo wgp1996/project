@@ -20,6 +20,14 @@ public interface ProjectInfoMapper
     public ProjectInfo selectProjectInfoById(Integer id);
 
     /**
+     * 查询项目建档
+     *
+     * @param code 项目编码
+     * @return 项目建档
+     */
+    public ProjectInfo selectProjectInfoByCode(String code);
+
+    /**
      * 查询项目建档列表
      * 
      * @param projectInfo 项目建档

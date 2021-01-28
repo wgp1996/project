@@ -52,6 +52,13 @@ public interface IFlowInfoService
     public int deleteFlowInfoByIds(Integer[] ids);
 
     /**
+     * 检查流程是否重复
+     * @param flowNo
+     * @param id
+     * @return
+     */
+    public int checkFlow(String flowNo,Integer id);
+    /**
      * 删除流程表信息
      * 
      * @param id 流程表ID

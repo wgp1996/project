@@ -34,7 +34,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFlowInfoVo"/>
         where id = #{id}
     </select>
-        
+    <select id="checkFlow"  resultType="Integer">
+        select count(id) from flow_info
+        where flow_no = #{flowNo}
+        <if test="id!=-1">
+            and id != #{id}
+        </if>
+    </select>
     <insert id="insertFlowInfo" parameterType="FlowInfo" useGeneratedKeys="true" keyProperty="id">
         insert into flow_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

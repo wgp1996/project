@@ -14,6 +14,14 @@ public interface IProjectInfoService
     /**
      * 查询项目建档
      * 
+     * @param code 项目编码
+     * @return 项目建档
+     */
+    public ProjectInfo selectProjectInfoByCode(String code);
+
+    /**
+     * 查询项目建档
+     *
      * @param id 项目建档ID
      * @return 项目建档
      */

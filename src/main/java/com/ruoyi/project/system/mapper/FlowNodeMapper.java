@@ -34,6 +34,12 @@ public interface FlowNodeMapper
      * @return 结果
      */
     public int insertFlowNode(FlowNode flowNode);
+    /**
+     * 获取末级节点
+     * @param flowNo
+     * @return
+     */
+    public String getEndFlowNode(String flowNo);
 
     /**
      * 修改节点表
@@ -58,4 +64,13 @@ public interface FlowNodeMapper
      * @return 结果
      */
     public int deleteFlowNodeByIds(Integer[] ids);
+
+    /**
+     * 批量删除节点
+     * @param ids
+     * @return
+     */
+    public int deleteFlowNodeByPid(Integer[] ids);
+
+
 }

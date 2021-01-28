@@ -43,7 +43,15 @@ public class FlowNodeServiceImpl implements IFlowNodeService
     {
         return flowNodeMapper.selectFlowNodeList(flowNode);
     }
-
+    /**
+     * 获取末级节点
+     * @param flowNo
+     * @return
+     */
+    @Override
+    public String getEndFlowNode(String flowNo){
+        return flowNodeMapper.getEndFlowNode(flowNo);
+    }
     /**
      * 新增节点表
      * 
@@ -92,5 +100,14 @@ public class FlowNodeServiceImpl implements IFlowNodeService
     public int deleteFlowNodeById(Integer id)
     {
         return flowNodeMapper.deleteFlowNodeById(id);
+    }
+    /**
+     * 批量删除节点
+     * @param ids
+     * @return
+     */
+    @Override
+    public int deleteFlowNodeByPid(Integer[] ids){
+        return flowNodeMapper.deleteFlowNodeByPid(ids);
     }
 }

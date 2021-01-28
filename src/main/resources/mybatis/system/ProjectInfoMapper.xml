@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectProjectInfoVo">
-        select id, project_name, project_code, project_name_jc, project_type, project_manager_name, project_manager_code, project_start_time, project_end_time, ys_status, create_by, create_time, update_by, update_time, remark from project_info
+        select * from project_info
     </sql>
     <sql id="selectProjectInfoVoByRole">
         select a.* from project_info a
@@ -51,6 +51,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectProjectInfoById" parameterType="Integer" resultMap="ProjectInfoResult">
         <include refid="selectProjectInfoVo"/>
         where id = #{id}
+    </select>
+    <select id="selectProjectInfoByCode" parameterType="String" resultMap="ProjectInfoResult">
+        <include refid="selectProjectInfoVo"/>
+        where project_code = #{code}
     </select>
     <select id="checkProjectCode"  resultType="Integer">
         select count(id) from project_info

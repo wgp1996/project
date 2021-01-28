@@ -56,4 +56,12 @@ public enum BusinessType
      * 清空数据
      */
     CLEAN,
+    /**
+     * 取消
+     */
+    CANCEL,
+    /**
+     * 生效
+     */
+    EFFECT
 }

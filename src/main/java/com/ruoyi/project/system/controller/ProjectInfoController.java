@@ -100,6 +100,15 @@ public class ProjectInfoController extends BaseController
         return AjaxResult.success(projectInfoService.selectProjectInfoById(id));
     }
 
+
+    /**
+     * 根据编码获取项目建档详细信息
+     */
+    @GetMapping(value = "/getInfoByCode/{code}")
+    public AjaxResult getInfoByCode(@PathVariable("code") String code)
+    {
+        return AjaxResult.success(projectInfoService.selectProjectInfoByCode(code));
+    }
     /**
      * 新增项目建档
      */

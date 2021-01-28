@@ -32,25 +32,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFlowNodeVo"/>
         <where>  
             <if test="flowNo != null  and flowNo != ''"> and flow_no = #{flowNo}</if>
-            <if test="nodeNo != null  and nodeNo != ''"> and node_no = #{nodeNo}</if>
+            <if test="nodeNo != null "> and node_no = #{nodeNo}</if>
             <if test="nodeNum != null  and nodeNum != ''"> and node_num = #{nodeNum}</if>
             <if test="isRole != null "> and is_role = #{isRole}</if>
             <if test="prId != null  and prId != ''"> and pr_id = #{prId}</if>
             <if test="isEnd != null "> and is_end = #{isEnd}</if>
         </where>
+        order by node_num asc
     </select>
-    
+
+    <select id="getEndFlowNode" parameterType="String" resultType="Integer">
+        select node_no from flow_node where flow_no = #{flowNo} order flow_no desc limit 1
+    </select>
+
     <select id="selectFlowNodeById" parameterType="Integer" resultMap="FlowNodeResult">
         <include refid="selectFlowNodeVo"/>
         where id = #{id}
     </select>
-        
     <insert id="insertFlowNode" parameterType="FlowNode">
         insert into flow_node
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null ">id,</if>
             <if test="flowNo != null  and flowNo != ''">flow_no,</if>
-            <if test="nodeNo != null  and nodeNo != ''">node_no,</if>
+            <if test="nodeNo != null ">node_no,</if>
             <if test="nodeNum != null  and nodeNum != ''">node_num,</if>
             <if test="isRole != null ">is_role,</if>
             <if test="prId != null  and prId != ''">pr_id,</if>
@@ -83,7 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update flow_node
         <trim prefix="SET" suffixOverrides=",">
             <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
-            <if test="nodeNo != null  and nodeNo != ''">node_no = #{nodeNo},</if>
+            <if test="nodeNo != null  ">node_no = #{nodeNo},</if>
             <if test="nodeNum != null  and nodeNum != ''">node_num = #{nodeNum},</if>
             <if test="isRole != null ">is_role = #{isRole},</if>
             <if test="prId != null  and prId != ''">pr_id = #{prId},</if>
@@ -107,6 +111,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteFlowNodeByPid" parameterType="String">
+        delete from flow_node where flow_no in (
+            select flow_no from flow_info where id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        )
     </delete>
     
 </mapper>

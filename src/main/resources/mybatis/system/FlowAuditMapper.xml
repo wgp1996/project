@@ -17,34 +17,60 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="prId"    column="pr_id"    />
+        <result property="prName"    column="pr_name"    />
+        <result property="isEnd"    column="is_end"    />
+        <result property="isEndName"    column="is_end_name"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
+        <result property="flowStatus"    column="flow_status"    />
+        <result property="stepStatus"    column="step_status"    />
     </resultMap>
 
     <sql id="selectFlowAuditVo">
-        select id, dj_id, node_no, user_id, user_name, audit_info, audit_time, create_by, create_time, update_by, update_time, remark from flow_audit
+        select a.*,case a.status when 0 then '未审核' when 1 then '审核通过' when 2 then '审核退回' end as status_name,
+        case a.status when 0 then '' when 1 then 'success' when 2 then 'error' end as step_status,
+        case a.is_end when 0 then  '否' when 1 then '是' end as is_end_name
+        from flow_audit a
     </sql>
 
     <select id="selectFlowAuditList" parameterType="FlowAudit" resultMap="FlowAuditResult">
         <include refid="selectFlowAuditVo"/>
         <where>  
             <if test="djId != null  and djId != ''"> and dj_id = #{djId}</if>
-            <if test="nodeNo != null  and nodeNo != ''"> and node_no = #{nodeNo}</if>
+            <if test="nodeNo != null  "> and node_no = #{nodeNo}</if>
             <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
             <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
             <if test="auditInfo != null  and auditInfo != ''"> and audit_info = #{auditInfo}</if>
             <if test="auditTime != null  and auditTime != ''"> and audit_time = #{auditTime}</if>
+            <if test="flowStatus != null"> and flow_status = #{flowStatus}</if>
         </where>
+        order by
+        <!--历史流程按照审批时间排序-->
+        <if test="flowStatus != null and flowStatus==-1">
+            audit_time asc,
+        </if>
+         node_no asc
     </select>
     
     <select id="selectFlowAuditById" parameterType="Integer" resultMap="FlowAuditResult">
         <include refid="selectFlowAuditVo"/>
         where id = #{id}
     </select>
-        
+
+    <select id="selectFlowAuditNoAndDjId"  resultMap="FlowAuditResult">
+        <include refid="selectFlowAuditVo"/>
+        where dj_id = #{djId} and node_no = #{nodeNo} and flow_status=0
+    </select>
+
+    <select id="getEndNode" parameterType="String" resultType="Integer">
+        select node_no from flow_audit where dj_id = #{djId} and flow_status=0 order by node_no desc limit 1
+    </select>
     <insert id="insertFlowAudit" parameterType="FlowAudit" useGeneratedKeys="true" keyProperty="id">
         insert into flow_audit
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="djId != null  and djId != ''">dj_id,</if>
-            <if test="nodeNo != null  and nodeNo != ''">node_no,</if>
+            <if test="nodeNo != null  ">node_no,</if>
             <if test="userId != null  and userId != ''">user_id,</if>
             <if test="userName != null  and userName != ''">user_name,</if>
             <if test="auditInfo != null  and auditInfo != ''">audit_info,</if>
@@ -54,10 +80,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+            <if test="prId != null  and prId != ''">pr_id,</if>
+            <if test="prName != null  and prName != ''">pr_name,</if>
+            <if test="isEnd != null ">is_end,</if>
+            <if test="status != null ">status,</if>
+            <if test="flowStatus != null ">flow_status,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="djId != null  and djId != ''">#{djId},</if>
-            <if test="nodeNo != null  and nodeNo != ''">#{nodeNo},</if>
+            <if test="nodeNo != null  ">#{nodeNo},</if>
             <if test="userId != null  and userId != ''">#{userId},</if>
             <if test="userName != null  and userName != ''">#{userName},</if>
             <if test="auditInfo != null  and auditInfo != ''">#{auditInfo},</if>
@@ -67,14 +98,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="prId != null  and prId != ''">#{prId},</if>
+            <if test="prName != null  and prName != ''">#{prName},</if>
+            <if test="isEnd != null ">#{isEnd},</if>
+            <if test="status != null ">  #{status},</if>
+            <if test="flowStatus != null ">#{flowStatus},</if>
          </trim>
     </insert>
 
     <update id="updateFlowAudit" parameterType="FlowAudit">
         update flow_audit
         <trim prefix="SET" suffixOverrides=",">
+            <if test="flowStatus != null ">flow_status=#{flowStatus},</if>
             <if test="djId != null  and djId != ''">dj_id = #{djId},</if>
-            <if test="nodeNo != null  and nodeNo != ''">node_no = #{nodeNo},</if>
+            <if test="nodeNo != null  ">node_no = #{nodeNo},</if>
             <if test="userId != null  and userId != ''">user_id = #{userId},</if>
             <if test="userName != null  and userName != ''">user_name = #{userName},</if>
             <if test="auditInfo != null  and auditInfo != ''">audit_info = #{auditInfo},</if>
@@ -84,12 +121,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="prId != null  and prId != ''">pr_id = #{prId},</if>
+            <if test="prName != null  and prName != ''">pr_name=#{prName},</if>
+            <if test="isEnd != null ">is_end = #{isEnd},</if>
+            <if test="status != null ">status = #{status},</if>
         </trim>
         where id = #{id}
     </update>
 
+    <update id="updateFlowAuditByHistory" parameterType="String">
+        update flow_audit set flow_status=-1
+        where dj_id = #{djId}
+    </update>
+
     <delete id="deleteFlowAuditById" parameterType="Integer">
         delete from flow_audit where id = #{id}
+    </delete>
+    <delete id="deleteFlowAuditByDjId" parameterType="String">
+        delete from flow_audit where dj_id = #{djId}
     </delete>
 
     <delete id="deleteFlowAuditByIds" parameterType="String">

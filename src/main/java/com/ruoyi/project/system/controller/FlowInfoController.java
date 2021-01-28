@@ -6,9 +6,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.project.system.domain.FlowNode;
-import com.ruoyi.project.system.domain.ProjectInfo;
-import com.ruoyi.project.system.domain.ProjectUser;
+import com.ruoyi.project.system.domain.*;
+import com.ruoyi.project.system.service.IFlowAuditService;
 import com.ruoyi.project.system.service.IFlowNodeService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
-import com.ruoyi.project.system.domain.FlowInfo;
 import com.ruoyi.project.system.service.IFlowInfoService;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
@@ -43,6 +41,29 @@ public class FlowInfoController extends BaseController
     private IFlowInfoService flowInfoService;
     @Autowired
     private IFlowNodeService flowNodeService;
+    @Autowired
+    private IFlowAuditService flowAuditService;
+
+    /**
+     * 查询审批流程列表
+     */
+    @GetMapping("/flowList")
+    public TableDataInfo flowList(FlowAudit flowAudit)
+    {
+        List<FlowAudit> list=null;
+        if(flowAudit.getDjId()!=""&&flowAudit.getDjId()!=null&&!"".equals(flowAudit.getDjId())){
+            list = flowAuditService.selectFlowAuditList(flowAudit);
+            for(FlowAudit item:list){
+                if(item.getAuditTime()==null||item.getAuditTime()==" "){
+                    item.setAuditTime("");
+                }
+                if(item.getStatusName()==null||item.getStatusName()==" "){
+                    item.setStatusName("未审核");
+                }
+            }
+        }
+        return getDataTable(list);
+    }
 
     /**
      * 查询流程表列表
@@ -96,14 +117,19 @@ public class FlowInfoController extends BaseController
         if(flowInfo.getRows()==""){
             return  toAjaxByError("节点明细不能为空!");
         }
+        int result=flowInfoService.checkFlow(flowInfo.getFlowNo(),-1);
+        if(result>0){
+            return toAjaxByError("流程重复!");
+        }
         flowInfo.setStatus(0);
-        flowInfo.setFlowNo(StringUtils.getRandomCode("SP"));
+        //flowInfo.setFlowNo(StringUtils.getRandomCode("SP"));
         //插入审批人员
         if(flowInfo.getRows()!=null&&flowInfo.getRows()!="") {
             List<FlowNode> childList = JSONArray.parseArray(flowInfo.getRows(), FlowNode.class);
             int i=1;
             for (FlowNode child : childList) {
-                child.setNodeNo(StringUtils.getRandomCode("NO"));
+                //child.setNodeNo(StringUtils.getRandomCode("NO"));
+                child.setNodeNo(i);
                 child.setCreateBy(SecurityUtils.getUsername());
                 child.setNodeNum(i+"");
                 child.setFlowNo(flowInfo.getFlowNo());
@@ -128,6 +154,10 @@ public class FlowInfoController extends BaseController
         if(flowInfo.getRows()==""){
             return  toAjaxByError("节点明细不能为空!");
         }
+        int result=flowInfoService.checkFlow(flowInfo.getFlowNo(),flowInfo.getId());
+        if(result>0){
+            return toAjaxByError("流程重复!");
+        }
        // flowInfo.setStatus(0);
        // flowInfo.setFlowNo(StringUtils.getRandomCode("SP"));
         //插入审批人员
@@ -141,7 +171,7 @@ public class FlowInfoController extends BaseController
                     child.setFlowNo(flowInfo.getFlowNo());
                     flowNodeService.updateFlowNode(child);
                 }else{
-                    child.setNodeNo(StringUtils.getRandomCode("NO"));
+                    child.setNodeNo(i);
                     child.setCreateBy(SecurityUtils.getUsername());
                     child.setNodeNum(i+"");
                     child.setFlowNo(flowInfo.getFlowNo());
@@ -168,6 +198,8 @@ public class FlowInfoController extends BaseController
                 return toAjaxByError(flowInfo.getFlowName()+":流程已启动,禁止删除!");
             }
         }
+        //删除节点
+        flowNodeService.deleteFlowNodeByPid(ids);
         return toAjax(flowInfoService.deleteFlowInfoByIds(ids));
     }
 
@@ -175,13 +207,30 @@ public class FlowInfoController extends BaseController
      * 启用流程表
      */
     @PreAuthorize("@ss.hasPermi('system:flowInfo:effect')")
-    @Log(title = "流程表", businessType = BusinessType.DELETE)
+    @Log(title = "流程表", businessType = BusinessType.EFFECT)
     @DeleteMapping("/effect/{ids}")
     public AjaxResult effect(@PathVariable Integer[] ids)
     {
         for(Integer id:ids){
             FlowInfo flowInfo=flowInfoService.selectFlowInfoById(id);
             flowInfo.setStatus(1);
+            flowInfoService.updateFlowInfo(flowInfo);
+            flowInfo=null;
+        }
+        return toAjaxBySuccess("生效成功!");
+    }
+
+    /**
+     * 取消启用流程表
+     */
+    @PreAuthorize("@ss.hasPermi('system:flowInfo:cancel')")
+    @Log(title = "流程表", businessType = BusinessType.CANCEL)
+    @DeleteMapping("/cancel/{ids}")
+    public AjaxResult cancel(@PathVariable Integer[] ids)
+    {
+        for(Integer id:ids){
+            FlowInfo flowInfo=flowInfoService.selectFlowInfoById(id);
+            flowInfo.setStatus(0);
             flowInfoService.updateFlowInfo(flowInfo);
             flowInfo=null;
         }

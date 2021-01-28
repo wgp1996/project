@@ -56,6 +56,16 @@ public class FlowInfoServiceImpl implements IFlowInfoService
         flowInfo.setCreateTime(DateUtils.getNowDate());
         return flowInfoMapper.insertFlowInfo(flowInfo);
     }
+    /**
+     * 检查流程是否重复
+     * @param flowNo
+     * @param id
+     * @return
+     */
+    @Override
+    public int checkFlow(String flowNo,Integer id){
+        return flowInfoMapper.checkFlow(flowNo,id);
+    }
 
     /**
      * 修改流程表

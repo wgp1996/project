@@ -24,7 +24,7 @@ public class FlowNode extends BaseEntity
 
     /** 节点编号 */
     @Excel(name = "节点编号")
-    private String nodeNo;
+    private Integer nodeNo;
 
     /** 顺序 */
     @Excel(name = "顺序")
@@ -91,16 +91,16 @@ public class FlowNode extends BaseEntity
     {
         return flowNo;
     }
-    public void setNodeNo(String nodeNo) 
-    {
+
+    public Integer getNodeNo() {
+        return nodeNo;
+    }
+
+    public void setNodeNo(Integer nodeNo) {
         this.nodeNo = nodeNo;
     }
 
-    public String getNodeNo() 
-    {
-        return nodeNo;
-    }
-    public void setNodeNum(String nodeNum) 
+    public void setNodeNum(String nodeNum)
     {
         this.nodeNum = nodeNum;
     }

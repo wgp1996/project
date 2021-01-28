@@ -28,6 +28,13 @@ public interface IFlowNodeService
     public List<FlowNode> selectFlowNodeList(FlowNode flowNode);
 
     /**
+     * 获取末级节点
+     * @param flowNo
+     * @return
+     */
+    public String getEndFlowNode(String flowNo);
+
+    /**
      * 新增节点表
      * 
      * @param flowNode 节点表
@@ -58,4 +65,10 @@ public interface IFlowNodeService
      * @return 结果
      */
     public int deleteFlowNodeById(Integer id);
+    /**
+     * 批量删除节点
+     * @param ids
+     * @return
+     */
+    public int deleteFlowNodeByPid(Integer[] ids);
 }

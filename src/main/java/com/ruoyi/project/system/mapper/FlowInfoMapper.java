@@ -34,7 +34,13 @@ public interface FlowInfoMapper
      * @return 结果
      */
     public int insertFlowInfo(FlowInfo flowInfo);
-
+    /**
+     * 检查流程是否重复
+     * @param flowNo
+     * @param id
+     * @return
+     */
+    public int checkFlow(String flowNo,Integer id);
     /**
      * 修改流程表
      * 

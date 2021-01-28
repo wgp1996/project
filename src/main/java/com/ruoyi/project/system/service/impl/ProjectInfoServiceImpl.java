@@ -33,6 +33,17 @@ public class ProjectInfoServiceImpl implements IProjectInfoService
     }
 
     /**
+     * 查询项目建档
+     *
+     * @param code 项目编码
+     * @return 项目建档
+     */
+    @Override
+    public ProjectInfo selectProjectInfoByCode(String code){
+        return projectInfoMapper.selectProjectInfoByCode(code);
+    }
+
+    /**
      * 查询项目建档列表
      * 
      * @param projectInfo 项目建档
