@@ -1,6 +1,8 @@
 package com.ruoyi.project.system.controller;
 
 import java.util.List;
+
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -40,9 +42,11 @@ public class SysPostController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:post:list')")
     @GetMapping("/list")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(SysPost post)
     {
         startPage();
+        post.setCreateBy(SecurityUtils.getUsername());
         List<SysPost> list = postService.selectPostList(post);
         return getDataTable(list);
     }
@@ -122,9 +126,12 @@ public class SysPostController extends BaseController
      * 获取岗位选择框列表
      */
     @GetMapping("/optionselect")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public AjaxResult optionselect()
     {
-        List<SysPost> posts = postService.selectPostAll();
+        SysPost post=new SysPost();
+        List<SysPost> posts = postService.selectPostList(post);
+        post=null;
         return AjaxResult.success(posts);
     }
 }

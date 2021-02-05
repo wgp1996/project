@@ -44,6 +44,15 @@ public interface ISysDeptService
     public List<Integer> selectDeptListByRoleId(Long roleId);
 
     /**
+     * 根据部门名称查询信息
+     *
+     * @param deptName 部门名称
+     * @return 部门信息
+     */
+    public SysDept selectDeptByName(String deptName);
+
+
+    /**
      * 根据部门ID查询信息
      * 
      * @param deptId 部门ID

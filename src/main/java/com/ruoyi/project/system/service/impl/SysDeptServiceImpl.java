@@ -107,7 +107,16 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         return deptMapper.selectDeptById(deptId);
     }
-
+    /**
+     * 根据部门名称查询信息
+     *
+     * @param deptName 部门名称
+     * @return 部门信息
+     */
+    @Override
+    public SysDept selectDeptByName(String deptName){
+        return deptMapper.selectDeptByName(deptName);
+    }
     /**
      * 是否存在子节点
      * 

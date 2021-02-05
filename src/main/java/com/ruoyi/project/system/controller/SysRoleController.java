@@ -40,6 +40,7 @@ public class SysRoleController extends BaseController
     public TableDataInfo list(SysRole role)
     {
         startPage();
+        role.setCreateBy(SecurityUtils.getUsername());
         List<SysRole> list = roleService.selectRoleList(role);
         return getDataTable(list);
     }
@@ -149,6 +150,9 @@ public class SysRoleController extends BaseController
     @GetMapping("/optionselect")
     public AjaxResult optionselect()
     {
-        return AjaxResult.success(roleService.selectRoleAll());
+        SysRole role=new SysRole();
+        role.setCreateBy(SecurityUtils.getUsername());
+        List<SysRole> list = roleService.selectRoleList(role);
+        return AjaxResult.success(list);
     }
 }

@@ -18,8 +18,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectPostVo">
-        select post_id, post_code, post_name, post_sort, status, create_by, create_time, remark 
-		from sys_post
+        select a.*
+		from sys_post a
+		join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 	
 	<select id="selectPostList" parameterType="SysPost" resultMap="SysPostResult">
@@ -34,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="postName != null and postName != ''">
 				AND post_name like concat('%', #{postName}, '%')
 			</if>
+			${dataScope}
 		</where>
 	</select>
 	

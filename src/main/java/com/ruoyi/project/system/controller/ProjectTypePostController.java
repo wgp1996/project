@@ -2,6 +2,7 @@ package com.ruoyi.project.system.controller;
 
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
@@ -40,7 +41,7 @@ public class ProjectTypePostController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:projectTypePost:list')")
     @GetMapping("/list")
-   // @DataScope(deptAlias = "d", userAlias = "u")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public AjaxResult list(ProjectTypePost projectType)
     {
         List<ProjectTypePost> list = projectTypeService.selectProjectTypeList(projectType);

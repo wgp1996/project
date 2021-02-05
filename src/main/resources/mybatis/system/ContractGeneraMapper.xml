@@ -55,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contractMoney != null  and contractMoney != ''"> and contract_money = #{contractMoney}</if>
             <if test="flowNo != null  and flowNo != ''"> and flow_no = #{flowNo}</if>
             <if test="nodeNo != null "> and node_no = #{nodeNo}</if>
+            ${dataScope}
         </where>
     </select>
 

@@ -39,6 +39,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="status != null and status != ''">
 			AND status = #{status}
 		</if>
+		<!-- 排除自己 -->
+		<if test="createBy != null and createBy != ''  and createBy != 'admin'">
+			AND d.create_by!='admin'
+		</if>
 		<!-- 数据范围过滤 -->
 		${dataScope}
 		order by d.parent_id, d.order_num
@@ -56,6 +60,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDeptById" parameterType="Long" resultMap="SysDeptResult">
 		<include refid="selectDeptVo"/>
 		where dept_id = #{deptId}
+	</select>
+
+	<select id="selectDeptByName" parameterType="String" resultMap="SysDeptResult">
+		<include refid="selectDeptVo"/>
+		where dept_name = #{deptName} limit 1
 	</select>
     
     <select id="checkDeptExistUser" parameterType="Long" resultType="int">

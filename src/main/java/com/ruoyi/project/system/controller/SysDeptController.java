@@ -40,6 +40,17 @@ public class SysDeptController extends BaseController
     @GetMapping("/list")
     public AjaxResult list(SysDept dept)
     {
+        dept.setCreateBy(SecurityUtils.getUsername());
+        List<SysDept> depts = deptService.selectDeptList(dept);
+        return AjaxResult.success(depts);
+    }
+
+    /**
+     * 获取部门列表
+     */
+    @GetMapping("/allList")
+    public AjaxResult allList(SysDept dept)
+    {
         List<SysDept> depts = deptService.selectDeptList(dept);
         return AjaxResult.success(depts);
     }
@@ -60,6 +71,7 @@ public class SysDeptController extends BaseController
     @GetMapping("/treeselect")
     public AjaxResult treeselect(SysDept dept)
     {
+        dept.setCreateBy(SecurityUtils.getUsername());
         List<SysDept> depts = deptService.selectDeptList(dept);
         return AjaxResult.success(deptService.buildDeptTreeSelect(depts));
     }

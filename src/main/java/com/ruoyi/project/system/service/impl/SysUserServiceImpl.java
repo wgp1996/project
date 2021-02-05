@@ -67,6 +67,17 @@ public class SysUserServiceImpl implements ISysUserService
     }
 
     /**
+     * 根据条件分页查询用户审核列表
+     *
+     * @param user 用户信息
+     * @return 用户信息集合信息
+     */
+    @Override
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public List<SysUser> selectUserShList(SysUser user){
+        return userMapper.selectUserShList(user);
+    }
+    /**
      * 通过用户名查询用户
      * 
      * @param userName 用户名

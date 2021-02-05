@@ -63,6 +63,7 @@ public class ContractGeneraController extends BaseController
      * 查询总包合同审核列表
      */
     @GetMapping("/shList")
+    //@DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo shList(ContractGenera contractGenera)
     {
         startPage();

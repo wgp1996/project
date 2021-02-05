@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.service.IFlowAuditService;
 import com.ruoyi.project.system.service.IFlowNodeService;
@@ -70,6 +71,7 @@ public class FlowInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:flowInfo:list')")
     @GetMapping("/list")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(FlowInfo flowInfo)
     {
         startPage();

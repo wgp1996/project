@@ -1,6 +1,11 @@
 package com.ruoyi.project.system.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.project.system.domain.SysDept;
+import com.ruoyi.project.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +55,8 @@ public class SysUserController extends BaseController
 
     @Autowired
     private TokenService tokenService;
-
+    @Autowired
+    private ISysDeptService deptService;
     /**
      * 获取用户列表
      */
@@ -59,7 +65,20 @@ public class SysUserController extends BaseController
     public TableDataInfo list(SysUser user)
     {
         startPage();
+        user.setCreateBy(SecurityUtils.getUsername());
         List<SysUser> list = userService.selectUserList(user);
+        return getDataTable(list);
+    }
+
+    /**
+     * 用户审核列表
+     */
+    @GetMapping("/shList")
+    public TableDataInfo shList(SysUser user)
+    {
+        startPage();
+        user.setCreateBy(SecurityUtils.getUsername());
+        List<SysUser> list = userService.selectUserShList(user);
         return getDataTable(list);
     }
 
@@ -69,6 +88,7 @@ public class SysUserController extends BaseController
     @GetMapping("/getAll")
     public TableDataInfo getAll(SysUser user)
     {
+        user.setCreateBy(SecurityUtils.getUsername());
         List<SysUser> list = userService.selectUserList(user);
         return getDataTable(list);
     }
@@ -80,6 +100,7 @@ public class SysUserController extends BaseController
     public TableDataInfo allList(SysUser user)
     {
         startPage();
+        user.setCreateBy(SecurityUtils.getUsername());
         List<SysUser> list = userService.selectUserList(user);
         return getDataTable(list);
     }
@@ -156,6 +177,49 @@ public class SysUserController extends BaseController
         user.setCreateBy(SecurityUtils.getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         return toAjax(userService.insertUser(user));
+    }
+
+    @Log(title = "用户注册", businessType = BusinessType.INSERT)
+    @PostMapping("/register")
+    public AjaxResult register(@Validated @RequestBody SysUser user)
+    {
+        if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
+        {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+        }
+        else if (UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
+        {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+        }
+        //admin默认为注册用户
+        user.setCreateBy("admin");
+        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+        //新建部门
+        SysDept dept=new SysDept();
+        dept.setParentId((long) 100);
+        dept.setAncestors("0,100");
+        dept.setDeptName(user.getNickName());
+        dept.setOrderNum("0");
+        dept.setLeader(user.getNickName());
+        dept.setPhone(user.getPhonenumber());
+        dept.setEmail(user.getEmail());
+        dept.setCreateBy("admin");
+        dept.setStatus("0");
+        dept.setCreateTime(DateUtils.getNowDate());
+        int result=deptService.insertDept(dept);
+        if(result>0){
+            //根据部门名称查询部门ID
+            SysDept item=deptService.selectDeptByName(user.getNickName());
+            user.setDeptId(item.getDeptId());
+            user.setStatus("1");//需要审核
+            Long [] roles={Long.parseLong("2")};
+            user.setRoleIds(roles);
+            userService.insertUser(user);
+            return toAjaxBySuccess("注册成功!");
+        }else{
+            return toAjaxBySuccess("部门注册失败!");
+        }
+
     }
 
     /**
