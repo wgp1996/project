@@ -88,7 +88,16 @@ public class SysUserServiceImpl implements ISysUserService
     {
         return userMapper.selectUserByUserName(userName);
     }
-
+    /**
+     * 通过openID查询用户
+     *
+     * @param wxOpenId 微信openId
+     * @return 用户对象信息
+     */
+    @Override
+    public SysUser selectUserByOpenId(String wxOpenId){
+        return userMapper.selectUserByOpenId(wxOpenId);
+    }
     /**
      * 通过用户ID查询用户
      * 

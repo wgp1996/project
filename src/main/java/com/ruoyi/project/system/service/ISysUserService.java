@@ -35,6 +35,16 @@ public interface ISysUserService
     public SysUser selectUserByUserName(String userName);
 
     /**
+     * 通过openID查询用户
+     *
+     * @param wxOpenId 微信openId
+     * @return 用户对象信息
+     */
+    public SysUser selectUserByOpenId(String wxOpenId);
+
+
+
+    /**
      * 通过用户ID查询用户
      * 
      * @param userId 用户ID

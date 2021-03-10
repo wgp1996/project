@@ -89,7 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 过滤请求
                 .authorizeRequests()
                 // 对于登录login 验证码captchaImage 允许匿名访问
-                .antMatchers("/login", "/captchaImage").anonymous()
+                .antMatchers("/login", "/wxLogin","/captchaImage").anonymous()
                 .antMatchers(
                         HttpMethod.GET,
                         "/*.html",
@@ -107,6 +107,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/druid/**").anonymous()
                 .antMatchers("/websocket/**").anonymous()
                 .antMatchers("/system/user/register").anonymous()
+                .antMatchers("/wx/**").anonymous()
+                .antMatchers("/api/**").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
                 .and()

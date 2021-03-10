@@ -3,7 +3,9 @@ package com.ruoyi.project.system.controller;
 import java.util.List;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.security.Md5Utils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.framework.redis.RedisCache;
 import com.ruoyi.project.system.domain.SysDept;
 import com.ruoyi.project.system.service.ISysDeptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,8 @@ public class SysUserController extends BaseController
     private TokenService tokenService;
     @Autowired
     private ISysDeptService deptService;
+    @Autowired
+    private RedisCache redisCache;
     /**
      * 获取用户列表
      */
@@ -143,7 +147,8 @@ public class SysUserController extends BaseController
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) Long userId)
     {
         AjaxResult ajax = AjaxResult.success();
-        ajax.put("roles", roleService.selectRoleAll());
+        ajax.put("roles", roleService.selectRoleListByUserId(userId));
+        //ajax.put("roles", roleService.selectRoleAll());
         ajax.put("posts", postService.selectPostAll());
         if (StringUtils.isNotNull(userId))
         {
@@ -185,20 +190,29 @@ public class SysUserController extends BaseController
     {
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
         {
-            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在!");
         }
-        else if (UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
-        {
-            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+        if(user.getSmsCode()==null||"".equals(user.getSmsCode())){
+            return AjaxResult.error("验证码不能为空!");
+        }
+        //用手机号做为登录账号
+        String smsCode=redisCache.getCacheObject(user.getUserName());
+        System.out.println(smsCode);
+        if(smsCode==null){
+            return AjaxResult.error("验证码已过期!");
+        }
+        if(!smsCode.equals(user.getSmsCode())){
+            return AjaxResult.error("验证码错误!");
         }
         //admin默认为注册用户
         user.setCreateBy("admin");
+        user.setOld(user.getPassword());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         //新建部门
         SysDept dept=new SysDept();
         dept.setParentId((long) 100);
         dept.setAncestors("0,100");
-        dept.setDeptName(user.getNickName());
+        dept.setDeptName(user.getUserName());
         dept.setOrderNum("0");
         dept.setLeader(user.getNickName());
         dept.setPhone(user.getPhonenumber());
@@ -209,7 +223,7 @@ public class SysUserController extends BaseController
         int result=deptService.insertDept(dept);
         if(result>0){
             //根据部门名称查询部门ID
-            SysDept item=deptService.selectDeptByName(user.getNickName());
+            SysDept item=deptService.selectDeptByName(user.getUserName());
             user.setDeptId(item.getDeptId());
             user.setStatus("1");//需要审核
             Long [] roles={Long.parseLong("2")};
@@ -235,10 +249,6 @@ public class SysUserController extends BaseController
         {
             return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
         }
-        else if (UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
-        {
-            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
-        }
         user.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(userService.updateUser(user));
     }
@@ -263,6 +273,7 @@ public class SysUserController extends BaseController
     public AjaxResult resetPwd(@RequestBody SysUser user)
     {
         userService.checkUserAllowed(user);
+        user.setOld(user.getPassword());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         user.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(userService.resetPwd(user));

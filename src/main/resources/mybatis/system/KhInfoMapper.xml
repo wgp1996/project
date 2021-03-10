@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="KhInfo" id="KhInfoResult">
         <result property="id"    column="id"    />
-        <result property="khType"    column="kh_type"    />
+        <result property="khType" column="kh_type"    />
         <result property="khTypeName"    column="kh_type_name"    />
         <result property="khCode"    column="kh_code"    />
         <result property="khName"    column="kh_name"    />
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectKhInfoVoByRole">
-        select a.*,case a.kh_type when 0 then '客户' when 1 then '供应商' end as kh_type_name from kh_info a
+        select a.*,case a.kh_type when 0 then '客户' when 1 then '供应商' when 2 then '往来单位' end as kh_type_name from kh_info a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
-            <if test="khType != null "> and kh_type = #{khType}</if>
+            <if test="khType != null and khType != ''"> and kh_type = #{khType}</if>
             <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
             <if test="khPhone != null  and khPhone != ''"> and kh_phone = #{khPhone}</if>
             <if test="khWx != null  and khWx != ''"> and kh_wx = #{khWx}</if>
@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
-            <if test="khType != null">kh_type,</if>
+            <if test="khType != null and khType !=''">kh_type,</if>
             create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -83,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
-            <if test="khType != null">#{khType},</if>
+            <if test="khType != null and khType !=''">#{khType},</if>
             sysdate()
          </trim>
     </insert>
@@ -100,7 +100,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
-            <if test="khType != null">kh_type=#{khType},</if>
+            <if test="khType != null and khType !=''">kh_type=#{khType},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}

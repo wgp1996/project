@@ -57,13 +57,25 @@ public class SysUser extends BaseEntity
     /** 密码 */
     private String password;
 
+    private String old;
+
     /** 盐加密 */
     private String salt;
+
 
     /** 帐号状态（0正常 1停用） */
     @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
     private String status;
-
+    /** 微信openId **/
+    private String wxOpenId;
+    /** 证件信息 身份证/信用代码 **/
+    private String certificatesCode;
+    /** 类型 0 自然人 1 企业**/
+    private String certificatesType;
+    /** 证件base64 **/
+    private String certificatesImg;
+    /** 短信验证码 **/
+    private String smsCode;
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;
 
@@ -94,6 +106,54 @@ public class SysUser extends BaseEntity
     public SysUser()
     {
 
+    }
+
+    public String getOld() {
+        return old;
+    }
+
+    public void setOld(String old) {
+        this.old = old;
+    }
+
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
+    }
+
+    public String getWxOpenId() {
+        return wxOpenId;
+    }
+
+    public void setWxOpenId(String wxOpenId) {
+        this.wxOpenId = wxOpenId;
+    }
+
+    public String getCertificatesCode() {
+        return certificatesCode;
+    }
+
+    public void setCertificatesCode(String certificatesCode) {
+        this.certificatesCode = certificatesCode;
+    }
+
+    public String getCertificatesType() {
+        return certificatesType;
+    }
+
+    public void setCertificatesType(String certificatesType) {
+        this.certificatesType = certificatesType;
+    }
+
+    public String getCertificatesImg() {
+        return certificatesImg;
+    }
+
+    public void setCertificatesImg(String certificatesImg) {
+        this.certificatesImg = certificatesImg;
     }
 
     public SysUser(Long userId)

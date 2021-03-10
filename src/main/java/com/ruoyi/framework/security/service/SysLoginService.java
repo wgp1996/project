@@ -1,6 +1,9 @@
 package com.ruoyi.framework.security.service;
 
 import javax.annotation.Resource;
+
+import com.ruoyi.common.utils.IdUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +20,9 @@ import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.framework.redis.RedisCache;
 import com.ruoyi.framework.security.LoginUser;
+
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * 登录校验方法
@@ -40,7 +46,7 @@ public class SysLoginService
      * 
      * @param username 用户名
      * @param password 密码
-     * @param captcha 验证码
+     * @param code 验证码
      * @param uuid 唯一标识
      * @return 结果
      */
@@ -73,6 +79,43 @@ public class SysLoginService
             {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
                 throw new UserPasswordNotMatchException();
+            }
+            else
+            {
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
+                throw new CustomException(e.getMessage());
+            }
+        }
+        AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        // 生成token
+        return tokenService.createToken(loginUser);
+    }
+
+    /**
+     * 微信登录验证
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 结果
+     */
+    public String wxLogin(String username, String password)
+    {
+        // 用户验证
+        Authentication authentication = null;
+        try
+        {
+            // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        }
+        catch (Exception e)
+        {
+            //不校验密码
+            if (e instanceof BadCredentialsException)
+            {
+//                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
+//                throw new UserPasswordNotMatchException();
             }
             else
             {

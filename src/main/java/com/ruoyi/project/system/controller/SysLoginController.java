@@ -42,7 +42,7 @@ public class SysLoginController
      * 
      * @param username 用户名
      * @param password 密码
-     * @param captcha 验证码
+     * @param code 验证码
      * @param uuid 唯一标识
      * @return 结果
      */
@@ -52,6 +52,24 @@ public class SysLoginController
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(username, password, code, uuid);
+        ajax.put(Constants.TOKEN, token);
+        return ajax;
+    }
+
+    /**
+     * 微信后台登录方法
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 结果
+     */
+    @PostMapping("/wxLogin")
+    public AjaxResult wxLogin(String username, String password)
+    {
+        System.out.println("用户名"+username+"密码:"+password);
+        AjaxResult ajax = AjaxResult.success();
+        // 生成令牌
+        String token = loginService.wxLogin(username, password);
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }

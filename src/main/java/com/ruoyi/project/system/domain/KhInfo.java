@@ -19,7 +19,7 @@ public class KhInfo extends BaseEntity
     private Integer id;
     /** 供应商编码 */
     @Excel(name = "客户类型")
-    private Integer khType;
+    private String khType;
 
     /** 供应商编码 */
     @Excel(name = "供应商编码")
@@ -108,11 +108,11 @@ public class KhInfo extends BaseEntity
         return khAddress;
     }
 
-    public Integer getKhType() {
+    public String getKhType() {
         return khType;
     }
 
-    public void setKhType(Integer khType) {
+    public void setKhType(String khType) {
         this.khType = khType;
     }
 
