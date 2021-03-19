@@ -42,6 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectManagerCode != null  and projectManagerCode != ''"> and project_manager_code = #{projectManagerCode}</if>
             <if test="projectStartTime != null  and projectStartTime != ''"> and project_start_time = #{projectStartTime}</if>
             <if test="projectEndTime != null  and projectEndTime != ''"> and project_end_time = #{projectEndTime}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             <if test="ysStatus != null "> and ys_status = #{ysStatus}</if>
             ${dataScope}
         </where>

@@ -11,11 +11,13 @@ import com.ruoyi.project.system.domain.SysUser;
 public interface ISysUserService
 {
     /**
-     * 根据条件分页查询用户列表
+     * 根据查询二级用户列表
      * 
-     * @param user 用户信息
+     * @param createBy 用户信息
      * @return 用户信息集合信息
      */
+    public List<SysUser> selectAllUserList(String createBy);
+
     public List<SysUser> selectUserList(SysUser user);
 
     /**

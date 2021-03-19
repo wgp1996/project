@@ -20,6 +20,8 @@ public interface SysUserMapper
      * @return 用户信息集合信息
      */
     public List<SysUser> selectUserList(SysUser sysUser);
+
+    public List<SysUser> selectAllUserList(String createBy);
     /**
      * 根据条件分页查询用户审核列表
      *

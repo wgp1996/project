@@ -66,6 +66,10 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.selectUserList(user);
     }
 
+    @Override
+    public List<SysUser> selectAllUserList(String createBy){
+            return userMapper.selectAllUserList(createBy);
+    }
     /**
      * 根据条件分页查询用户审核列表
      *
