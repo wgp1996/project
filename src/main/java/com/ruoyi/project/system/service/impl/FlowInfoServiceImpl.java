@@ -2,6 +2,8 @@ package com.ruoyi.project.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import org.apache.catalina.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.system.mapper.FlowInfoMapper;
@@ -53,6 +55,7 @@ public class FlowInfoServiceImpl implements IFlowInfoService
     @Override
     public int insertFlowInfo(FlowInfo flowInfo)
     {
+        flowInfo.setCreateBy(SecurityUtils.getUsername());
         flowInfo.setCreateTime(DateUtils.getNowDate());
         return flowInfoMapper.insertFlowInfo(flowInfo);
     }

@@ -147,7 +147,7 @@ public class SysUserController extends BaseController
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) Long userId)
     {
         AjaxResult ajax = AjaxResult.success();
-        ajax.put("roles", roleService.selectRoleListByUserId(userId));
+        ajax.put("roles", roleService.selectRoleListsByUserId(SecurityUtils.getUsername()));
         //ajax.put("roles", roleService.selectRoleAll());
         ajax.put("posts", postService.selectPostAll());
         if (StringUtils.isNotNull(userId))
@@ -155,6 +155,7 @@ public class SysUserController extends BaseController
             ajax.put(AjaxResult.DATA_TAG, userService.selectUserById(userId));
             ajax.put("postIds", postService.selectPostListByUserId(userId));
             ajax.put("roleIds", roleService.selectRoleListByUserId(userId));
+            //ajax.put("roleIds", roleService.selectRoleListByUserId(SecurityUtils.getLoginUser().getUser().getUserId()));
         }
         return ajax;
     }

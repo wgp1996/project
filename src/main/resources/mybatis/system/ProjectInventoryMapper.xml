@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectInventoryMapper">
+    
+    <resultMap type="ProjectInventory" id="ProjectInventoryResult">
+        <result property="id"    column="id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="isLast"    column="is_last"    />
+        <result property="inventoryUnit"    column="inventory_unit"    />
+        <result property="inventoryNum"    column="inventory_num"    />
+        <result property="inventoryPrice"    column="inventory_price"    />
+        <result property="inventoryMoney"    column="inventory_money"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="inventoryCode"    column="inventory_code"    />
+        <result property="inventoryName"    column="inventory_name"    />
+    </resultMap>
+
+    <sql id="selectProjectInventoryVo">
+        select id, project_name, project_code, parent_id, order_num, is_last, inventory_unit, inventory_num, inventory_price, inventory_money, create_by, create_time, update_by, update_time, remark, inventory_code, inventory_name from project_inventory
+    </sql>
+
+    <select id="selectProjectInventoryList" parameterType="ProjectInventory" resultMap="ProjectInventoryResult">
+        <include refid="selectProjectInventoryVo"/>
+        <where>  
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="isLast != null "> and is_last = #{isLast}</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''"> and inventory_unit = #{inventoryUnit}</if>
+            <if test="inventoryNum != null  and inventoryNum != ''"> and inventory_num = #{inventoryNum}</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''"> and inventory_price = #{inventoryPrice}</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''"> and inventory_money = #{inventoryMoney}</if>
+            <if test="inventoryCode != null  and inventoryCode != ''"> and inventory_code = #{inventoryCode}</if>
+            <if test="inventoryName != null  and inventoryName != ''"> and inventory_name like concat('%', #{inventoryName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectInventoryById" parameterType="Integer" resultMap="ProjectInventoryResult">
+        <include refid="selectProjectInventoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectInventory" parameterType="ProjectInventory">
+        insert into project_inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="parentId != null  and parentId != ''">parent_id,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="isLast != null ">is_last,</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''">inventory_unit,</if>
+            <if test="inventoryNum != null  and inventoryNum != ''">inventory_num,</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''">inventory_price,</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''">inventory_money,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="inventoryCode != null  and inventoryCode != ''">inventory_code,</if>
+            <if test="inventoryName != null  and inventoryName != ''">inventory_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="isLast != null ">#{isLast},</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''">#{inventoryUnit},</if>
+            <if test="inventoryNum != null  and inventoryNum != ''">#{inventoryNum},</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''">#{inventoryPrice},</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''">#{inventoryMoney},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="inventoryCode != null  and inventoryCode != ''">#{inventoryCode},</if>
+            <if test="inventoryName != null  and inventoryName != ''">#{inventoryName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectInventory" parameterType="ProjectInventory">
+        update project_inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="parentId != null  and parentId != ''">parent_id = #{parentId},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="isLast != null ">is_last = #{isLast},</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''">inventory_unit = #{inventoryUnit},</if>
+            <if test="inventoryNum != null  and inventoryNum != ''">inventory_num = #{inventoryNum},</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''">inventory_price = #{inventoryPrice},</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''">inventory_money = #{inventoryMoney},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="inventoryCode != null  and inventoryCode != ''">inventory_code = #{inventoryCode},</if>
+            <if test="inventoryName != null  and inventoryName != ''">inventory_name = #{inventoryName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectInventoryById" parameterType="Integer">
+        delete from project_inventory where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectInventoryByIds" parameterType="String">
+        delete from project_inventory where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

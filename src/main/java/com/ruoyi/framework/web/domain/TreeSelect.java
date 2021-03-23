@@ -43,6 +43,12 @@ public class TreeSelect implements Serializable
         this.label = dept.getGoodsTypeName();
         this.children = dept.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
     }
+    public TreeSelect(ProjectInventory inventory)
+    {
+        this.id = inventory.getId().longValue();
+        this.label = inventory.getInventoryName();
+        this.children = inventory.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
+    }
 
     public TreeSelect(SysMenu menu)
     {

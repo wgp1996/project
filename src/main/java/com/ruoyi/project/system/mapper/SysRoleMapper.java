@@ -40,7 +40,13 @@ public interface SysRoleMapper
      * @return 选中角色ID列表
      */
     public List<Integer> selectRoleListByUserId(Long userId);
-
+    /**
+     * 根据用户ID获取角色选择框列表
+     *
+     * @param userId 用户ID
+     * @return 选中角色ID列表
+     */
+    public List<SysRole> selectRoleListsByUserId(String createBy);
     /**
      * 通过角色ID查询角色
      * 

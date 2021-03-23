@@ -91,7 +91,7 @@ public class ContractGeneraController extends BaseController
     /**
      * 获取总包合同详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:contractGenera:query')")
+    //@PreAuthorize("@ss.hasPermi('system:contractGenera:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -243,6 +243,8 @@ public class ContractGeneraController extends BaseController
             }
             //状态
             item.setFlowStatus(0);
+            //状态
+            item.setStatus(0);
             //审核意见
             item.setAuditInfo(" ");
             //审核时间
@@ -290,7 +292,7 @@ public class ContractGeneraController extends BaseController
     {
         //查询审批流程
         FlowInfo flowInfo=new FlowInfo();
-        flowInfo.setFlowNo("ZBHT001");
+        flowInfo.setFlowNo("ZBHT001"+SecurityUtils.getUsername());
         flowInfo.setStatus(1);
         List<FlowInfo> list = flowInfoService.selectFlowInfoList(flowInfo);
         //查询审批节点

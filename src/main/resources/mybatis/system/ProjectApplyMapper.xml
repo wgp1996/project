@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectApplyMapper">
+    
+    <resultMap type="ProjectApply" id="ProjectApplyResult">
+        <result property="id"    column="id"    />
+        <result property="engineerFrom"    column="engineer_from"    />
+        <result property="engineerCode"    column="engineer_code"    />
+        <result property="engineerName"    column="engineer_name"    />
+        <result property="isFormal"    column="is_formal"    />
+        <result property="isZb"    column="is_zb"    />
+        <result property="createContent"    column="create_content"    />
+        <result property="engineerAddress"    column="engineer_address"    />
+        <result property="engineerUnit"    column="engineer_unit"    />
+        <result property="enginnerLxr"    column="enginner_lxr"    />
+        <result property="enginnerLxrPhone"    column="enginner_lxr_phone"    />
+        <result property="enginnerArea"    column="enginner_area"    />
+        <result property="enginnerDevice"    column="enginner_device"    />
+        <result property="enginnerTime"    column="enginner_time"    />
+        <result property="enginnerStartTime"    column="enginner_start_time"    />
+        <result property="enginnerEndTime"    column="enginner_end_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
+        <result property="flowNo"    column="flow_no"    />
+        <result property="nodeNo"    column="node_no"    />
+        <result property="isSp"    column="is_sp"    />
+        <result property="djNumber"    column="dj_number"    />
+    </resultMap>
+
+    <sql id="selectProjectApplyVo">
+        select a.* from project_apply a
+    </sql>
+    <sql id="selectProjectApplyVoByRole">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_apply a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectProjectApplyList" parameterType="ProjectApply" resultMap="ProjectApplyResult">
+        <include refid="selectProjectApplyVoByRole"/>
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="engineerFrom != null  and engineerFrom != ''"> and engineer_from = #{engineerFrom}</if>
+            <if test="engineerCode != null  and engineerCode != ''"> and engineer_code = #{engineerCode}</if>
+            <if test="engineerName != null  and engineerName != ''"> and engineer_name like concat('%', #{engineerName}, '%')</if>
+            <if test="isFormal != null "> and is_formal = #{isFormal}</if>
+            <if test="isZb != null "> and is_zb = #{isZb}</if>
+            <if test="createContent != null  and createContent != ''"> and create_content = #{createContent}</if>
+            <if test="engineerAddress != null  and engineerAddress != ''"> and engineer_address = #{engineerAddress}</if>
+            <if test="engineerUnit != null  and engineerUnit != ''"> and engineer_unit = #{engineerUnit}</if>
+            <if test="enginnerLxr != null  and enginnerLxr != ''"> and enginner_lxr = #{enginnerLxr}</if>
+            <if test="enginnerLxrPhone != null  and enginnerLxrPhone != ''"> and enginner_lxr_phone = #{enginnerLxrPhone}</if>
+            <if test="enginnerArea != null  and enginnerArea != ''"> and enginner_area = #{enginnerArea}</if>
+            <if test="enginnerDevice != null  and enginnerDevice != ''"> and enginner_device = #{enginnerDevice}</if>
+            <if test="enginnerTime != null "> and enginner_time = #{enginnerTime}</if>
+            <if test="enginnerStartTime != null  and enginnerStartTime != ''"> and enginner_start_time = #{enginnerStartTime}</if>
+            <if test="enginnerEndTime != null  and enginnerEndTime != ''"> and enginner_end_time = #{enginnerEndTime}</if>
+            <if test="status != null "> and status = #{status}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+
+
+    <select id="selectProjectApplyShList" parameterType="ProjectApply" resultMap="ProjectApplyResult">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_apply a
+        join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        <if test="type==0">
+            and a.node_no=b.node_no
+            and a.status=1
+            and b.status=0
+        </if>
+        <if test="type==1">
+            and b.status=1
+        </if>
+        <where>
+            and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+            <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="engineerCode != null  and engineerCode != ''"> and engineer_code = #{engineerCode}</if>
+            <if test="engineerName != null  and engineerName != ''"> and engineer_name like concat('%', #{engineerName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectApplyById" parameterType="Long" resultMap="ProjectApplyResult">
+        <include refid="selectProjectApplyVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectApply" parameterType="ProjectApply" useGeneratedKeys="true" keyProperty="id">
+        insert into project_apply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="engineerFrom != null  and engineerFrom != ''">engineer_from,</if>
+            <if test="engineerCode != null  and engineerCode != ''">engineer_code,</if>
+            <if test="engineerName != null  and engineerName != ''">engineer_name,</if>
+            <if test="isFormal != null ">is_formal,</if>
+            <if test="isZb != null ">is_zb,</if>
+            <if test="createContent != null  and createContent != ''">create_content,</if>
+            <if test="engineerAddress != null  and engineerAddress != ''">engineer_address,</if>
+            <if test="engineerUnit != null  and engineerUnit != ''">engineer_unit,</if>
+            <if test="enginnerLxr != null  and enginnerLxr != ''">enginner_lxr,</if>
+            <if test="enginnerLxrPhone != null  and enginnerLxrPhone != ''">enginner_lxr_phone,</if>
+            <if test="enginnerArea != null  and enginnerArea != ''">enginner_area,</if>
+            <if test="enginnerDevice != null  and enginnerDevice != ''">enginner_device,</if>
+            <if test="enginnerTime != null ">enginner_time,</if>
+            <if test="enginnerStartTime != null  and enginnerStartTime != ''">enginner_start_time,</if>
+            <if test="enginnerEndTime != null  and enginnerEndTime != ''">enginner_end_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="status != null ">status,</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
+            <if test="nodeNo != null  ">node_no,</if>
+            <if test="isSp != null ">is_sp,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="engineerFrom != null  and engineerFrom != ''">#{engineerFrom},</if>
+            <if test="engineerCode != null  and engineerCode != ''">#{engineerCode},</if>
+            <if test="engineerName != null  and engineerName != ''">#{engineerName},</if>
+            <if test="isFormal != null ">#{isFormal},</if>
+            <if test="isZb != null ">#{isZb},</if>
+            <if test="createContent != null  and createContent != ''">#{createContent},</if>
+            <if test="engineerAddress != null  and engineerAddress != ''">#{engineerAddress},</if>
+            <if test="engineerUnit != null  and engineerUnit != ''">#{engineerUnit},</if>
+            <if test="enginnerLxr != null  and enginnerLxr != ''">#{enginnerLxr},</if>
+            <if test="enginnerLxrPhone != null  and enginnerLxrPhone != ''">#{enginnerLxrPhone},</if>
+            <if test="enginnerArea != null  and enginnerArea != ''">#{enginnerArea},</if>
+            <if test="enginnerDevice != null  and enginnerDevice != ''">#{enginnerDevice},</if>
+            <if test="enginnerTime != null ">#{enginnerTime},</if>
+            <if test="enginnerStartTime != null  and enginnerStartTime != ''">#{enginnerStartTime},</if>
+            <if test="enginnerEndTime != null  and enginnerEndTime != ''">#{enginnerEndTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
+            <if test="nodeNo != null  ">#{nodeNo},</if>
+            <if test="isSp != null ">#{isSp},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectApply" parameterType="ProjectApply">
+        update project_apply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="engineerFrom != null  and engineerFrom != ''">engineer_from = #{engineerFrom},</if>
+            <if test="engineerCode != null  and engineerCode != ''">engineer_code = #{engineerCode},</if>
+            <if test="engineerName != null  and engineerName != ''">engineer_name = #{engineerName},</if>
+            <if test="isFormal != null ">is_formal = #{isFormal},</if>
+            <if test="isZb != null ">is_zb = #{isZb},</if>
+            <if test="createContent != null  and createContent != ''">create_content = #{createContent},</if>
+            <if test="engineerAddress != null  and engineerAddress != ''">engineer_address = #{engineerAddress},</if>
+            <if test="engineerUnit != null  and engineerUnit != ''">engineer_unit = #{engineerUnit},</if>
+            <if test="enginnerLxr != null  and enginnerLxr != ''">enginner_lxr = #{enginnerLxr},</if>
+            <if test="enginnerLxrPhone != null  and enginnerLxrPhone != ''">enginner_lxr_phone = #{enginnerLxrPhone},</if>
+            <if test="enginnerArea != null  and enginnerArea != ''">enginner_area = #{enginnerArea},</if>
+            <if test="enginnerDevice != null  and enginnerDevice != ''">enginner_device = #{enginnerDevice},</if>
+            <if test="enginnerTime != null ">enginner_time = #{enginnerTime},</if>
+            <if test="enginnerStartTime != null  and enginnerStartTime != ''">enginner_start_time = #{enginnerStartTime},</if>
+            <if test="enginnerEndTime != null  and enginnerEndTime != ''">enginner_end_time = #{enginnerEndTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
+            <if test="nodeNo != null  ">node_no = #{nodeNo},</if>
+            <if test="isSp != null ">is_sp=#{isSp},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateProjectApplyStatusOrNodeNo">
+        update project_apply
+        <if test="type==0">
+            set node_no = #{status}
+        </if>
+        <if test="type==1">
+            set status=#{status}
+        </if>
+        where dj_number = #{djNumber}
+    </update>
+
+    <delete id="deleteProjectApplyById" parameterType="Long">
+        delete from project_apply where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectApplyByIds" parameterType="String">
+        delete from project_apply where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			AND r.create_by!='admin'
 		</if>
 		<!-- 数据范围过滤 -->
-		${dataScope}
+ 		/*${dataScope}*/
 	</select>
     
 	<select id="selectRolePermissionByUserId" parameterType="Long" resultMap="SysRoleResult">
@@ -69,6 +69,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        left join sys_user_role ur on ur.role_id = r.role_id
 	        left join sys_user u on u.user_id = ur.user_id
 	    where u.user_id = #{userId}
+	</select>
+
+	<select id="selectRoleListsByUserId" parameterType="String" resultMap="SysRoleResult">
+		select distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope,
+            r.status, r.del_flag, r.create_time, r.remark
+        from sys_role r
+	    where r.create_by = #{createBy}
 	</select>
 	
 	<select id="selectRoleById" parameterType="Long" resultMap="SysRoleResult">

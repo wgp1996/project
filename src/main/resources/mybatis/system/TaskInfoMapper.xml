@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.TaskInfoMapper">
+    
+    <resultMap type="TaskInfo" id="TaskInfoResult">
+        <result property="id"    column="id"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="taskCode"    column="task_code"    />
+        <result property="taskEndTime"    column="task_end_time"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="implementUserCode"    column="implement_user_code"    />
+        <result property="implementUserName"    column="implement_user_name"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
+        <result property="urgentStatusName"    column="urgent_status_name"    />
+        <result property="urgentStatus"    column="urgent_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="isUrge"    column="is_urge"    />
+        <result property="isRead"    column="is_read"    />
+        <result property="sendIsRead"    column="send_is_read"    />
+        <result property="taskNum"    column="task_num"    />
+        <result property="message"    column="message"    />
+        <result property="resultNum"    column="result_num"    />
+    </resultMap>
+
+    <sql id="selectTaskInfoVo">
+        select * from task_info
+    </sql>
+
+    <sql id="selectTaskInfoVoByRole">
+        select a.*,case a.status when 0 then '未开始' when 1 then '进行中' when -1 then '已超期'  when 3 then '待验收'  when 4 then '已完成' end as status_name,
+         case a.urgent_status when 0 then '普通' when 1 then '重要' when 2 then '紧急' end as urgent_status_name
+         from task_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectTaskInfoList" parameterType="TaskInfo" resultMap="TaskInfoResult">
+        <include refid="selectTaskInfoVoByRole"/>
+        <where>  
+            <if test="taskName != null  and taskName != ''"> and task_name like concat('%', #{taskName}, '%')</if>
+            <if test="taskCode != null  and taskCode != ''"> and task_code = #{taskCode}</if>
+            <if test="taskEndTime != null  and taskEndTime != ''"> and task_end_time = #{taskEndTime}</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="implementUserCode != null  and implementUserCode != ''"> and implement_user_code = #{implementUserCode}</if>
+            <if test="implementUserName != null  and implementUserName != ''"> and implement_user_name like concat('%', #{implementUserName}, '%')</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="status != null "> and a.status = #{status}</if>
+            <if test="urgentStatus != null "> and urgent_status = #{urgentStatus}</if>
+            <if test="isRead != null "> and is_read = #{isRead}</if>
+            <if test="sendIsRead != null  "> and send_is_read = #{sendIsRead}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectTaskInfoById" parameterType="Integer" resultMap="TaskInfoResult">
+        <include refid="selectTaskInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTaskInfo" parameterType="TaskInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into task_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskName != null  and taskName != ''">task_name,</if>
+            <if test="taskCode != null  and taskCode != ''">task_code,</if>
+            <if test="taskEndTime != null  and taskEndTime != ''">task_end_time,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="implementUserCode != null  and implementUserCode != ''">implement_user_code,</if>
+            <if test="implementUserName != null  and implementUserName != ''">implement_user_name,</if>
+            <if test="status != null ">status,</if>
+            <if test="urgentStatus != null ">urgent_status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="isUrge != null ">is_urge,</if>
+            <if test="isRead != null ">is_read,</if>
+            <if test="sendIsRead != null ">send_is_read,</if>
+            <if test="taskNum != null  and taskNum != ''">task_num,</if>
+            <if test="message != null  and message != ''">message,</if>
+            <if test="resultNum != null ">result_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskName != null  and taskName != ''">#{taskName},</if>
+            <if test="taskCode != null  and taskCode != ''">#{taskCode},</if>
+            <if test="taskEndTime != null  and taskEndTime != ''">#{taskEndTime},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="implementUserCode != null  and implementUserCode != ''">#{implementUserCode},</if>
+            <if test="implementUserName != null  and implementUserName != ''">#{implementUserName},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="urgentStatus != null ">#{urgentStatus},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="isUrge != null ">#{isUrge},</if>
+            <if test="isRead != null ">#{isRead},</if>
+            <if test="sendIsRead != null ">#{sendIsRead},</if>
+            <if test="taskNum != null  and taskNum != ''">#{taskNum},</if>
+            <if test="message != null  and message != ''">#{message},</if>
+            <if test="resultNum != null ">#{resultNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTaskInfo" parameterType="TaskInfo">
+        update task_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskName != null  and taskName != ''">task_name = #{taskName},</if>
+            <if test="taskCode != null  and taskCode != ''">task_code = #{taskCode},</if>
+            <if test="taskEndTime != null  and taskEndTime != ''">task_end_time = #{taskEndTime},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
+            <if test="implementUserCode != null  and implementUserCode != ''">implement_user_code = #{implementUserCode},</if>
+            <if test="implementUserName != null  and implementUserName != ''">implement_user_name = #{implementUserName},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="urgentStatus != null ">urgent_status = #{urgentStatus},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="isUrge != null ">is_urge = #{isUrge},</if>
+            <if test="isRead != null ">is_read = #{isRead},</if>
+            <if test="taskNum != null  and taskNum != ''">task_num = #{taskNum},</if>
+            <if test="message != null  and message != ''">message = #{message},</if>
+            <if test="resultNum != null ">result_num = #{resultNum},</if>
+            <if test="sendIsRead != null ">send_is_read = #{sendIsRead},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskInfoById" parameterType="Integer">
+        delete from task_info where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskInfoByIds" parameterType="String">
+        delete from task_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

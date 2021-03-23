@@ -36,7 +36,7 @@ public class FlowNodeController extends BaseController
     /**
      * 查询节点表列表
      */
-    @PreAuthorize("@ss.hasPermi('system:flowNode:list')")
+//    @PreAuthorize("@ss.hasPermi('system:flowNode:list')")
     @GetMapping("/list")
     public TableDataInfo list(FlowNode flowNode)
     {

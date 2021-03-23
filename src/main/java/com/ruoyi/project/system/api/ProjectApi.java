@@ -443,7 +443,6 @@ public class ProjectApi extends BaseController {
         TaskInfo taskInfo=taskInfoService.selectTaskInfoById(id);
         taskInfo.setUrgentStatus(status);
         int result=taskInfoService.updateTaskInfo(taskInfo);
-        taskInfo=null;
         if(result>0){
             String strStatus="普通";
             if(status==1){
@@ -461,6 +460,7 @@ public class ProjectApi extends BaseController {
             message.setMessage("设置了任务的优先级为："+strStatus);
             taskMessageService.insertTaskMessage(message);
             message=null;
+            taskInfo=null;
             return toAjaxBySuccess("修改成功");
         }else{
             return toAjaxByError("修改失败");

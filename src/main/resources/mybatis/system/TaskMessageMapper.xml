@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.TaskMessageMapper">
+    
+    <resultMap type="TaskMessage" id="TaskMessageResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="message"    column="message"    />
+        <result property="time"    column="time"    />
+        <result property="num"    column="num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="taskCode"    column="task_code"    />
+    </resultMap>
+
+    <sql id="selectTaskMessageVo">
+        select * from task_message
+    </sql>
+
+    <select id="selectTaskMessageList" parameterType="TaskMessage" resultMap="TaskMessageResult">
+        <include refid="selectTaskMessageVo"/>
+        <where>  
+            <if test="type != null "> and type = #{type}</if>
+            <if test="message != null  and message != ''"> and message = #{message}</if>
+            <if test="time != null  and time != ''"> and time = #{time}</if>
+            <if test="num != null "> and num = #{num}</if>
+            <if test="taskName != null  and taskName != ''"> and task_name like concat('%', #{taskName}, '%')</if>
+            <if test="taskCode != null  and taskCode != ''"> and task_code = #{taskCode}</if>
+        </where>
+        order by create_time asc
+    </select>
+    
+    <select id="selectTaskMessageById" parameterType="Integer" resultMap="TaskMessageResult">
+        <include refid="selectTaskMessageVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTaskMessage" parameterType="TaskMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into task_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null ">type,</if>
+            <if test="message != null  and message != ''">message,</if>
+            <if test="time != null  and time != ''">time,</if>
+            <if test="num != null ">num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="taskName != null  and taskName != ''">task_name,</if>
+            <if test="taskCode != null  and taskCode != ''">task_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null ">#{type},</if>
+            <if test="message != null  and message != ''">#{message},</if>
+            <if test="time != null  and time != ''">#{time},</if>
+            <if test="num != null ">#{num},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="taskName != null  and taskName != ''">#{taskName},</if>
+            <if test="taskCode != null  and taskCode != ''">#{taskCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTaskMessage" parameterType="TaskMessage">
+        update task_message
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null ">type = #{type},</if>
+            <if test="message != null  and message != ''">message = #{message},</if>
+            <if test="time != null  and time != ''">time = #{time},</if>
+            <if test="num != null ">num = #{num},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="taskName != null  and taskName != ''">task_name = #{taskName},</if>
+            <if test="taskCode != null  and taskCode != ''">task_code = #{taskCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskMessageById" parameterType="Integer">
+        delete from task_message where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskMessageByTaskCode" parameterType="String">
+        delete from task_message where task_code = #{taskCode}
+    </delete>
+
+    <delete id="deleteTaskMessageByIds" parameterType="String">
+        delete from task_message where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

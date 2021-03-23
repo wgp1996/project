@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectApplyChildMapper">
+    
+    <resultMap type="ProjectApplyChild" id="ProjectApplyChildResult">
+        <result property="id"    column="id"    />
+        <result property="deptCode"    column="dept_code"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="enginnerNum"    column="enginner_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="enginnerCode"    column="enginner_code"    />
+    </resultMap>
+
+    <sql id="selectProjectApplyChildVo">
+        select id, dept_code, dept_name, enginner_num, create_by, create_time, update_by, update_time, remark, enginner_code from project_apply_child
+    </sql>
+
+    <select id="selectProjectApplyChildList" parameterType="ProjectApplyChild" resultMap="ProjectApplyChildResult">
+        <include refid="selectProjectApplyChildVo"/>
+        <where>  
+            <if test="deptCode != null  and deptCode != ''"> and dept_code = #{deptCode}</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="enginnerNum != null  and enginnerNum != ''"> and enginner_num = #{enginnerNum}</if>
+            <if test="enginnerCode != null  and enginnerCode != ''"> and enginner_code = #{enginnerCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectApplyChildById" parameterType="Long" resultMap="ProjectApplyChildResult">
+        <include refid="selectProjectApplyChildVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectApplyChild" parameterType="ProjectApplyChild" useGeneratedKeys="true" keyProperty="id">
+        insert into project_apply_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptCode != null  and deptCode != ''">dept_code,</if>
+            <if test="deptName != null  and deptName != ''">dept_name,</if>
+            <if test="enginnerNum != null  and enginnerNum != ''">enginner_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="enginnerCode != null  and enginnerCode != ''">enginner_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptCode != null  and deptCode != ''">#{deptCode},</if>
+            <if test="deptName != null  and deptName != ''">#{deptName},</if>
+            <if test="enginnerNum != null  and enginnerNum != ''">#{enginnerNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="enginnerCode != null  and enginnerCode != ''">#{enginnerCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectApplyChild" parameterType="ProjectApplyChild">
+        update project_apply_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptCode != null  and deptCode != ''">dept_code = #{deptCode},</if>
+            <if test="deptName != null  and deptName != ''">dept_name = #{deptName},</if>
+            <if test="enginnerNum != null  and enginnerNum != ''">enginner_num = #{enginnerNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="enginnerCode != null  and enginnerCode != ''">enginner_code = #{enginnerCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectApplyChildById" parameterType="Long">
+        delete from project_apply_child where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectApplyChildByIds" parameterType="String">
+        delete from project_apply_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <delete id="deleteProjectApplyChildByPIds" parameterType="String">
+        delete from project_apply_child where enginner_code in(
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            select enginner_code from project_apply where id= #{id}
+        </foreach>
+        )
+    </delete>
+    
+</mapper>

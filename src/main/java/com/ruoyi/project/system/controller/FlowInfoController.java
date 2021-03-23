@@ -123,6 +123,7 @@ public class FlowInfoController extends BaseController
         if(result>0){
             return toAjaxByError("流程重复!");
         }
+        flowInfo.setFlowNo(flowInfo.getFlowNo()+SecurityUtils.getUsername());
         flowInfo.setStatus(0);
         //flowInfo.setFlowNo(StringUtils.getRandomCode("SP"));
         //插入审批人员
