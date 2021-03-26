@@ -55,6 +55,16 @@ public class ProjectInfoServiceImpl implements IProjectInfoService
         return projectInfoMapper.selectProjectInfoList(projectInfo);
     }
     /**
+     * 总包选择项目建档列表
+     *
+     * @param projectInfo 项目建档
+     * @return 项目建档集合
+     */
+    @Override
+    public List<ProjectInfo> selectProjectInfoListByZb(ProjectInfo projectInfo){
+        return projectInfoMapper.selectProjectInfoListByZb(projectInfo);
+    }
+    /**
      * 检测项目编码是否重复
      *
      * @return 结果

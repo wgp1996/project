@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectContractMapper">
+    
+    <resultMap type="ProjectContract" id="ProjectContractResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="contractName"    column="contract_name"    />
+        <result property="contractCode"    column="contract_code"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectTypeWork"    column="project_type_work"    />
+        <result property="lxrPhone"    column="lxr_phone"    />
+        <result property="contractMoney"    column="contract_money"    />
+        <result property="status"    column="status"    />
+        <result property="flowNo"    column="flow_no"    />
+        <result property="nodeNo"    column="node_no"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="isSp"    column="is_sp"    />
+        <result property="khName"    column="kh_name"    />
+        <result property="khCode"    column="kh_code"    />
+        <result property="statusName"    column="status_name"    />
+    </resultMap>
+
+    <sql id="selectProjectContractVo">
+        select * from project_contract
+    </sql>
+    <sql id="selectProjectContractVoByRole">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_contract a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectProjectContractList" parameterType="ProjectContract" resultMap="ProjectContractResult">
+        <include refid="selectProjectContractVoByRole"/>
+        <where>  
+            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
+            <if test="contractCode != null  and contractCode != ''"> and contract_code = #{contractCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    <select id="selectProjectContractShList" parameterType="ProjectContract" resultMap="ProjectContractResult">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_contract a
+        join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        <if test="type==0">
+            and a.node_no=b.node_no
+            and a.status=1
+            and b.status=0
+        </if>
+        <if test="type==1">
+            and b.status=1
+        </if>
+        <where>
+            and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
+            <if test="contractCode != null  and contractCode != ''"> and contract_code = #{contractCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+        </where>
+    </select>
+
+
+    <update id="updatetProjectContractStatusOrNodeNo">
+        update project_contract
+        <if test="type==0">
+            set node_no = #{status}
+        </if>
+        <if test="type==1">
+            set status=#{status}
+        </if>
+        where dj_number = #{djNumber}
+    </update>
+
+    <select id="selectProjectContractById" parameterType="Integer" resultMap="ProjectContractResult">
+        <include refid="selectProjectContractVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectContract" parameterType="ProjectContract" useGeneratedKeys="true" keyProperty="id">
+        insert into project_contract
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="khName != null  and khName != ''">kh_name,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="contractName != null  and contractName != ''">contract_name,</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectTypeWork != null  and projectTypeWork != ''">project_type_work,</if>
+            <if test="lxrPhone != null  and lxrPhone != ''">lxr_phone,</if>
+            <if test="contractMoney != null  and contractMoney != ''">contract_money,</if>
+            <if test="status != null ">status,</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
+            <if test="nodeNo != null ">node_no,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="isSp != null ">is_sp,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="khName != null  and khName != ''">#{khName},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="contractName != null  and contractName != ''">#{contractName},</if>
+            <if test="contractCode != null  and contractCode != ''">#{contractCode},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectTypeWork != null  and projectTypeWork != ''">#{projectTypeWork},</if>
+            <if test="lxrPhone != null  and lxrPhone != ''">#{lxrPhone},</if>
+            <if test="contractMoney != null  and contractMoney != ''">#{contractMoney},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
+            <if test="nodeNo != null ">#{nodeNo},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="isSp != null ">#{isSp},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectContract" parameterType="ProjectContract">
+        update project_contract
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="khName != null  and khName != ''">kh_name=#{khName},</if>
+            <if test="khCode != null  and khCode != ''">kh_code=#{khCode},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="contractName != null  and contractName != ''">contract_name = #{contractName},</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code = #{contractCode},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectTypeWork != null  and projectTypeWork != ''">project_type_work = #{projectTypeWork},</if>
+            <if test="lxrPhone != null  and lxrPhone != ''">lxr_phone = #{lxrPhone},</if>
+            <if test="contractMoney != null  and contractMoney != ''">contract_money = #{contractMoney},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
+            <if test="nodeNo != null ">node_no = #{nodeNo},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="isSp != null ">is_sp = #{isSp},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectContractById" parameterType="Integer">
+        delete from project_contract where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectContractByIds" parameterType="String">
+        delete from project_contract where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

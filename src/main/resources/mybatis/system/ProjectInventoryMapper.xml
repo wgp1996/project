@@ -8,7 +8,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="projectName"    column="project_name"    />
         <result property="projectCode"    column="project_code"    />
-        <result property="parentId"    column="parent_id"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="parentName"    column="parent_name"    />
         <result property="orderNum"    column="order_num"    />
         <result property="isLast"    column="is_last"    />
         <result property="inventoryUnit"    column="inventory_unit"    />
@@ -22,18 +23,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="inventoryCode"    column="inventory_code"    />
         <result property="inventoryName"    column="inventory_name"    />
+        <result property="djNumber"    column="dj_number"    />
+
     </resultMap>
 
     <sql id="selectProjectInventoryVo">
-        select id, project_name, project_code, parent_id, order_num, is_last, inventory_unit, inventory_num, inventory_price, inventory_money, create_by, create_time, update_by, update_time, remark, inventory_code, inventory_name from project_inventory
+        select * from project_inventory
+    </sql>
+
+    <sql id="selectProjectInventoryVoByRole">
+        select a.* from project_inventory a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectProjectInventoryList" parameterType="ProjectInventory" resultMap="ProjectInventoryResult">
-        <include refid="selectProjectInventoryVo"/>
+        <include refid="selectProjectInventoryVoByRole"/>
         <where>  
             <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
             <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
-            <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="parentCode != null  and parentCode != ''"> and parent_code = #{parentCode}</if>
             <if test="orderNum != null "> and order_num = #{orderNum}</if>
             <if test="isLast != null "> and is_last = #{isLast}</if>
             <if test="inventoryUnit != null  and inventoryUnit != ''"> and inventory_unit = #{inventoryUnit}</if>
@@ -42,11 +52,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inventoryMoney != null  and inventoryMoney != ''"> and inventory_money = #{inventoryMoney}</if>
             <if test="inventoryCode != null  and inventoryCode != ''"> and inventory_code = #{inventoryCode}</if>
             <if test="inventoryName != null  and inventoryName != ''"> and inventory_name like concat('%', #{inventoryName}, '%')</if>
+            ${dataScope}
         </where>
+        order by create_time desc
+    </select>
+    <!--  分包合同选择清单   -->
+    <select id="inventoryList" parameterType="ProjectInventory" resultMap="ProjectInventoryResult">
+        select a.inventory_unit,a.inventory_price,a.id,a.inventory_name from project_inventory a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        join project_invent b on a.dj_number=b.dj_number
+        <where>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="parentCode != null  and parentCode != ''"> and parent_code = #{parentCode}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="isLast != null "> and is_last = #{isLast}</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''"> and inventory_unit = #{inventoryUnit}</if>
+            <if test="inventoryNum != null  and inventoryNum != ''"> and inventory_num = #{inventoryNum}</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''"> and inventory_price = #{inventoryPrice}</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''"> and inventory_money = #{inventoryMoney}</if>
+            <if test="inventoryCode != null  and inventoryCode != ''"> and inventory_code = #{inventoryCode}</if>
+            <if test="inventoryName != null  and inventoryName != ''"> and inventory_name like concat('%', #{inventoryName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="selectProjectInventoryListByDjNumber" parameterType="String" resultMap="ProjectInventoryResult">
+        select * from project_inventory where dj_number = #{djNumber}
     </select>
     
     <select id="selectProjectInventoryById" parameterType="Integer" resultMap="ProjectInventoryResult">
-        <include refid="selectProjectInventoryVo"/>
+         select a.*,IFNULL((select inventory_name from project_inventory where id=a.parent_code),"顶级节点") as parent_name from project_inventory a
         where id = #{id}
     </select>
         
@@ -54,9 +93,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into project_inventory
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null ">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
             <if test="projectName != null  and projectName != ''">project_name,</if>
             <if test="projectCode != null  and projectCode != ''">project_code,</if>
-            <if test="parentId != null  and parentId != ''">parent_id,</if>
+            <if test="parentCode != null  and parentCode != ''">parent_code,</if>
             <if test="orderNum != null ">order_num,</if>
             <if test="isLast != null ">is_last,</if>
             <if test="inventoryUnit != null  and inventoryUnit != ''">inventory_unit,</if>
@@ -73,9 +113,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null ">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
             <if test="projectName != null  and projectName != ''">#{projectName},</if>
             <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
-            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+            <if test="parentCode != null  and parentCode != ''">#{parentCode},</if>
             <if test="orderNum != null ">#{orderNum},</if>
             <if test="isLast != null ">#{isLast},</if>
             <if test="inventoryUnit != null  and inventoryUnit != ''">#{inventoryUnit},</if>
@@ -95,9 +136,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateProjectInventory" parameterType="ProjectInventory">
         update project_inventory
         <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
             <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
             <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
-            <if test="parentId != null  and parentId != ''">parent_id = #{parentId},</if>
+            <if test="parentCode != null  and parentCode != ''">parent_code = #{parentCode},</if>
             <if test="orderNum != null ">order_num = #{orderNum},</if>
             <if test="isLast != null ">is_last = #{isLast},</if>
             <if test="inventoryUnit != null  and inventoryUnit != ''">inventory_unit = #{inventoryUnit},</if>
@@ -117,6 +159,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <delete id="deleteProjectInventoryById" parameterType="Integer">
         delete from project_inventory where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectInventoryByPId" parameterType="Integer">
+        delete from project_inventory where dj_number=(select dj_number from project_invent where id = #{id})
     </delete>
 
     <delete id="deleteProjectInventoryByIds" parameterType="String">

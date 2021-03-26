@@ -53,11 +53,46 @@ public class ProjectInventory extends TreeEntity
     @Excel(name = "分项编码")
     private String inventoryCode;
 
+    /** 分项编码 */
+    @Excel(name = "单据编号")
+    private String djNumber;
+
     /** 分项名称 */
     @Excel(name = "分项名称")
     private String inventoryName;
 
-    public void setId(Integer id) 
+    /** 父类ID */
+    @Excel(name = "父类ID")
+    private String parentCode;
+    private String parentName;
+
+    @Override
+    public String getParentName() {
+        return parentName;
+    }
+
+    @Override
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public String getParentCode() {
+        return parentCode;
+    }
+
+    public void setParentCode(String parentCode) {
+        this.parentCode = parentCode;
+    }
+
+    public String getDjNumber() {
+        return djNumber;
+    }
+
+    public void setDjNumber(String djNumber) {
+        this.djNumber = djNumber;
+    }
+
+    public void setId(Integer id)
     {
         this.id = id;
     }

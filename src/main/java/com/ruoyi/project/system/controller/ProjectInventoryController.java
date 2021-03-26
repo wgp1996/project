@@ -3,6 +3,9 @@ package com.ruoyi.project.system.controller;
 import java.util.List;
 
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.framework.web.page.TableDataInfo;
+import com.ruoyi.project.system.domain.ProjectContractChild;
 import com.ruoyi.project.system.domain.ProjectTypePost;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,20 @@ public class ProjectInventoryController extends BaseController
     }
 
     /**
+     * 分包合同选择清单
+     * @param projectInventory
+     * @return
+     */
+    @GetMapping("/selectList")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo selectList(ProjectInventory projectInventory)
+    {
+        startPage();
+        List<ProjectInventory> list = projectInventoryService.inventoryList(projectInventory);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出编制清单列表
      */
     @PreAuthorize("@ss.hasPermi('system:projectInventory:export')")
@@ -74,10 +91,19 @@ public class ProjectInventoryController extends BaseController
      * 获取编制清单详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:projectInventory:query')")
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/detailInfo/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
         return AjaxResult.success(projectInventoryService.selectProjectInventoryById(id));
+    }
+
+    /**
+     * 根据单号获取编制清单详细信息
+     */
+    @GetMapping(value = "/detail/{djNumber}")
+    public AjaxResult getInfoByDjNumber(@PathVariable("djNumber") String djNumber)
+    {
+        return AjaxResult.success(projectInventoryService.selectProjectInventoryListByDjNumber(djNumber));
     }
 
     /**
@@ -88,6 +114,9 @@ public class ProjectInventoryController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody ProjectInventory projectInventory)
     {
+        if(projectInventory.getDjNumber()==null||projectInventory.getDjNumber()==""){
+            return toAjaxByError("请先保存主表!");
+        }
         projectInventory.setCreateBy(SecurityUtils.getUsername());
         return toAjax(projectInventoryService.insertProjectInventory(projectInventory));
     }
@@ -109,9 +138,10 @@ public class ProjectInventoryController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:projectInventory:remove')")
     @Log(title = "编制清单", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Integer[] ids)
+	@DeleteMapping("/{id}")
+    public AjaxResult remove(@PathVariable Integer id)
     {
-        return toAjax(projectInventoryService.deleteProjectInventoryByIds(ids));
+        projectInventoryService.deleteProjectInventoryByPId(id);
+        return toAjax(projectInventoryService.deleteProjectInventoryById(id));
     }
 }

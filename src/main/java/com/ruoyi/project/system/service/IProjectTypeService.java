@@ -67,6 +67,18 @@ public interface IProjectTypeService
      * @return 下拉树结构列表
      */
     public List<TreeSelect> buildGoodsTreeSelect(List<ProjectType> depts);
+
+    /**
+     * 构建前端所需要下拉树结构
+     *
+     * @param depts 部门列表
+     * @return 下拉树结构列表
+     */
+    public List<TreeSelect> buildTreeSelect(List<ProjectType> depts);
+
+    public List<ProjectType> buildProjectTree(List<ProjectType> depts);
+
+
     /**
      * 查询项目分类列表
      * 
@@ -76,8 +88,16 @@ public interface IProjectTypeService
     public List<ProjectType> selectProjectTypeList(ProjectType projectType);
 
     /**
+     * 查询项目分类跟项目集合
+     *
+     * @param projectType 项目分类
+     * @return 查询项目分类跟项目集合
+     */
+    public List<ProjectType> selectProjectTypeProjectList(ProjectType projectType);
+
+    /**
      * 新增项目分类
-     * 
+     *
      * @param projectType 项目分类
      * @return 结果
      */

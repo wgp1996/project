@@ -18,7 +18,13 @@ public interface ProjectInventoryMapper
      * @return 编制清单
      */
     public ProjectInventory selectProjectInventoryById(Integer id);
-
+    /**
+     * 查询编制清单
+     *
+     * @param djNumber 编制清单单号
+     * @return 编制清单
+     */
+    public List<ProjectInventory> selectProjectInventoryListByDjNumber(String djNumber);
     /**
      * 查询编制清单列表
      * 
@@ -27,6 +33,13 @@ public interface ProjectInventoryMapper
      */
     public List<ProjectInventory> selectProjectInventoryList(ProjectInventory projectInventory);
 
+    /**
+     * 分包合同选择编制清单列表
+     *
+     * @param projectInventory 编制清单
+     * @return 编制清单集合
+     */
+    public List<ProjectInventory> inventoryList(ProjectInventory projectInventory);
     /**
      * 新增编制清单
      * 
@@ -58,4 +71,11 @@ public interface ProjectInventoryMapper
      * @return 结果
      */
     public int deleteProjectInventoryByIds(Integer[] ids);
+    /**
+     * 删除编制清单信息
+     *
+     * @param id 编制清单ID
+     * @return 结果
+     */
+    public int deleteProjectInventoryByPId(Integer id);
 }

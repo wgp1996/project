@@ -36,6 +36,16 @@ public class ProjectTypeController extends BaseController
         List<ProjectType> goods = projectTypeService.selectProjectTypeList(good);
         return AjaxResult.success(projectTypeService.buildGoodsTreeSelect(goods));
     }
+
+    /**
+     * 获取部门下拉树列表
+     */
+    @GetMapping("/projecttreeselect")
+    public AjaxResult projecttreeselect(ProjectType good)
+    {
+        List<ProjectType> goods = projectTypeService.selectProjectTypeProjectList(good);
+        return AjaxResult.success(goods);
+    }
     /**
      * 查询项目分类列表
      */

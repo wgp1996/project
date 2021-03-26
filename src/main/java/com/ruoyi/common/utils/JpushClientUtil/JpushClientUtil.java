@@ -327,6 +327,6 @@ public class JpushClientUtil {
 
     public static void main(String[] args) {
         //JpushClientUtil.sendToAll("测试","测试","测试","");
-        //JpushClientUtil.sendToRegistrationId("admin","测试","测试","测试","createBy");
+        JpushClientUtil.sendToRegistrationId("18661605143","测试","测试","测试","createBy");
     }
 }

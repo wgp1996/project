@@ -33,6 +33,16 @@ public class ProjectType extends TreeEntity
     @Excel(name = "档案类型")
     private Integer type;
 
+    private String projectCode;
+
+    public String getProjectCode() {
+        return projectCode;
+    }
+
+    public void setProjectCode(String projectCode) {
+        this.projectCode = projectCode;
+    }
+
     public void setProjectTypeId(Integer projectTypeId)
     {
         this.projectTypeId = projectTypeId;

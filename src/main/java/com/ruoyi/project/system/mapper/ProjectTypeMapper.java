@@ -54,7 +54,13 @@ public interface ProjectTypeMapper
      * @return 项目分类集合
      */
     public List<ProjectType> selectProjectTypeList(ProjectType projectType);
-
+    /**
+     * 查询项目分类跟项目集合
+     *
+     * @param projectType 项目分类
+     * @return 查询项目分类跟项目集合
+     */
+    public List<ProjectType> selectProjectTypeProjectList(ProjectType projectType);
     /**
      * 新增项目分类
      * 

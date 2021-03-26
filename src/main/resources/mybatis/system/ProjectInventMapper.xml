@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectInventMapper">
+    
+    <resultMap type="ProjectInvent" id="ProjectInventResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="djTitle"    column="dj_title"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="projectCode"    column="project_code"    />
+    </resultMap>
+
+    <sql id="selectProjectInventVo">
+        select id, dj_number, status, dj_time, dj_title, create_by, create_time, update_by, update_time, remark, project_code from project_invent
+    </sql>
+    <sql id="selectProjectInventVoByRole">
+        select a.*,case a.status  when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_invent a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectProjectInventList" parameterType="ProjectInvent" resultMap="ProjectInventResult">
+        <include refid="selectProjectInventVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="djTitle != null  and djTitle != ''"> and dj_title = #{djTitle}</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectProjectInventById" parameterType="Integer" resultMap="ProjectInventResult">
+        <include refid="selectProjectInventVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectInvent" parameterType="ProjectInvent">
+        insert into project_invent
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="status != null ">status,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="djTitle != null  and djTitle != ''">dj_title,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="djTitle != null  and djTitle != ''">#{djTitle},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectInvent" parameterType="ProjectInvent">
+        update project_invent
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="djTitle != null  and djTitle != ''">dj_title = #{djTitle},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectInventById" parameterType="Integer">
+        delete from project_invent where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectInventByIds" parameterType="String">
+        delete from project_invent where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

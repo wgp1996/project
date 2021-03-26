@@ -36,6 +36,14 @@ public interface IProjectInfoService
     public List<ProjectInfo> selectProjectInfoList(ProjectInfo projectInfo);
 
     /**
+     * 总包选择项目建档列表
+     *
+     * @param projectInfo 项目建档
+     * @return 项目建档集合
+     */
+    public List<ProjectInfo> selectProjectInfoListByZb(ProjectInfo projectInfo);
+
+    /**
      * 新增项目建档
      * 
      * @param projectInfo 项目建档

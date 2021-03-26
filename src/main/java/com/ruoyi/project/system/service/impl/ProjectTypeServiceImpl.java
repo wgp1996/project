@@ -68,6 +68,16 @@ public class ProjectTypeServiceImpl implements IProjectTypeService
         return goodsTypeMapper.checkProjectTypeNameUnique(name,pid);
     }
     /**
+     * 查询项目分类跟项目集合
+     *
+     * @param projectType 项目分类
+     * @return 查询项目分类跟项目集合
+     */
+    @Override
+    public List<ProjectType> selectProjectTypeProjectList(ProjectType projectType){
+        return goodsTypeMapper.selectProjectTypeProjectList(projectType);
+    }
+    /**
      * 构建前端所需要树结构
      *
      * @param goods 部门列表
@@ -75,6 +85,32 @@ public class ProjectTypeServiceImpl implements IProjectTypeService
      */
     @Override
     public List<ProjectType> buildGoodsTree(List<ProjectType> goods)
+    {
+        List<ProjectType> returnList = new ArrayList<ProjectType>();
+        List<Long> tempList = new ArrayList<Long>();
+        for (ProjectType good : goods)
+        {
+            tempList.add(good.getProjectTypeId().longValue());
+        }
+        for (Iterator<ProjectType> iterator = goods.iterator(); iterator.hasNext();)
+        {
+            ProjectType dept = (ProjectType) iterator.next();
+            // 如果是顶级节点, 遍历该父节点的所有子节点
+            if (!tempList.contains(dept.getProjectTypePid()))
+            {
+                recursionFn(goods, dept);
+                returnList.add(dept);
+            }
+        }
+        if (returnList.isEmpty())
+        {
+            returnList = goods;
+        }
+        return returnList;
+    }
+
+    @Override
+    public List<ProjectType> buildProjectTree(List<ProjectType> goods)
     {
         List<ProjectType> returnList = new ArrayList<ProjectType>();
         List<Long> tempList = new ArrayList<Long>();
@@ -109,6 +145,18 @@ public class ProjectTypeServiceImpl implements IProjectTypeService
     public List<TreeSelect> buildGoodsTreeSelect(List<ProjectType> goods)
     {
         List<ProjectType> deptTrees = buildGoodsTree(goods);
+        System.out.println(deptTrees.stream().map(TreeSelect::new).collect(Collectors.toList()));
+        return deptTrees.stream().map(TreeSelect::new).collect(Collectors.toList());
+    }
+    /**
+     * 构建前端所需要下拉树结构
+     *
+     * @param depts 部门列表
+     * @return 下拉树结构列表
+     */
+    @Override
+    public List<TreeSelect> buildTreeSelect(List<ProjectType> depts){
+        List<ProjectType> deptTrees = buildProjectTree(depts);
         System.out.println(deptTrees.stream().map(TreeSelect::new).collect(Collectors.toList()));
         return deptTrees.stream().map(TreeSelect::new).collect(Collectors.toList());
     }

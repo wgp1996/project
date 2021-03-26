@@ -48,6 +48,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc
     </select>
+
+    <select id="selectProjectInfoListByZb" parameterType="ProjectInfo" resultMap="ProjectInfoResult">
+        <include refid="selectProjectInfoVoByRole"/>
+        <where>
+            a.project_code not in(select project_code from contract_genera)
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="projectNameJc != null  and projectNameJc != ''"> and project_name_jc = #{projectNameJc}</if>
+            <if test="projectType != null  and projectType != ''"> and project_type = #{projectType}</if>
+            <if test="projectManagerName != null  and projectManagerName != ''"> and project_manager_name like concat('%', #{projectManagerName}, '%')</if>
+            <if test="projectManagerCode != null  and projectManagerCode != ''"> and project_manager_code = #{projectManagerCode}</if>
+            <if test="projectStartTime != null  and projectStartTime != ''"> and project_start_time = #{projectStartTime}</if>
+            <if test="projectEndTime != null  and projectEndTime != ''"> and project_end_time = #{projectEndTime}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="ysStatus != null "> and ys_status = #{ysStatus}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
     
     <select id="selectProjectInfoById" parameterType="Integer" resultMap="ProjectInfoResult">
         <include refid="selectProjectInfoVo"/>

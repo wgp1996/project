@@ -42,6 +42,28 @@ public class ProjectInventoryServiceImpl implements IProjectInventoryService
     }
 
 
+    /**
+     * 分包合同选择编制清单列表
+     *
+     * @param projectInventory 编制清单
+     * @return 编制清单集合
+     */
+    @Override
+    public List<ProjectInventory> inventoryList(ProjectInventory projectInventory){
+        return projectInventoryMapper.inventoryList(projectInventory);
+    }
+
+    /**
+     * 查询编制清单
+     *
+     * @param djNumber 编制清单单号
+     * @return 编制清单
+     */
+    @Override
+    public List<ProjectInventory> selectProjectInventoryListByDjNumber(String djNumber){
+        return projectInventoryMapper.selectProjectInventoryListByDjNumber(djNumber);
+    }
+
     @Override
     public List<ProjectInventory> buildTree(List<ProjectInventory> goods)
     {
@@ -190,5 +212,16 @@ public class ProjectInventoryServiceImpl implements IProjectInventoryService
     public int deleteProjectInventoryById(Integer id)
     {
         return projectInventoryMapper.deleteProjectInventoryById(id);
+    }
+
+    /**
+     * 删除编制清单信息
+     *
+     * @param id 编制清单ID
+     * @return 结果
+     */
+    @Override
+    public int deleteProjectInventoryByPId(Integer id){
+        return projectInventoryMapper.deleteProjectInventoryByPId(id);
     }
 }

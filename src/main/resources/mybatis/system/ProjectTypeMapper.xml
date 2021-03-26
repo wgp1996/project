@@ -13,6 +13,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="parentName"    column="parent_name"    />
+        <result property="projectCode"    column="project_code"    />
         <result property="type"    column="type"    />
     </resultMap>
 
@@ -34,6 +36,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ${dataScope}
         </where>
         order by a.project_type_pid, a.order_num
+    </select>
+
+    <select id="selectProjectTypeProjectList" parameterType="ProjectType" resultMap="ProjectTypeResult">
+        select 0 as type,a.project_type_id,a.project_type_id as project_code,project_type_pid,project_type_name from project_type a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="projectTypePid != null "> and project_type_pid = #{projectTypePid}</if>
+            <if test="projectTypeName != null  and projectTypeName != ''"> and project_type_name like concat('%', #{projectTypeName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            and `type` =0
+            ${dataScope}
+        </where>
+        UNION All
+        select 1 as type,CEILING(RAND()*900+100) as project_type_id,a.project_code as project_code,a.project_type as project_type_pid,project_name as project_type_name from project_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="projectTypePid != null "> and project_type = #{projectTypePid}</if>
+            <if test="projectTypeName != null  and projectTypeName != ''"> and project_name like concat('%', #{projectTypeName}, '%')</if>
+            ${dataScope}
+        </where>
     </select>
     
     <select id="selectProjectTypeById" parameterType="Integer" resultMap="ProjectTypeResult">

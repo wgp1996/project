@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectContractChildMapper">
+    
+    <resultMap type="ProjectContractChild" id="ProjectContractChildResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="inventoryCode"    column="inventory_code"    />
+        <result property="inventoryName"    column="inventory_name"    />
+        <result property="inventoryUnit"    column="inventory_unit"    />
+        <result property="inventoryNum"    column="inventory_num"    />
+        <result property="inventoryPrice"    column="inventory_price"    />
+        <result property="inventoryMoney"    column="inventory_money"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectProjectContractChildVo">
+        select * from project_contract_child
+    </sql>
+
+    <select id="selectProjectContractChildList" parameterType="ProjectContractChild" resultMap="ProjectContractChildResult">
+        <include refid="selectProjectContractChildVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="inventoryCode != null  and inventoryCode != ''"> and inventory_code = #{inventoryCode}</if>
+            <if test="inventoryName != null  and inventoryName != ''"> and inventory_name like concat('%', #{inventoryName}, '%')</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''"> and inventory_unit = #{inventoryUnit}</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''"> and inventory_price = #{inventoryPrice}</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''"> and inventory_money = #{inventoryMoney}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectProjectContractChildById" parameterType="Integer" resultMap="ProjectContractChildResult">
+        <include refid="selectProjectContractChildVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectContractChild" parameterType="ProjectContractChild" useGeneratedKeys="true" keyProperty="id">
+        insert into project_contract_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="inventoryNum != null  and inventoryNum != ''">inventory_num,</if>
+
+            <if test="inventoryCode != null  and inventoryCode != ''">inventory_code,</if>
+            <if test="inventoryName != null  and inventoryName != ''">inventory_name,</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''">inventory_unit,</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''">inventory_price,</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''">inventory_money,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="inventoryNum != null  and inventoryNum != ''">#{inventoryNum},</if>
+            <if test="inventoryCode != null  and inventoryCode != ''">#{inventoryCode},</if>
+            <if test="inventoryName != null  and inventoryName != ''">#{inventoryName},</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''">#{inventoryUnit},</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''">#{inventoryPrice},</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''">#{inventoryMoney},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectContractChild" parameterType="ProjectContractChild">
+        update project_contract_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inventoryNum != null  and inventoryNum != ''">inventory_num=#{inventoryNum},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="inventoryCode != null  and inventoryCode != ''">inventory_code = #{inventoryCode},</if>
+            <if test="inventoryName != null  and inventoryName != ''">inventory_name = #{inventoryName},</if>
+            <if test="inventoryUnit != null  and inventoryUnit != ''">inventory_unit = #{inventoryUnit},</if>
+            <if test="inventoryPrice != null  and inventoryPrice != ''">inventory_price = #{inventoryPrice},</if>
+            <if test="inventoryMoney != null  and inventoryMoney != ''">inventory_money = #{inventoryMoney},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectContractChildById" parameterType="Integer">
+        delete from project_contract_child where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectContractChildByIds" parameterType="String">
+        delete from project_contract_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteProjectContractChildByPIds" parameterType="String">
+        delete from project_contract_child where dj_number in(
+            select dj_number from project_contract where id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                id = #{id}
+            </foreach>
+        )
+    </delete>
+    
+</mapper>
