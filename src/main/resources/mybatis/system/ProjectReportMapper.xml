@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ProjectReportMapper">
+    
+    <resultMap type="ProjectReport" id="ProjectReportResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="dayNum"    column="day_num"    />
+        <result property="status"    column="status"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="htDjNumber"    column="ht_dj_number"    />
+        <result property="htMoney"    column="ht_money"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="yfMoney"    column="yf_money"    />
+        <result property="fpMoney"    column="fp_money"    />
+        <result property="czMoney"    column="cz_money"    />
+        <result property="flowNo"    column="flow_no"    />
+        <result property="nodeNo"    column="node_no"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="isSp"    column="is_sp"    />
+        <result property="statusName"    column="status_name"    />
+        <result property="djTitle"    column="dj_title"    />
+    </resultMap>
+
+    <sql id="selectProjectReportVo">
+        select * from project_report
+    </sql>
+    <sql id="selectProjectReportVoByRole">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_report a
+         join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectProjectReportList" parameterType="ProjectReport" resultMap="ProjectReportResult">
+        <include refid="selectProjectReportVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="htDjNumber != null  and htDjNumber != ''"> and ht_dj_number = #{htDjNumber}</if>
+            <if test="htMoney != null  and htMoney != ''"> and ht_money = #{htMoney}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="startTime != null  and startTime != ''"> and start_time = #{startTime}</if>
+            <if test="endTime != null  and endTime != ''"> and end_time = #{endTime}</if>
+            <if test="yfMoney != null  and yfMoney != ''"> and yf_money = #{yfMoney}</if>
+            <if test="fpMoney != null  and fpMoney != ''"> and fp_money = #{fpMoney}</if>
+            <if test="czMoney != null  and czMoney != ''"> and cz_money = #{czMoney}</if>
+            <if test="flowNo != null  and flowNo != ''"> and flow_no = #{flowNo}</if>
+            <if test="nodeNo != null "> and node_no = #{nodeNo}</if>
+            <if test="isSp != null "> and is_sp = #{isSp}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+
+
+    <select id="selectProjectReportShList" parameterType="ProjectReport" resultMap="ProjectReportResult">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_report a
+        join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        <if test="type==0">
+            and a.node_no=b.node_no
+            and a.status=1
+            and b.status=0
+        </if>
+        <if test="type==1">
+            and b.status=1
+        </if>
+        <where>
+            and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="htDjNumber != null  and htDjNumber != ''"> and ht_dj_number = #{htDjNumber}</if>
+            <if test="htMoney != null  and htMoney != ''"> and ht_money = #{htMoney}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+        </where>
+    </select>
+
+    <update id="updatetProjectReportStatusOrNodeNo">
+        update project_report
+        <if test="type==0">
+            set node_no = #{status}
+        </if>
+        <if test="type==1">
+            set status=#{status}
+        </if>
+        where dj_number = #{djNumber}
+    </update>
+
+    <select id="selectProjectReportById" parameterType="Integer" resultMap="ProjectReportResult">
+        <include refid="selectProjectReportVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProjectReport" parameterType="ProjectReport" useGeneratedKeys="true" keyProperty="id">
+        insert into project_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="djTitle != null  and djTitle != ''">dj_title,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="status != null ">status,</if>
+            <if test="dayNum != null ">day_num,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="htDjNumber != null  and htDjNumber != ''">ht_dj_number,</if>
+            <if test="htMoney != null  and htMoney != ''">ht_money,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="startTime != null  and startTime != ''">start_time,</if>
+            <if test="endTime != null  and endTime != ''">end_time,</if>
+            <if test="yfMoney != null  and yfMoney != ''">yf_money,</if>
+            <if test="fpMoney != null  and fpMoney != ''">fp_money,</if>
+            <if test="czMoney != null  and czMoney != ''">cz_money,</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
+            <if test="nodeNo != null ">node_no,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="isSp != null ">is_sp,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="djTitle != null  and djTitle != ''">#{djTitle},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="dayNum != null ">#{dayNum},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="htDjNumber != null  and htDjNumber != ''">#{htDjNumber},</if>
+            <if test="htMoney != null  and htMoney != ''">#{htMoney},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="startTime != null  and startTime != ''">#{startTime},</if>
+            <if test="endTime != null  and endTime != ''">#{endTime},</if>
+            <if test="yfMoney != null  and yfMoney != ''">#{yfMoney},</if>
+            <if test="fpMoney != null  and fpMoney != ''">#{fpMoney},</if>
+            <if test="czMoney != null  and czMoney != ''">#{czMoney},</if>
+            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
+            <if test="nodeNo != null ">#{nodeNo},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="isSp != null ">#{isSp},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectReport" parameterType="ProjectReport">
+        update project_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dayNum != null ">day_num=#{dayNum},</if>
+            <if test="djTitle != null  and djTitle != ''">dj_title=#{djTitle},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="htDjNumber != null  and htDjNumber != ''">ht_dj_number = #{htDjNumber},</if>
+            <if test="htMoney != null  and htMoney != ''">ht_money = #{htMoney},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="startTime != null  and startTime != ''">start_time = #{startTime},</if>
+            <if test="endTime != null  and endTime != ''">end_time = #{endTime},</if>
+            <if test="yfMoney != null  and yfMoney != ''">yf_money = #{yfMoney},</if>
+            <if test="fpMoney != null  and fpMoney != ''">fp_money = #{fpMoney},</if>
+            <if test="czMoney != null  and czMoney != ''">cz_money = #{czMoney},</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
+            <if test="nodeNo != null ">node_no = #{nodeNo},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="isSp != null ">is_sp = #{isSp},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectReportById" parameterType="Integer">
+        delete from project_report where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectReportByIds" parameterType="String">
+        delete from project_report where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

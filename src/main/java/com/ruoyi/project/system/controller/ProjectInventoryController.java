@@ -39,6 +39,8 @@ public class ProjectInventoryController extends BaseController
     private IProjectInventoryService projectInventoryService;
 
 
+
+
     /**
      * 获取部门下拉树列表
      */
@@ -141,7 +143,9 @@ public class ProjectInventoryController extends BaseController
 	@DeleteMapping("/{id}")
     public AjaxResult remove(@PathVariable Integer id)
     {
-        projectInventoryService.deleteProjectInventoryByPId(id);
+        if(projectInventoryService.hasChildById(id)>0){
+            return toAjaxByError("请先删除下级");
+        }
         return toAjax(projectInventoryService.deleteProjectInventoryById(id));
     }
 }

@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.ProjectInventory;
 import com.ruoyi.project.system.domain.SystemFile;
+import com.ruoyi.project.system.service.IProjectInventoryService;
 import com.ruoyi.project.system.service.ISystemFileService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,8 @@ public class ProjectInventController extends BaseController
     private IProjectInventService projectInventService;
     @Autowired
     private ISystemFileService systemFileService;
+    @Autowired
+    private IProjectInventoryService projectInventoryService;
     /**
      * 查询预算编制列表
      */
@@ -147,6 +150,7 @@ public class ProjectInventController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids)
     {
+        projectInventoryService.deleteProjectInventoryByPId(ids[0]);
         return toAjax(projectInventService.deleteProjectInventByIds(ids));
     }
 }

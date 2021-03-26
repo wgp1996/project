@@ -224,4 +224,15 @@ public class ProjectInventoryServiceImpl implements IProjectInventoryService
     public int deleteProjectInventoryByPId(Integer id){
         return projectInventoryMapper.deleteProjectInventoryByPId(id);
     }
+
+    /**
+     * 查询是否存在子集
+     * @param id
+     * @return
+     */
+    @Override
+    public int hasChildById(Integer id){
+        return projectInventoryMapper.hasChildById(id);
+    }
+
 }

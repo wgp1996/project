@@ -28,6 +28,16 @@ public interface IProjectContractService
     public List<ProjectContract> selectProjectContractShList(ProjectContract projectContract);
 
     /**
+     * 产值报告单查询分包合同列表
+     *
+     * @param projectContract 分包合同
+     * @return 分包合同集合
+     */
+    public List<ProjectContract> selectProjectContractListByReport(ProjectContract projectContract);
+
+
+
+    /**
      * 查询分包合同审核列表
      *
      * @param projectContract 分包合同

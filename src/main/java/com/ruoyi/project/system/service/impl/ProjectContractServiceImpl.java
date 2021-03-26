@@ -43,6 +43,17 @@ public class ProjectContractServiceImpl implements IProjectContractService
     {
         return projectContractMapper.selectProjectContractList(projectContract);
     }
+
+    /**
+     * 产值报告单查询分包合同列表
+     *
+     * @param projectContract 分包合同
+     * @return 分包合同集合
+     */
+    @Override
+    public List<ProjectContract> selectProjectContractListByReport(ProjectContract projectContract){
+        return projectContractMapper.selectProjectContractListByReport(projectContract);
+    }
     /**
      * 查询分包合同列表
      *

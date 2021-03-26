@@ -48,6 +48,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc
     </select>
+
+    <select id="selectProjectContractListByReport" parameterType="ProjectContract" resultMap="ProjectContractResult">
+        <include refid="selectProjectContractVoByRole"/>
+        <where>
+            and dj_number not in(select ht_dj_number from project_report)
+            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
+            <if test="contractCode != null  and contractCode != ''"> and contract_code = #{contractCode}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+
     <select id="selectProjectContractShList" parameterType="ProjectContract" resultMap="ProjectContractResult">
         select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from project_contract a
         join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0

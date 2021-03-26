@@ -157,6 +157,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <select id="hasChildById" parameterType="int" resultType="int">
+		select count(1) from project_inventory
+		where parent_code = #{id}
+	</select>
     <delete id="deleteProjectInventoryById" parameterType="Integer">
         delete from project_inventory where id = #{id}
     </delete>

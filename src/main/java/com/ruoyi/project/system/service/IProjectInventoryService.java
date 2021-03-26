@@ -87,6 +87,13 @@ public interface IProjectInventoryService
     public int deleteProjectInventoryByIds(Integer[] ids);
 
     /**
+     * 查询是否存在子集
+     * @param id
+     * @return
+     */
+    public int hasChildById(Integer id);
+
+    /**
      * 删除编制清单信息
      * 
      * @param id 编制清单ID
