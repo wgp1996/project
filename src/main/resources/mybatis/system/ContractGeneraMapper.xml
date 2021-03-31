@@ -57,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="nodeNo != null "> and node_no = #{nodeNo}</if>
             ${dataScope}
         </where>
+        order by a.create_time desc
     </select>
 
     <select id="selectContractGeneraShList" parameterType="ContractGenera" resultMap="ContractGeneraResult">
@@ -77,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectCode != null  and projectCode != ''"> and a.project_code = #{projectCode}</if>
             <if test="projectName != null  and projectName != ''"> and a.project_name like concat('%', #{projectName}, '%')</if>
         </where>
+        order by a.create_time desc
     </select>
     
     <select id="selectContractGeneraById" parameterType="Long" resultMap="ContractGeneraResult">

@@ -157,6 +157,7 @@ public class ProjectContractController extends BaseController
         if(projectContract.getStatus()>0){
             return toAjaxByError("禁止修改!");
         }
+        projectContract.setUpdateBy(SecurityUtils.getUsername());
         if(projectContract.getRows()!=null&&projectContract.getRows()!="") {
             List<ProjectContractChild> childList = JSONArray.parseArray(projectContract.getRows(), ProjectContractChild.class);
             for (ProjectContractChild child : childList) {
