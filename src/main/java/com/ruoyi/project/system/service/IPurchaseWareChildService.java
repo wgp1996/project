@@ -28,6 +28,14 @@ public interface IPurchaseWareChildService
     public List<PurchaseWareChild> selectPurchaseWareChildList(PurchaseWareChild PurchaseWareChild);
 
     /**
+     * 采购接收单查询采购入库单列表
+     *
+     * @param PurchaseWareChild 采购入库子表
+     * @return 采购入库子表集合
+     */
+    public List<PurchaseWareChild> selectPurchaseWareListBySettlement(PurchaseWareChild PurchaseWareChild);
+
+    /**
      * 新增采购入库子表
      * 
      * @param PurchaseWareChild 采购入库子表

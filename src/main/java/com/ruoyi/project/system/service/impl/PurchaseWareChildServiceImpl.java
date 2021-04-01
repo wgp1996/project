@@ -47,6 +47,17 @@ public class PurchaseWareChildServiceImpl implements IPurchaseWareChildService
     }
 
     /**
+     * 采购接收单查询采购入库单列表
+     *
+     * @param PurchaseWareChild 采购入库子表
+     * @return 采购入库子表集合
+     */
+    @Override
+    public List<PurchaseWareChild> selectPurchaseWareListBySettlement(PurchaseWareChild PurchaseWareChild){
+        return PurchaseWareChildMapper.selectPurchaseWareListBySettlement(PurchaseWareChild);
+    }
+
+    /**
      * 新增采购入库子表
      * 
      * @param PurchaseWareChild 采购入库子表

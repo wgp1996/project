@@ -48,6 +48,8 @@ public class PurchaseWareController extends BaseController
     private IFlowAuditService flowAuditService;
     @Autowired
     private IPurchaseWareChildService PurchaseWareChildService;
+    @Autowired
+    private IStockInfoService stockInfoService;
 
     /**
      * 查询采购入库列表
@@ -59,6 +61,18 @@ public class PurchaseWareController extends BaseController
     {
         startPage();
         List<PurchaseWare> list = purchaseWareService.selectPurchaseWareList(purchaseWare);
+        return getDataTable(list);
+    }
+
+    /**
+     * 采购结算单选择入库单列表
+     */
+    @GetMapping("/settlementSelectList")
+    public TableDataInfo wareSelectList(PurchaseWareChild purchaseWareChild)
+    {
+        startPage();
+        purchaseWareChild.setCreateBy(SecurityUtils.getUsername());
+        List<PurchaseWareChild> list = PurchaseWareChildService.selectPurchaseWareListBySettlement(purchaseWareChild);
         return getDataTable(list);
     }
 
@@ -111,7 +125,7 @@ public class PurchaseWareController extends BaseController
     public AjaxResult add(@RequestBody PurchaseWare purchaseWare)
     {
         purchaseWare.setCreateBy(SecurityUtils.getUsername());
-        purchaseWare.setDjNumber(StringUtils.getRandomCode("PO"));
+        purchaseWare.setDjNumber(StringUtils.getRandomCode("RK"));
         if(purchaseWare.getRows()!=null&&purchaseWare.getRows()!="") {
             List<PurchaseWareChild> childList = JSONArray.parseArray(purchaseWare.getRows(), PurchaseWareChild.class);
             for (PurchaseWareChild child : childList) {
@@ -204,6 +218,30 @@ public class PurchaseWareController extends BaseController
                 //直接生效
                 info.setStatus(2);
                 purchaseWareService.updatePurchaseWare(info);
+                PurchaseWareChild child=new PurchaseWareChild();
+                child.setDjNumber(info.getDjNumber());
+                List<PurchaseWareChild> purchaseWareChildList=PurchaseWareChildService.selectPurchaseWareChildList(child);
+                for(PurchaseWareChild pwChild:purchaseWareChildList){
+                    //添加库存
+                    StockInfo StockInfo=new StockInfo();
+                    StockInfo.setDjNumber(info.getDjNumber());
+                    StockInfo.setProjectCode(info.getProjectCode());
+                    StockInfo.setProjectName(info.getProjectName());
+//                    StockInfo.setStoreCode(child.);
+//                    StockInfo.setStoreName(info.getDjNumber());
+                    StockInfo.setDjTime(info.getDjTime());
+                    StockInfo.setRkTime(DateUtils.getTime());
+                    StockInfo.setGoodsCode(pwChild.getGoodsCode());
+                    StockInfo.setGoodsName(pwChild.getGoodsName());
+                    StockInfo.setGoodsDw(pwChild.getGoodsDw());
+                    StockInfo.setGoodsGg(pwChild.getGoodsGg());
+                    StockInfo.setGoodsNum(pwChild.getGoodsNum());
+                    StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
+                    StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
+                    StockInfo.setCreateBy(SecurityUtils.getUsername());
+                    stockInfoService.insertStockInfo(StockInfo);
+                }
+                child=null;
             }else{
                 if(list!=null&&list.size()>0){
                     //添加流程号
@@ -338,6 +376,33 @@ public class PurchaseWareController extends BaseController
             if (lag) {
                 //修改单据状态为已生效
                 purchaseWareService.updatetPurchaseWareStatusOrNodeNo(flowAudit.getDjId(), 2, 1);
+                PurchaseWare ware=new PurchaseWare();
+                ware.setDjNumber(flowAudit.getDjId());
+                PurchaseWare info=purchaseWareService.selectPurchaseWareList(ware).get(0);
+                PurchaseWareChild child=new PurchaseWareChild();
+                child.setDjNumber(info.getDjNumber());
+                List<PurchaseWareChild> purchaseWareChildList=PurchaseWareChildService.selectPurchaseWareChildList(child);
+                for(PurchaseWareChild pwChild:purchaseWareChildList){
+                    //添加库存
+                    StockInfo StockInfo=new StockInfo();
+                    StockInfo.setDjNumber(info.getDjNumber());
+                    StockInfo.setProjectCode(info.getProjectCode());
+                    StockInfo.setProjectName(info.getProjectName());
+                    StockInfo.setDjTime(info.getDjTime());
+                    StockInfo.setRkTime(DateUtils.getTime());
+                    StockInfo.setGoodsCode(pwChild.getGoodsCode());
+                    StockInfo.setGoodsName(pwChild.getGoodsName());
+                    StockInfo.setGoodsDw(pwChild.getGoodsDw());
+                    StockInfo.setGoodsGg(pwChild.getGoodsGg());
+                    StockInfo.setGoodsNum(pwChild.getGoodsNum());
+                    StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
+                    StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
+                    StockInfo.setCreateBy(SecurityUtils.getUsername());
+                    stockInfoService.insertStockInfo(StockInfo);
+                    StockInfo=null;
+                }
+                child=null;
+                ware=null;
             }
         }
         return toAjaxBySuccess("审批成功!");
@@ -388,6 +453,7 @@ public class PurchaseWareController extends BaseController
             //如果已经生效则改变状态为待审核
             if(lag){
                 //修改单据状态为待审核
+                stockInfoService.deleteStockInfoBydjNumber(djIds[i]);
                 purchaseWareService.updatetPurchaseWareStatusOrNodeNo(djIds[i],1,1);
             }
         }
@@ -405,6 +471,13 @@ public class PurchaseWareController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids)
     {
+        for(Integer id:ids){
+            PurchaseWare info=purchaseWareService.selectPurchaseWareById(id);
+            if(info.getStatus()>0){
+                return toAjaxByError("已生效禁止删除");
+            }
+        }
+        PurchaseWareChildService.deletePurchaseWareChildByPIds(ids);
         return toAjax(purchaseWareService.deletePurchaseWareByIds(ids));
     }
 }

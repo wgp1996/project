@@ -43,13 +43,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectPurchaseOrderListByWave" parameterType="String" resultMap="PurchaseOrderChildResult">
+    <select id="selectPurchaseOrderListByWave" parameterType="PurchaseOrderChild" resultMap="PurchaseOrderChildResult">
 
             select t.*,(IFNULL(t.goods_num,0)-IFNULL(f.goods_num,0)) as surplus_num from
-
-            (select a.*,b.dj_type from purchase_order_child a,purchase_order b where a.dj_number=b.dj_number and b.`status`=2 and b.kh_code=#{khCode}  and a.create_by=#{createBy}) t left join
-
-            (select goods_num,order_id from purchase_ware_child where create_by=#{createBy}) f on f.order_id=t.id where IFNULL(t.goods_num,0)-IFNULL(f.goods_num,0)>0
+            (
+                select a.*,b.dj_type from purchase_order_child a,purchase_order b where a.dj_number=b.dj_number and b.`status`=2 and b.kh_code=#{khCode}  and a.create_by=#{createBy}
+                <if test="goodsCode != null  and goodsCode != ''"> and a.goods_code = #{goodsCode}</if>
+                <if test="goodsName != null  and goodsName != ''"> and a.goods_name like concat('%', #{goodsName}, '%')</if>
+            ) t left join
+            (select sum(goods_num) as goods_num,order_id from purchase_ware_child where create_by=#{createBy} GROUP BY order_id) f on f.order_id=t.id where IFNULL(t.goods_num,0)-IFNULL(f.goods_num,0)>0
     </select>
     
     <select id="selectPurchaseOrderChildById" parameterType="String" resultMap="PurchaseOrderChildResult">
@@ -131,7 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from purchase_order_child where dj_number in(
         select dj_number from purchase_order where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
-            id = #{id}
+             #{id}
         </foreach>
         )
     </delete>

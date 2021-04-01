@@ -36,10 +36,12 @@ public class ProjectReportChildController extends BaseController
     /**
      * 查询产值明细列表
      */
-    @PreAuthorize("@ss.hasPermi('system:projectReportChild:list')")
     @GetMapping("/list")
     public TableDataInfo list(ProjectReportChild projectReportChild)
     {
+        if(projectReportChild.getDjNumber()==null||projectReportChild.getDjNumber()==""){
+            projectReportChild.setDjNumber("-1");
+        }
         startPage();
         List<ProjectReportChild> list = projectReportChildService.selectProjectReportChildList(projectReportChild);
         return getDataTable(list);

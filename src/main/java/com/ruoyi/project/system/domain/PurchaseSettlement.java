@@ -6,16 +6,16 @@ import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
 
 /**
- * 采购入库对象 purchase_ware
+ * 结算申请单对象 purchase_settlement
  * 
  * @author ruoyi
- * @date 2021-03-30
+ * @date 2021-04-01
  */
-public class PurchaseWare extends BaseEntity
+public class PurchaseSettlement extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** ID */
+    /** id */
     private Integer id;
 
     /** 单号 */
@@ -29,6 +29,10 @@ public class PurchaseWare extends BaseEntity
     /** 状态 */
     @Excel(name = "状态")
     private Integer status;
+
+    /** 订单类型 */
+    @Excel(name = "订单类型")
+    private Integer djType;
 
     /** 供货商编码 */
     @Excel(name = "供货商编码")
@@ -47,18 +51,21 @@ public class PurchaseWare extends BaseEntity
     private String projectName;
 
     /** 流程号 */
-    @Excel(name = "流程号")
     private String flowNo;
 
     /** 节点编号 */
-    @Excel(name = "节点编号")
     private Integer nodeNo;
 
     /** 是否审批 */
-    @Excel(name = "是否审批")
     private Integer isSp;
 
-    private String djType;
+    /** 申请结算金额 */
+    @Excel(name = "申请结算金额")
+    private String sqPayMoney;
+
+    /** 批发结算金额 */
+    @Excel(name = "批发结算金额")
+    private String pfPayMoney;
 
     private String rows;
 
@@ -71,14 +78,6 @@ public class PurchaseWare extends BaseEntity
     private String  roleId;
 
     private String type;
-
-    public String getDjType() {
-        return djType;
-    }
-
-    public void setDjType(String djType) {
-        this.djType = djType;
-    }
 
     public String getRows() {
         return rows;
@@ -164,6 +163,15 @@ public class PurchaseWare extends BaseEntity
     {
         return status;
     }
+    public void setDjType(Integer djType) 
+    {
+        this.djType = djType;
+    }
+
+    public Integer getDjType() 
+    {
+        return djType;
+    }
     public void setKhCode(String khCode) 
     {
         this.khCode = khCode;
@@ -227,6 +235,24 @@ public class PurchaseWare extends BaseEntity
     {
         return isSp;
     }
+    public void setSqPayMoney(String sqPayMoney) 
+    {
+        this.sqPayMoney = sqPayMoney;
+    }
+
+    public String getSqPayMoney() 
+    {
+        return sqPayMoney;
+    }
+    public void setPfPayMoney(String pfPayMoney) 
+    {
+        this.pfPayMoney = pfPayMoney;
+    }
+
+    public String getPfPayMoney() 
+    {
+        return pfPayMoney;
+    }
 
     @Override
     public String toString() {
@@ -235,6 +261,7 @@ public class PurchaseWare extends BaseEntity
             .append("djNumber", getDjNumber())
             .append("djTime", getDjTime())
             .append("status", getStatus())
+            .append("djType", getDjType())
             .append("khCode", getKhCode())
             .append("khName", getKhName())
             .append("projectCode", getProjectCode())
@@ -247,6 +274,8 @@ public class PurchaseWare extends BaseEntity
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
             .append("isSp", getIsSp())
+            .append("sqPayMoney", getSqPayMoney())
+            .append("pfPayMoney", getPfPayMoney())
             .toString();
     }
 }

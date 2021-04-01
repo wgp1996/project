@@ -8,7 +8,6 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.*;
-import com.ruoyi.project.system.domain.PurchaseOrderChild;
 import com.ruoyi.project.system.service.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +27,17 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
 
 /**
- * 采购订单Controller
+ * 结算申请单Controller
  * 
  * @author ruoyi
- * @date 2021-03-30
+ * @date 2021-04-01
  */
 @RestController
-@RequestMapping("/system/purchaseOrder")
-public class PurchaseOrderController extends BaseController
+@RequestMapping("/system/purchaseSettlement")
+public class PurchaseSettlementController extends BaseController
 {
     @Autowired
-    private IPurchaseOrderService purchaseOrderService;
+    private IPurchaseSettlementService purchaseSettlementService;
     @Autowired
     private ISystemFileService systemFileService;
     @Autowired
@@ -48,180 +47,144 @@ public class PurchaseOrderController extends BaseController
     @Autowired
     private IFlowAuditService flowAuditService;
     @Autowired
-    private IPurchaseOrderChildService purchaseOrderChildService;
-
+    private IPurchaseSettlementChildService purchaseSettlementChildService;
     /**
-     * 查询采购订单列表
+     * 查询结算申请单列表
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:list')")
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:list')")
     @GetMapping("/list")
     @DataScope(deptAlias = "d", userAlias = "u")
-    public TableDataInfo list(PurchaseOrder purchaseOrder)
+    public TableDataInfo list(PurchaseSettlement purchaseSettlement)
     {
         startPage();
-        List<PurchaseOrder> list = purchaseOrderService.selectPurchaseOrderList(purchaseOrder);
+        List<PurchaseSettlement> list = purchaseSettlementService.selectPurchaseSettlementList(purchaseSettlement);
         return getDataTable(list);
     }
 
     /**
-     * 入库单选择采购订单列表
+     * 导出结算申请单列表
      */
-    @GetMapping("/wareSelectList")
-    public TableDataInfo wareSelectList(PurchaseOrderChild purchaseOrder)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:export')")
+    @Log(title = "结算申请单", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public AjaxResult export(PurchaseSettlement purchaseSettlement)
     {
-        startPage();
-        purchaseOrder.setCreateBy(SecurityUtils.getUsername());
-        List<PurchaseOrderChild> list = purchaseOrderChildService.selectPurchaseOrderListByWave(purchaseOrder);
-        return getDataTable(list);
+        List<PurchaseSettlement> list = purchaseSettlementService.selectPurchaseSettlementList(purchaseSettlement);
+        ExcelUtil<PurchaseSettlement> util = new ExcelUtil<PurchaseSettlement>(PurchaseSettlement.class);
+        return util.exportExcel(list, "purchaseSettlement");
     }
 
 
     /**
-     * 查询采购订单审核列表
+     * 查询采购结算审核列表
      */
     @GetMapping("/shList")
-    public TableDataInfo shList(PurchaseOrder purchaseOrder)
+    public TableDataInfo shList(PurchaseSettlement PurchaseSettlement)
     {
         startPage();
-        String userId=SecurityUtils.getUsername();
+        String userId= SecurityUtils.getUsername();
         String roleId=SecurityUtils.getLoginUser().getUser().getRoles().get(0).getRoleId()+"";
-        purchaseOrder.setUserId(userId);
-        purchaseOrder.setRoleId(roleId);
-        List<PurchaseOrder> list = purchaseOrderService.selectPurchaseOrderShList(purchaseOrder);
+        PurchaseSettlement.setUserId(userId);
+        PurchaseSettlement.setRoleId(roleId);
+        List<PurchaseSettlement> list = purchaseSettlementService.selectPurchaseSettlementShList(PurchaseSettlement);
         return getDataTable(list);
     }
 
-
     /**
-     * 导出采购订单列表
+     * 获取结算申请单详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:export')")
-    @Log(title = "采购订单", businessType = BusinessType.EXPORT)
-    @GetMapping("/export")
-    public AjaxResult export(PurchaseOrder purchaseOrder)
-    {
-        List<PurchaseOrder> list = purchaseOrderService.selectPurchaseOrderList(purchaseOrder);
-        ExcelUtil<PurchaseOrder> util = new ExcelUtil<PurchaseOrder>(PurchaseOrder.class);
-        return util.exportExcel(list, "purchaseOrder");
-    }
-
-    /**
-     * 获取采购订单详细信息
-     */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:query')")
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
-        return AjaxResult.success(purchaseOrderService.selectPurchaseOrderById(id));
+        return AjaxResult.success(purchaseSettlementService.selectPurchaseSettlementById(id));
     }
 
     /**
-     * 新增采购订单
+     * 新增结算申请单
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:add')")
-    @Log(title = "采购订单", businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:add')")
+    @Log(title = "结算申请单", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody PurchaseOrder purchaseOrder)
+    public AjaxResult add(@RequestBody PurchaseSettlement purchaseSettlement)
     {
-        purchaseOrder.setCreateBy(SecurityUtils.getUsername());
-        purchaseOrder.setDjNumber(StringUtils.getRandomCode("PO"));
-        if(purchaseOrder.getRows()!=null&&purchaseOrder.getRows()!="") {
-            List<PurchaseOrderChild> childList = JSONArray.parseArray(purchaseOrder.getRows(), PurchaseOrderChild.class);
-            for (PurchaseOrderChild child : childList) {
+        purchaseSettlement.setCreateBy(SecurityUtils.getUsername());
+        purchaseSettlement.setDjNumber(StringUtils.getRandomCode("RS"));
+        if(purchaseSettlement.getRows()!=null&&purchaseSettlement.getRows()!="") {
+            List<PurchaseSettlementChild> childList = JSONArray.parseArray(purchaseSettlement.getRows(), PurchaseSettlementChild.class);
+            for (PurchaseSettlementChild child : childList) {
                 child.setCreateBy(SecurityUtils.getUsername());
-                child.setDjNumber(purchaseOrder.getDjNumber());
+                child.setDjNumber(purchaseSettlement.getDjNumber());
                 child.setCreateTime(DateUtils.getNowDate());
-                purchaseOrderChildService.insertPurchaseOrderChild(child);
+                purchaseSettlementChildService.insertPurchaseSettlementChild(child);
             }
         }
         //插入附件
-        if(purchaseOrder.getFileRows()!=null&&purchaseOrder.getFileRows()!="") {
-            List<SystemFile> childList = JSONArray.parseArray(purchaseOrder.getFileRows(), SystemFile.class);
+        if(purchaseSettlement.getFileRows()!=null&&purchaseSettlement.getFileRows()!="") {
+            List<SystemFile> childList = JSONArray.parseArray(purchaseSettlement.getFileRows(), SystemFile.class);
             for (SystemFile child : childList) {
-                child.setCode(purchaseOrder.getDjNumber());
+                child.setCode(purchaseSettlement.getDjNumber());
                 child.setCreateBy(SecurityUtils.getUsername());
                 systemFileService.insertSystemFile(child);
             }
         }
-        return toAjax(purchaseOrderService.insertPurchaseOrder(purchaseOrder));
+        return toAjax(purchaseSettlementService.insertPurchaseSettlement(purchaseSettlement));
     }
 
     /**
-     * 修改采购订单
+     * 修改结算申请单
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:edit')")
-    @Log(title = "采购订单", businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:edit')")
+    @Log(title = "结算申请单", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody PurchaseOrder purchaseOrder)
+    public AjaxResult edit(@RequestBody PurchaseSettlement purchaseSettlement)
     {
-        if(purchaseOrder.getStatus()>0){
+        if(purchaseSettlement.getStatus()>0){
             return toAjaxByError("禁止修改!");
         }
-        purchaseOrder.setUpdateBy(SecurityUtils.getUsername());
-        if(purchaseOrder.getRows()!=null&&purchaseOrder.getRows()!="") {
-            List<PurchaseOrderChild> childList = JSONArray.parseArray(purchaseOrder.getRows(), PurchaseOrderChild.class);
-            for (PurchaseOrderChild child : childList) {
+        purchaseSettlement.setUpdateBy(SecurityUtils.getUsername());
+        if(purchaseSettlement.getRows()!=null&&purchaseSettlement.getRows()!="") {
+            List<PurchaseSettlementChild> childList = JSONArray.parseArray(purchaseSettlement.getRows(), PurchaseSettlementChild.class);
+            for (PurchaseSettlementChild child : childList) {
                 if (child.getId() != null) {
-                    child.setDjNumber(purchaseOrder.getDjNumber());
+                    child.setDjNumber(purchaseSettlement.getDjNumber());
                     child.setUpdateBy(SecurityUtils.getUsername());
-                    purchaseOrderChildService.updatePurchaseOrderChild(child);
+                    purchaseSettlementChildService.updatePurchaseSettlementChild(child);
                 } else {
                     child.setCreateBy(SecurityUtils.getUsername());
-                    child.setDjNumber(purchaseOrder.getDjNumber());
+                    child.setDjNumber(purchaseSettlement.getDjNumber());
                     child.setCreateTime(DateUtils.getNowDate());
-                    purchaseOrderChildService.insertPurchaseOrderChild(child);
+                    purchaseSettlementChildService.updatePurchaseSettlementChild(child);
                 }
             }
         }
         //插入附件
-        if(purchaseOrder.getFileRows()!=null&&purchaseOrder.getFileRows()!="") {
-            List<SystemFile> childList = JSONArray.parseArray(purchaseOrder.getFileRows(), SystemFile.class);
+        if(purchaseSettlement.getFileRows()!=null&&purchaseSettlement.getFileRows()!="") {
+            List<SystemFile> childList = JSONArray.parseArray(purchaseSettlement.getFileRows(), SystemFile.class);
             for (SystemFile child : childList) {
                 if (child.getId() != null) {
 
                 }else{
-                    child.setCode(purchaseOrder.getDjNumber());
+                    child.setCode(purchaseSettlement.getDjNumber());
                     child.setCreateBy(SecurityUtils.getUsername());
                     systemFileService.insertSystemFile(child);
                 }
             }
         }
-        return toAjax(purchaseOrderService.updatePurchaseOrder(purchaseOrder));
+        return toAjax(purchaseSettlementService.updatePurchaseSettlement(purchaseSettlement));
     }
 
     /**
-     * 审核时修改采购订单
+     * 提交采购结算
      */
-    @Log(title = "审核时修改采购订单", businessType = BusinessType.UPDATE)
-    @PutMapping("/shEdit")
-    public AjaxResult shEdit(@RequestBody PurchaseOrder purchaseOrder)
-    {
-        purchaseOrder.setUpdateBy(SecurityUtils.getUsername());
-        if(purchaseOrder.getRows()!=null&&purchaseOrder.getRows()!="") {
-            List<PurchaseOrderChild> childList = JSONArray.parseArray(purchaseOrder.getRows(), PurchaseOrderChild.class);
-            for (PurchaseOrderChild child : childList) {
-                if (child.getId() != null) {
-                    child.setDjNumber(purchaseOrder.getDjNumber());
-                    child.setUpdateBy(SecurityUtils.getUsername());
-                    purchaseOrderChildService.updatePurchaseOrderChild(child);
-                }
-            }
-        }
-        return toAjax(purchaseOrderService.updatePurchaseOrder(purchaseOrder));
-    }
-
-
-    /**
-     * 提交采购订单
-     */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:effect')")
-    @Log(title = "提交采购订单", businessType = BusinessType.EFFECT)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:effect')")
+    @Log(title = "提交采购结算", businessType = BusinessType.EFFECT)
     @DeleteMapping("/effect/{ids}")
     public AjaxResult effect(@PathVariable Integer[] ids)
     {
         //查询审批流程
         FlowInfo flowInfo=new FlowInfo();
-        flowInfo.setFlowNo("CGDD001"+SecurityUtils.getUsername());
+        flowInfo.setFlowNo("CGJS001"+SecurityUtils.getUsername());
         flowInfo.setStatus(1);
         List<FlowInfo> list = flowInfoService.selectFlowInfoList(flowInfo);
         //查询审批节点
@@ -229,7 +192,7 @@ public class PurchaseOrderController extends BaseController
         node.setFlowNo(flowInfo.getFlowNo());
         List<FlowNode> nodeList = flowNodeService.selectFlowNodeList(node);
         for(Integer id:ids){
-            PurchaseOrder info=purchaseOrderService.selectPurchaseOrderById(id);
+            PurchaseSettlement info=purchaseSettlementService.selectPurchaseSettlementById(id);
             if(info.getStatus()>0){
                 continue;
             }
@@ -237,7 +200,7 @@ public class PurchaseOrderController extends BaseController
             if(info.getIsSp()==0){
                 //直接生效
                 info.setStatus(2);
-                purchaseOrderService.updatePurchaseOrder(info);
+                purchaseSettlementService.updatePurchaseSettlement(info);
             }else{
                 if(list!=null&&list.size()>0){
                     //添加流程号
@@ -246,7 +209,7 @@ public class PurchaseOrderController extends BaseController
                     info.setStatus(1);
                     //添加一级节点
                     info.setNodeNo(1);
-                    purchaseOrderService.updatePurchaseOrder(info);
+                    purchaseSettlementService.updatePurchaseSettlement(info);
                     //删除历史流程 即修改历史流程状态
                     flowAuditService.updateFlowAuditByHistory(info.getDjNumber());
                     //添加单据流程环节
@@ -274,15 +237,15 @@ public class PurchaseOrderController extends BaseController
     }
 
     /**
-     * 取消提交采购订单
+     * 取消提交采购结算
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:cancel')")
-    @Log(title = "取消提交采购订单", businessType = BusinessType.CANCEL)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:cancel')")
+    @Log(title = "取消提交采购结算", businessType = BusinessType.CANCEL)
     @DeleteMapping("/cancel/{ids}")
     public AjaxResult cancel(@PathVariable Integer[] ids)
     {
         for(Integer id:ids){
-            PurchaseOrder info=purchaseOrderService.selectPurchaseOrderById(id);
+            PurchaseSettlement info=purchaseSettlementService.selectPurchaseSettlementById(id);
             if(info.getStatus()==0){
                 continue;
             }
@@ -305,7 +268,7 @@ public class PurchaseOrderController extends BaseController
                     continue;
                 }
             }
-            purchaseOrderService.updatePurchaseOrder(info);
+            purchaseSettlementService.updatePurchaseSettlement(info);
         }
         return toAjaxBySuccess("取消成功!");
     }
@@ -313,10 +276,10 @@ public class PurchaseOrderController extends BaseController
 
 
     /**
-     * 审核采购订单
+     * 审核采购结算
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:examine')")
-    @Log(title = "审核采购订单", businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:examine')")
+    @Log(title = "审核采购结算", businessType = BusinessType.UPDATE)
     @PutMapping("/examine")
     public AjaxResult examine(@RequestBody FlowAudit flowAudit)
     {
@@ -339,7 +302,7 @@ public class PurchaseOrderController extends BaseController
             //修改节点状态
             flowAuditService.updateFlowAudit(item);
             //修改单据状态为被退回
-            purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(flowAudit.getDjId(), -1, 1);
+            purchaseSettlementService.updatetPurchaseSettlementStatusOrNodeNo(flowAudit.getDjId(), -1, 1);
         }else {
             //允许结束
             if (item.getIsEnd() == 1) {
@@ -367,21 +330,21 @@ public class PurchaseOrderController extends BaseController
             //修改节点状态
             flowAuditService.updateFlowAudit(item);
             //修改单据下一级节点
-            purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(flowAudit.getDjId(), flowAudit.getNodeNo() + 1, 0);
+            purchaseSettlementService.updatetPurchaseSettlementStatusOrNodeNo(flowAudit.getDjId(), flowAudit.getNodeNo() + 1, 0);
             //流程结束
             if (lag) {
                 //修改单据状态为已生效
-                purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(flowAudit.getDjId(), 2, 1);
+                purchaseSettlementService.updatetPurchaseSettlementStatusOrNodeNo(flowAudit.getDjId(), 2, 1);
             }
         }
         return toAjaxBySuccess("审批成功!");
     }
 
     /**
-     * 取消审核采购订单
+     * 取消审核采购结算
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:cancelAudit')")
-    @Log(title = "取消审核采购订单", businessType = BusinessType.CANCEL)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:cancelAudit')")
+    @Log(title = "取消审核采购结算", businessType = BusinessType.CANCEL)
     @DeleteMapping("/cancelAudit/{djIds}/{nodeNos}")
     public AjaxResult remove(@PathVariable String[] djIds,@PathVariable Integer[] nodeNos)
     {
@@ -418,34 +381,31 @@ public class PurchaseOrderController extends BaseController
             //回退节点状态
             flowAuditService.updateFlowAudit(item);
             //修改单据上一级节点
-            purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(djIds[i],(nodeNos[i]-1),0);
+            purchaseSettlementService.updatetPurchaseSettlementStatusOrNodeNo(djIds[i],(nodeNos[i]-1),0);
             //如果已经生效则改变状态为待审核
             if(lag){
-                //修改单据状态为待审核
-                purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(djIds[i],1,1);
+                purchaseSettlementService.updatetPurchaseSettlementStatusOrNodeNo(djIds[i],1,1);
             }
         }
         return toAjaxBySuccess("取消成功!");
     }
 
 
-
-
     /**
-     * 删除采购订单
+     * 删除结算申请单
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:remove')")
-    @Log(title = "采购订单", businessType = BusinessType.DELETE)
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:remove')")
+    @Log(title = "结算申请单", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids)
     {
         for(Integer id:ids){
-            PurchaseOrder info=purchaseOrderService.selectPurchaseOrderById(id);
+            PurchaseSettlement info=purchaseSettlementService.selectPurchaseSettlementById(id);
             if(info.getStatus()>0){
                 return toAjaxByError("已生效禁止删除");
             }
         }
-        purchaseOrderChildService.deletePurchaseOrderChildByPIds(ids);
-        return toAjax(purchaseOrderService.deletePurchaseOrderByIds(ids));
+        purchaseSettlementChildService.deletePurchaseSettlementChildByPIds(ids);
+        return toAjax(purchaseSettlementService.deletePurchaseSettlementByIds(ids));
     }
 }

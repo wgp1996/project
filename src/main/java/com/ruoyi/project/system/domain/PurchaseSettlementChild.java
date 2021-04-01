@@ -6,12 +6,12 @@ import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
 
 /**
- * 采购入库子表对象 purchase_wave_child
+ * 结算申请单明细对象 purchase_settlement_child
  * 
  * @author ruoyi
- * @date 2021-03-30
+ * @date 2021-04-01
  */
-public class PurchaseWareChild extends BaseEntity
+public class PurchaseSettlementChild extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -30,13 +30,9 @@ public class PurchaseWareChild extends BaseEntity
     @Excel(name = "物资名称")
     private String goodsName;
 
-    /** 订单数量 */
-    @Excel(name = "订单数量")
+    /** 数量 */
+    @Excel(name = "数量")
     private Integer goodsNum;
-
-    /** 到货数量 */
-    @Excel(name = "到货数量")
-    private Integer goodsDhNum;
 
     /** 单价 */
     @Excel(name = "单价")
@@ -54,45 +50,14 @@ public class PurchaseWareChild extends BaseEntity
     @Excel(name = "单位")
     private String goodsDw;
 
-    /** 订单子表ID */
-    @Excel(name = "订单子表ID")
+    /** 入库单子表ID */
     private String orderId;
 
-    /** 订单单号 */
-    @Excel(name = "订单单号")
+    /** 入库单单号 */
     private String orderDjNumber;
 
-    private String khCode;
-
-
-    private String orderDjType;
-
-
-    private String surplusNum;
-
-    public String getKhCode() {
-        return khCode;
-    }
-
-    public void setKhCode(String khCode) {
-        this.khCode = khCode;
-    }
-
-    public String getSurplusNum() {
-        return surplusNum;
-    }
-
-    public void setSurplusNum(String surplusNum) {
-        this.surplusNum = surplusNum;
-    }
-
-    public String getOrderDjType() {
-        return orderDjType;
-    }
-
-    public void setOrderDjType(String orderDjType) {
-        this.orderDjType = orderDjType;
-    }
+    /** 订单类型 */
+    private Integer orderDjType;
 
     public void setId(String id)
     {
@@ -138,15 +103,6 @@ public class PurchaseWareChild extends BaseEntity
     public Integer getGoodsNum() 
     {
         return goodsNum;
-    }
-    public void setGoodsDhNum(Integer goodsDhNum) 
-    {
-        this.goodsDhNum = goodsDhNum;
-    }
-
-    public Integer getGoodsDhNum() 
-    {
-        return goodsDhNum;
     }
     public void setGoodsPrice(String goodsPrice) 
     {
@@ -202,6 +158,15 @@ public class PurchaseWareChild extends BaseEntity
     {
         return orderDjNumber;
     }
+    public void setOrderDjType(Integer orderDjType) 
+    {
+        this.orderDjType = orderDjType;
+    }
+
+    public Integer getOrderDjType() 
+    {
+        return orderDjType;
+    }
 
     @Override
     public String toString() {
@@ -211,7 +176,6 @@ public class PurchaseWareChild extends BaseEntity
             .append("goodsCode", getGoodsCode())
             .append("goodsName", getGoodsName())
             .append("goodsNum", getGoodsNum())
-            .append("goodsDhNum", getGoodsDhNum())
             .append("goodsPrice", getGoodsPrice())
             .append("goodsMoney", getGoodsMoney())
             .append("goodsGg", getGoodsGg())
@@ -223,6 +187,7 @@ public class PurchaseWareChild extends BaseEntity
             .append("remark", getRemark())
             .append("orderId", getOrderId())
             .append("orderDjNumber", getOrderDjNumber())
+            .append("orderDjType", getOrderDjType())
             .toString();
     }
 }

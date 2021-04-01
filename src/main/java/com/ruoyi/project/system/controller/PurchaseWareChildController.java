@@ -36,10 +36,12 @@ public class PurchaseWareChildController extends BaseController
     /**
      * 查询采购入库子表列表
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseWareChild:list')")
     @GetMapping("/list")
     public TableDataInfo list(PurchaseWareChild PurchaseWareChild)
     {
+        if(PurchaseWareChild.getDjNumber()==null||PurchaseWareChild.getDjNumber()==""){
+            PurchaseWareChild.setDjNumber("-1");
+        }
         startPage();
         List<PurchaseWareChild> list = PurchaseWareChildService.selectPurchaseWareChildList(PurchaseWareChild);
         return getDataTable(list);

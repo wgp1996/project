@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.StockInfoMapper">
+    
+    <resultMap type="StockInfo" id="StockInfoResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="storeCode"    column="store_code"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="rkTime"    column="rk_time"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsGg"    column="goods_gg"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="goodsMoney"    column="goods_money"    />
+        <result property="rkOrderId"    column="rk_order_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectStockInfoVo">
+        select id, dj_number, project_code, project_name, store_code, store_name, dj_time, rk_time, goods_code, goods_name, goods_dw, goods_gg, goods_num, goods_price, goods_money, rk_order_id, create_by, create_time, update_by, update_time, remark from stock_info
+    </sql>
+
+    <sql id="selectStockInfoVoByRole">
+        select a.* from stock_info a
+         join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectStockInfoList" parameterType="StockInfo" resultMap="StockInfoResult">
+        <include refid="selectStockInfoVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number like concat('%', #{djNumber}, '%')</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectStockInfoById" parameterType="Integer" resultMap="StockInfoResult">
+        <include refid="selectStockInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStockInfo" parameterType="StockInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into stock_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="storeCode != null  and storeCode != ''">store_code,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="rkTime != null  and rkTime != ''">rk_time,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg,</if>
+            <if test="goodsNum != null ">goods_num,</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">goods_price,</if>
+            <if test="goodsMoney != null  and goodsMoney != ''">goods_money,</if>
+            <if test="rkOrderId != null  and rkOrderId != ''">rk_order_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="storeCode != null  and storeCode != ''">#{storeCode},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="rkTime != null  and rkTime != ''">#{rkTime},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
+            <if test="goodsGg != null  and goodsGg != ''">#{goodsGg},</if>
+            <if test="goodsNum != null ">#{goodsNum},</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">#{goodsPrice},</if>
+            <if test="goodsMoney != null  and goodsMoney != ''">#{goodsMoney},</if>
+            <if test="rkOrderId != null  and rkOrderId != ''">#{rkOrderId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStockInfo" parameterType="StockInfo">
+        update stock_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="storeCode != null  and storeCode != ''">store_code = #{storeCode},</if>
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="rkTime != null  and rkTime != ''">rk_time = #{rkTime},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg = #{goodsGg},</if>
+            <if test="goodsNum != null ">goods_num = #{goodsNum},</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">goods_price = #{goodsPrice},</if>
+            <if test="goodsMoney != null  and goodsMoney != ''">goods_money = #{goodsMoney},</if>
+            <if test="rkOrderId != null  and rkOrderId != ''">rk_order_id = #{rkOrderId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStockInfoById" parameterType="Integer">
+        delete from stock_info where id = #{id}
+    </delete>
+
+    <delete id="deleteStockInfoBydjNumber" parameterType="String">
+        delete from stock_info where dj_number = #{djNumber}
+    </delete>
+
+    <delete id="deleteStockInfoByIds" parameterType="String">
+        delete from stock_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

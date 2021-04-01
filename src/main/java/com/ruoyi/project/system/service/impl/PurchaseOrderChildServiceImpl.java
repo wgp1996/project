@@ -50,8 +50,8 @@ public class PurchaseOrderChildServiceImpl implements IPurchaseOrderChildService
      *
      * @return 采购订单子表集合
      */
-    public List<PurchaseOrderChild> selectPurchaseOrderListByWave(String khCode,String createBy){
-        return purchaseOrderChildMapper.selectPurchaseOrderListByWave(khCode,createBy);
+    public List<PurchaseOrderChild> selectPurchaseOrderListByWave(PurchaseOrderChild purchaseOrder){
+        return purchaseOrderChildMapper.selectPurchaseOrderListByWave(purchaseOrder);
     }
 
     /**

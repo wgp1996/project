@@ -36,10 +36,12 @@ public class PurchaseOrderChildController extends BaseController
     /**
      * 查询采购订单子表列表
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrderChild:list')")
     @GetMapping("/list")
     public TableDataInfo list(PurchaseOrderChild purchaseOrderChild)
     {
+        if(purchaseOrderChild.getDjNumber()==null||purchaseOrderChild.getDjNumber()==""){
+            purchaseOrderChild.setDjNumber("-1");
+        }
         startPage();
         List<PurchaseOrderChild> list = purchaseOrderChildService.selectPurchaseOrderChildList(purchaseOrderChild);
         return getDataTable(list);
