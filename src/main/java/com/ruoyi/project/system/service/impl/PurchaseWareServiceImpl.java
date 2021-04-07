@@ -55,6 +55,18 @@ public class PurchaseWareServiceImpl implements IPurchaseWareService
         return purchaseWareMapper.selectPurchaseWareShList(PurchaseWare);
     }
 
+
+    /**
+     * 查询订单是否被引用
+     *
+     * @param djNumber 入库单单号
+     * @return 结果
+     */
+    @Override
+    public int checkWageOnSettlement(String djNumber){
+        return purchaseWareMapper.checkWageOnSettlement(djNumber);
+    }
+
     /**
      * 修改审核状态
      *

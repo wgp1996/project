@@ -174,6 +174,19 @@ public class PurchaseSettlementController extends BaseController
         return toAjax(purchaseSettlementService.updatePurchaseSettlement(purchaseSettlement));
     }
 
+
+    /**
+     * 修改结算申请单
+     */
+    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:edit')")
+    @Log(title = "结算申请单", businessType = BusinessType.UPDATE)
+    @PutMapping("/shEdit")
+    public AjaxResult shEdit(@RequestBody PurchaseSettlement purchaseSettlement)
+    {
+        purchaseSettlement.setCreateBy(SecurityUtils.getUsername());
+        return toAjax(purchaseSettlementService.updatePurchaseSettlement(purchaseSettlement));
+    }
+
     /**
      * 提交采购结算
      */

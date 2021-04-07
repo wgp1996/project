@@ -292,6 +292,11 @@ public class PurchaseWareController extends BaseController
             }
             //判断是否审批 如不审批则直接取消
             if(info.getIsSp()==0){
+                //查看是否被引用
+                int result=purchaseWareService.checkWageOnSettlement(info.getDjNumber());
+                if(result>0){
+                    return toAjaxByError("单据:"+info.getDjNumber()+"被引用,取消失败!");
+                }
                 info.setStatus(0);
                 info.setFlowNo("-1");
                 info.setNodeNo(0);
@@ -431,6 +436,11 @@ public class PurchaseWareController extends BaseController
                 int nodeNo=flowAuditService.getEndNode(djIds[i]);
                 //末级结束
                 if(nodeNo==item.getNodeNo()){
+                    //查看是否被引用
+                    int result=purchaseWareService.checkWageOnSettlement(item.getDjId());
+                    if(result>0){
+                        return toAjaxByError("单据:"+item.getDjId()+"被引用,取消失败!");
+                    }
                     lag=true;
                 }else{
                     lag=false;

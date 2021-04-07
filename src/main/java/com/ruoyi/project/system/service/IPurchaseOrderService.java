@@ -57,6 +57,16 @@ public interface IPurchaseOrderService
     public int insertPurchaseOrder(PurchaseOrder purchaseOrder);
 
     /**
+     * 查询订单是否被引用
+     *
+     * @param djNumber 采购订单单号
+     * @return 结果
+     */
+    public int checkOrderOnWage(String djNumber);
+
+
+
+    /**
      * 修改采购订单
      *
      * @param purchaseOrder 采购订单

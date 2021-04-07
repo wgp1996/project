@@ -83,6 +83,17 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService
     }
 
     /**
+     * 查询订单是否被引用
+     *
+     * @param djNumber 采购订单单号
+     * @return 结果
+     */
+    @Override
+    public int checkOrderOnWage(String djNumber){
+        return purchaseOrderMapper.checkOrderOnWage(djNumber);
+    }
+
+    /**
      * 修改审核状态
      *
      * @param djNumber 单号

@@ -47,6 +47,13 @@ public interface PurchaseOrderMapper
      */
     public int updatetPurchaseOrderStatusOrNodeNo(String djNumber,Integer status,int type);
     /**
+     * 查询订单是否被引用
+     *
+     * @param djNumber 采购订单单号
+     * @return 结果
+     */
+    public int checkOrderOnWage(String djNumber);
+    /**
      * 新增采购订单
      * 
      * @param purchaseOrder 采购订单

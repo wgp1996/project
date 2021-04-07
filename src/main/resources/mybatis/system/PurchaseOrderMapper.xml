@@ -35,6 +35,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
+    <select id="checkOrderOnWage" parameterType="String" resultType="Integer">
+       select count(id) from purchase_ware_child
+        where order_dj_number = #{djNumber}
+    </select>
+
     <select id="selectPurchaseOrderList" parameterType="PurchaseOrder" resultMap="PurchaseOrderResult">
         <include refid="selectPurchaseOrderVoByRole"/>
         <where>  

@@ -93,6 +93,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectPurchaseWareVo"/>
         where id = #{id}
     </select>
+
+    <select id="checkWageOnSettlement" parameterType="String" resultType="Integer">
+       select count(id) from purchase_settlement_child
+        where order_dj_number = #{djNumber}
+    </select>
         
     <insert id="insertPurchaseWare" parameterType="PurchaseWare">
         insert into purchase_ware

@@ -196,6 +196,9 @@ public class PurchaseOrderController extends BaseController
     @PutMapping("/shEdit")
     public AjaxResult shEdit(@RequestBody PurchaseOrder purchaseOrder)
     {
+        if(purchaseOrder.getStatus()!=2){
+            return toAjaxByError("禁止修改!");
+        }
         purchaseOrder.setUpdateBy(SecurityUtils.getUsername());
         if(purchaseOrder.getRows()!=null&&purchaseOrder.getRows()!="") {
             List<PurchaseOrderChild> childList = JSONArray.parseArray(purchaseOrder.getRows(), PurchaseOrderChild.class);
@@ -288,6 +291,11 @@ public class PurchaseOrderController extends BaseController
             }
             //判断是否审批 如不审批则直接取消
             if(info.getIsSp()==0){
+                //查看是否被引用
+                int result=purchaseOrderService.checkOrderOnWage(info.getDjNumber());
+                if(result>0){
+                    return toAjaxByError("单据:"+info.getDjNumber()+"被引用,取消失败!");
+                }
                 info.setStatus(0);
                 info.setFlowNo("-1");
                 info.setNodeNo(0);
@@ -400,6 +408,11 @@ public class PurchaseOrderController extends BaseController
                 int nodeNo=flowAuditService.getEndNode(djIds[i]);
                 //末级结束
                 if(nodeNo==item.getNodeNo()){
+                    //查看是否被引用
+                    int result=purchaseOrderService.checkOrderOnWage(item.getDjId());
+                    if(result>0){
+                        return toAjaxByError("单据:"+item.getDjId()+"被引用,取消失败!");
+                    }
                     lag=true;
                 }else{
                     lag=false;

@@ -37,6 +37,15 @@ public interface IPurchaseWareService
      */
     public List<PurchaseWare> selectPurchaseWareShList(PurchaseWare PurchaseWare);
 
+
+    /**
+     * 查询订单是否被引用
+     *
+     * @param djNumber 入库单单号
+     * @return 结果
+     */
+    public int checkWageOnSettlement(String djNumber);
+
     /**
      * 修改审核状态
      *

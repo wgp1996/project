@@ -19,6 +19,16 @@ public interface ISysPostService
     public List<SysPost> selectPostList(SysPost post);
 
     /**
+     * 登录用户查询岗位信息集合
+     *
+     * @param createBy 登录用户信息
+     * @return 岗位列表
+     */
+    public List<SysPost> selectPostsByUserName(String createBy);
+
+
+
+    /**
      * 查询所有岗位
      * 
      * @return 岗位列表
