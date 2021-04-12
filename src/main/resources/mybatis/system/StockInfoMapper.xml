@@ -26,10 +26,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="djType"    column="dj_type"    />
+        <result property="khCode"    column="kh_code"    />
+        <result property="khName"    column="kh_name"    />
+        <result property="surplusNum"    column="surplus_num"    />
     </resultMap>
 
     <sql id="selectStockInfoVo">
-        select id, dj_number, project_code, project_name, store_code, store_name, dj_time, rk_time, goods_code, goods_name, goods_dw, goods_gg, goods_num, goods_price, goods_money, rk_order_id, create_by, create_time, update_by, update_time, remark from stock_info
+        select * from stock_info
     </sql>
 
     <sql id="selectStockInfoVoByRole">
@@ -40,7 +44,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStockInfoList" parameterType="StockInfo" resultMap="StockInfoResult">
         <include refid="selectStockInfoVoByRole"/>
-        <where>  
+        <where>
+            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
+            <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
             <if test="djNumber != null  and djNumber != ''"> and dj_number like concat('%', #{djNumber}, '%')</if>
             <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
             <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
@@ -48,6 +54,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ${dataScope}
         </where>
         order by a.create_time desc
+    </select>
+
+    <select id="selectStockInfoListByCkd" parameterType="StockInfo" resultMap="StockInfoResult">
+        select a.* from stock_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            and a.goods_num>0
+            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
+            <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number like concat('%', #{djNumber}, '%')</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            ${dataScope}
+        </where>
+         ORDER BY a.create_time desc
     </select>
     
     <select id="selectStockInfoById" parameterType="Integer" resultMap="StockInfoResult">
@@ -77,6 +100,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">create_time,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
+            <if test="djType != null ">dj_type,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
             <if test="remark != null  and remark != ''">remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -99,6 +125,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">#{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
+            <if test="djType != null ">#{djType},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
          </trim>
     </insert>
@@ -106,6 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateStockInfo" parameterType="StockInfo">
         update stock_info
         <trim prefix="SET" suffixOverrides=",">
+            <if test="djType != null ">dj_type = #{djType},</if>
             <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
             <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
             <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
@@ -126,8 +156,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <select id="checkStockByGoodsCode" parameterType="String" resultType="Integer">
+        select count(id) from stock_info where goods_code = #{goodsCode}
+    </select>
+
+    <update id="updateStockInfoByGoodsCode" parameterType="StockInfo">
+        update stock_info set
+        <if test="djType != null and djType==0">
+            goods_num=(goods_num + #{goodsNum})
+        </if>
+        <if test="djType != null and djType==1">
+            goods_num=(goods_num - #{goodsNum})
+        </if>
+        where goods_code = #{goodsCode} and rk_order_id = #{rkOrderId}
     </update>
 
     <delete id="deleteStockInfoById" parameterType="Integer">
@@ -135,7 +182,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteStockInfoBydjNumber" parameterType="String">
-        delete from stock_info where dj_number = #{djNumber}
+        delete from stock_info  where dj_number = #{djNumber}
     </delete>
 
     <delete id="deleteStockInfoByIds" parameterType="String">

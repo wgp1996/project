@@ -6,16 +6,16 @@ import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
 
 /**
- * 采购订单对象 purchase_order
+ * 领料出库单对象 picking_delivery
  * 
  * @author ruoyi
- * @date 2021-03-30
+ * @date 2021-04-07
  */
-public class PurchaseOrder extends BaseEntity
+public class PickingDelivery extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** id */
+    /** ID */
     private Integer id;
 
     /** 单号 */
@@ -30,17 +30,9 @@ public class PurchaseOrder extends BaseEntity
     @Excel(name = "状态")
     private Integer status;
 
-    /** 订单类型 */
-    @Excel(name = "订单类型")
-    private Integer djType;
-
-    /** 供货商编码 */
-    @Excel(name = "供货商编码")
-    private String khCode;
-
-    /** 供货商名称 */
-    @Excel(name = "供货商名称")
-    private String khName;
+    /** 领料类型 */
+    @Excel(name = "领料类型")
+    private Integer packType;
 
     /** 项目编码 */
     @Excel(name = "项目编码")
@@ -49,6 +41,22 @@ public class PurchaseOrder extends BaseEntity
     /** 项目名称 */
     @Excel(name = "项目名称")
     private String projectName;
+
+    /** 班组编码 */
+    @Excel(name = "班组编码")
+    private String khCode;
+
+    /** 班组名称 */
+    @Excel(name = "班组名称")
+    private String khName;
+
+    /** 仓库编码 */
+    @Excel(name = "仓库编码")
+    private String storeCode;
+
+    /** 仓库名称 */
+    @Excel(name = "仓库名称")
+    private String storeName;
 
     /** 流程号 */
     @Excel(name = "流程号")
@@ -62,7 +70,6 @@ public class PurchaseOrder extends BaseEntity
     @Excel(name = "是否审批")
     private Integer isSp;
 
-
     private String rows;
 
     private String fileRows;
@@ -75,69 +82,24 @@ public class PurchaseOrder extends BaseEntity
 
     private String type;
 
-    private String auditInfo;
+    private String surplusNum;
 
-    private Integer spStatus;
+    private String djType;
 
-    public String getAuditInfo() {
-        return auditInfo;
-    }
-
-    public void setAuditInfo(String auditInfo) {
-        this.auditInfo = auditInfo;
-    }
-
-    public Integer getSpStatus() {
-        return spStatus;
-    }
-
-    public void setSpStatus(Integer spStatus) {
-        this.spStatus = spStatus;
-    }
-
-    public void setId(Integer id)
-    {
-        this.id = id;
-    }
-
-    public Integer getId() 
-    {
-        return id;
-    }
-    public void setDjNumber(String djNumber) 
-    {
-        this.djNumber = djNumber;
-    }
-
-    public String getDjNumber() 
-    {
-        return djNumber;
-    }
-    public void setDjTime(String djTime) 
-    {
-        this.djTime = djTime;
-    }
-
-    public String getDjTime() 
-    {
-        return djTime;
-    }
-    public void setStatus(Integer status) 
-    {
-        this.status = status;
-    }
-
-    public Integer getStatus() 
-    {
-        return status;
-    }
-
-    public Integer getDjType() {
+    public String getDjType() {
         return djType;
     }
 
-    public void setDjType(Integer djType) {
+    public void setDjType(String djType) {
         this.djType = djType;
+    }
+
+    public String getSurplusNum() {
+        return surplusNum;
+    }
+
+    public void setSurplusNum(String surplusNum) {
+        this.surplusNum = surplusNum;
     }
 
     public String getRows() {
@@ -188,23 +150,50 @@ public class PurchaseOrder extends BaseEntity
         this.type = type;
     }
 
-    public void setKhCode(String khCode)
+    public void setId(Integer id)
     {
-        this.khCode = khCode;
+        this.id = id;
     }
 
-    public String getKhCode() 
+    public Integer getId() 
     {
-        return khCode;
+        return id;
     }
-    public void setKhName(String khName) 
+    public void setDjNumber(String djNumber) 
     {
-        this.khName = khName;
+        this.djNumber = djNumber;
     }
 
-    public String getKhName() 
+    public String getDjNumber() 
     {
-        return khName;
+        return djNumber;
+    }
+    public void setDjTime(String djTime) 
+    {
+        this.djTime = djTime;
+    }
+
+    public String getDjTime() 
+    {
+        return djTime;
+    }
+    public void setStatus(Integer status) 
+    {
+        this.status = status;
+    }
+
+    public Integer getStatus() 
+    {
+        return status;
+    }
+    public void setPackType(Integer packType) 
+    {
+        this.packType = packType;
+    }
+
+    public Integer getPackType() 
+    {
+        return packType;
     }
     public void setProjectCode(String projectCode) 
     {
@@ -223,6 +212,42 @@ public class PurchaseOrder extends BaseEntity
     public String getProjectName() 
     {
         return projectName;
+    }
+    public void setKhCode(String khCode) 
+    {
+        this.khCode = khCode;
+    }
+
+    public String getKhCode() 
+    {
+        return khCode;
+    }
+    public void setKhName(String khName) 
+    {
+        this.khName = khName;
+    }
+
+    public String getKhName() 
+    {
+        return khName;
+    }
+    public void setStoreCode(String storeCode) 
+    {
+        this.storeCode = storeCode;
+    }
+
+    public String getStoreCode() 
+    {
+        return storeCode;
+    }
+    public void setStoreName(String storeName) 
+    {
+        this.storeName = storeName;
+    }
+
+    public String getStoreName() 
+    {
+        return storeName;
     }
     public void setFlowNo(String flowNo) 
     {
@@ -259,11 +284,13 @@ public class PurchaseOrder extends BaseEntity
             .append("djNumber", getDjNumber())
             .append("djTime", getDjTime())
             .append("status", getStatus())
-            .append("type", getType())
-            .append("khCode", getKhCode())
-            .append("khName", getKhName())
+            .append("packType", getPackType())
             .append("projectCode", getProjectCode())
             .append("projectName", getProjectName())
+            .append("khCode", getKhCode())
+            .append("khName", getKhName())
+            .append("storeCode", getStoreCode())
+            .append("storeName", getStoreName())
             .append("flowNo", getFlowNo())
             .append("nodeNo", getNodeNo())
             .append("createBy", getCreateBy())

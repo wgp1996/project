@@ -154,7 +154,7 @@ public class PurchaseSettlementController extends BaseController
                     child.setCreateBy(SecurityUtils.getUsername());
                     child.setDjNumber(purchaseSettlement.getDjNumber());
                     child.setCreateTime(DateUtils.getNowDate());
-                    purchaseSettlementChildService.updatePurchaseSettlementChild(child);
+                    purchaseSettlementChildService.insertPurchaseSettlementChild(child);
                 }
             }
         }

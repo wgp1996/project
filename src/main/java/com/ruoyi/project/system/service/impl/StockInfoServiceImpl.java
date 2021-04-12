@@ -45,6 +45,17 @@ public class StockInfoServiceImpl implements IStockInfoService
     }
 
     /**
+     * 出库时查询库存管理列表
+     *
+     * @param stockInfo 库存管理
+     * @return 库存管理集合
+     */
+    @Override
+    public List<StockInfo> selectStockInfoListByCkd(StockInfo stockInfo){
+        return stockInfoMapper.selectStockInfoListByCkd(stockInfo);
+    }
+
+    /**
      * 新增库存管理
      * 
      * @param stockInfo 库存管理
@@ -58,6 +69,16 @@ public class StockInfoServiceImpl implements IStockInfoService
     }
 
     /**
+     * 查询商品是否存在
+     *
+     * @param goodsCode sh
+     * @return 结果
+     */
+    @Override
+    public int checkStockByGoodsCode(String goodsCode){
+        return stockInfoMapper.checkStockByGoodsCode(goodsCode);
+    }
+    /**
      * 修改库存管理
      * 
      * @param stockInfo 库存管理
@@ -69,6 +90,20 @@ public class StockInfoServiceImpl implements IStockInfoService
         stockInfo.setUpdateTime(DateUtils.getNowDate());
         return stockInfoMapper.updateStockInfo(stockInfo);
     }
+
+    /**
+     * 修改库存数
+     *
+     * @param stockInfo 库存管理
+     * @return 结果
+     */
+    @Override
+    public int updateStockInfoByGoodsCode(StockInfo stockInfo){
+        stockInfo.setUpdateTime(DateUtils.getNowDate());
+        return stockInfoMapper.updateStockInfoByGoodsCode(stockInfo);
+    }
+
+
 
     /**
      * 批量删除库存管理

@@ -28,6 +28,15 @@ public interface IStockInfoService
     public List<StockInfo> selectStockInfoList(StockInfo stockInfo);
 
     /**
+     * 出库时查询库存管理列表
+     *
+     * @param stockInfo 库存管理
+     * @return 库存管理集合
+     */
+    public List<StockInfo> selectStockInfoListByCkd(StockInfo stockInfo);
+
+
+    /**
      * 新增库存管理
      * 
      * @param stockInfo 库存管理
@@ -42,6 +51,25 @@ public interface IStockInfoService
      * @return 结果
      */
     public int updateStockInfo(StockInfo stockInfo);
+
+    /**
+     * 修改库存数
+     *
+     * @param stockInfo 库存管理
+     * @return 结果
+     */
+    public int updateStockInfoByGoodsCode(StockInfo stockInfo);
+
+    /**
+     * 查询商品是否存在
+     *
+     * @param goodsCode sh
+     * @return 结果
+     */
+    public int checkStockByGoodsCode(String goodsCode);
+
+
+
 
     /**
      * 批量删除库存管理

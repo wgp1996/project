@@ -45,6 +45,16 @@ public interface IPurchaseOrderChildService
     public int insertPurchaseOrderChild(PurchaseOrderChild purchaseOrderChild);
 
     /**
+     * 取消批复 恢复单价
+     *
+     * @param djNumber 单号
+     * @return 结果
+     */
+    public int updateOrderPriceByReply(String djNumber);
+
+
+
+    /**
      * 修改采购订单子表
      * 
      * @param purchaseOrderChild 采购订单子表

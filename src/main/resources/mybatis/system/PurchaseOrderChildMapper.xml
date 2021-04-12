@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 <if test="goodsCode != null  and goodsCode != ''"> and a.goods_code = #{goodsCode}</if>
                 <if test="goodsName != null  and goodsName != ''"> and a.goods_name like concat('%', #{goodsName}, '%')</if>
             ) t left join
-            (select sum(goods_num) as goods_num,order_id from purchase_ware_child where create_by=#{createBy} GROUP BY order_id) f on f.order_id=t.id where IFNULL(t.goods_num,0)-IFNULL(f.goods_num,0)>0
+            (select sum(goods_dh_num) as goods_num,order_id from purchase_ware_child where create_by=#{createBy} GROUP BY order_id) f on f.order_id=t.id where IFNULL(t.goods_num,0)-IFNULL(f.goods_num,0)>0
     </select>
     
     <select id="selectPurchaseOrderChildById" parameterType="String" resultMap="PurchaseOrderChildResult">
@@ -116,6 +116,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="updateOrderPriceByReply" parameterType="String">
+        update purchase_order_child set goods_sp_price=goods_price where dj_number = #{djNumber}
     </update>
 
     <delete id="deletePurchaseOrderChildById" parameterType="String">

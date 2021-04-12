@@ -49,6 +49,19 @@ public class StockInfoController extends BaseController
     }
 
     /**
+     * 出库时查询入库库存管理列表
+     */
+    @GetMapping("/ckList")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo ckList(StockInfo stockInfo)
+    {
+        startPage();
+        stockInfo.setDjType(0);
+        List<StockInfo> list = stockInfoService.selectStockInfoListByCkd(stockInfo);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出库存管理列表
      */
     @PreAuthorize("@ss.hasPermi('system:stockInfo:export')")

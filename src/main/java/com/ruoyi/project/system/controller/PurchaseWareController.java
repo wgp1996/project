@@ -170,7 +170,7 @@ public class PurchaseWareController extends BaseController
                     child.setCreateBy(SecurityUtils.getUsername());
                     child.setDjNumber(purchaseWare.getDjNumber());
                     child.setCreateTime(DateUtils.getNowDate());
-                    PurchaseWareChildService.updatePurchaseWareChild(child);
+                    PurchaseWareChildService.insertPurchaseWareChild(child);
                 }
             }
         }
@@ -222,24 +222,61 @@ public class PurchaseWareController extends BaseController
                 child.setDjNumber(info.getDjNumber());
                 List<PurchaseWareChild> purchaseWareChildList=PurchaseWareChildService.selectPurchaseWareChildList(child);
                 for(PurchaseWareChild pwChild:purchaseWareChildList){
-                    //添加库存
-                    StockInfo StockInfo=new StockInfo();
-                    StockInfo.setDjNumber(info.getDjNumber());
-                    StockInfo.setProjectCode(info.getProjectCode());
-                    StockInfo.setProjectName(info.getProjectName());
-//                    StockInfo.setStoreCode(child.);
-//                    StockInfo.setStoreName(info.getDjNumber());
-                    StockInfo.setDjTime(info.getDjTime());
-                    StockInfo.setRkTime(DateUtils.getTime());
-                    StockInfo.setGoodsCode(pwChild.getGoodsCode());
-                    StockInfo.setGoodsName(pwChild.getGoodsName());
-                    StockInfo.setGoodsDw(pwChild.getGoodsDw());
-                    StockInfo.setGoodsGg(pwChild.getGoodsGg());
-                    StockInfo.setGoodsNum(pwChild.getGoodsNum());
-                    StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
-                    StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
-                    StockInfo.setCreateBy(SecurityUtils.getUsername());
-                    stockInfoService.insertStockInfo(StockInfo);
+                    //库管型
+                    if("1".equals(pwChild.getOrderDjType())) {
+                        //添加库存
+                        StockInfo StockInfo = new StockInfo();
+                        StockInfo.setDjType(0);//入库
+                        StockInfo.setRkOrderId(pwChild.getId());
+                        StockInfo.setKhCode(info.getKhCode());
+                        StockInfo.setKhName(info.getKhName());
+                        StockInfo.setDjNumber(info.getDjNumber());
+                        StockInfo.setProjectCode(info.getProjectCode());
+                        StockInfo.setProjectName(info.getProjectName());
+                        StockInfo.setDjTime(info.getDjTime());
+                        StockInfo.setRkTime(DateUtils.getTime());
+                        StockInfo.setGoodsCode(pwChild.getGoodsCode());
+                        StockInfo.setGoodsName(pwChild.getGoodsName());
+                        StockInfo.setGoodsDw(pwChild.getGoodsDw());
+                        StockInfo.setGoodsGg(pwChild.getGoodsGg());
+                        StockInfo.setGoodsNum(pwChild.getGoodsDhNum());
+                        StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
+                        StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
+                        StockInfo.setCreateBy(SecurityUtils.getUsername());
+                        stockInfoService.insertStockInfo(StockInfo);
+                        //查询是否存在库存
+                        /*int goodsCount = stockInfoService.checkStockByGoodsCode(pwChild.getGoodsCode());
+                        StockInfo StockInfo = new StockInfo();
+                        if (goodsCount > 0) {
+                            //增加库存
+                            StockInfo.setDjType(0);
+                            StockInfo.setRkOrderId(pwChild.getId());
+                            StockInfo.setGoodsNum(pwChild.getGoodsNum());
+                            stockInfoService.updateStockInfoByGoodsCode(StockInfo);
+                        } else {
+                            //添加库存
+                            StockInfo.setDjType(0);//入库
+                            StockInfo.setRkOrderId(pwChild.getId());
+                            StockInfo.setKhCode(info.getKhCode());
+                            StockInfo.setKhName(info.getKhName());
+                            StockInfo.setDjNumber(info.getDjNumber());
+                            StockInfo.setProjectCode(info.getProjectCode());
+                            StockInfo.setProjectName(info.getProjectName());
+                            StockInfo.setDjTime(info.getDjTime());
+                            StockInfo.setRkTime(DateUtils.getTime());
+                            StockInfo.setGoodsCode(pwChild.getGoodsCode());
+                            StockInfo.setGoodsName(pwChild.getGoodsName());
+                            StockInfo.setGoodsDw(pwChild.getGoodsDw());
+                            StockInfo.setGoodsGg(pwChild.getGoodsGg());
+                            StockInfo.setGoodsNum(pwChild.getGoodsNum());
+                            StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
+                            StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
+                            StockInfo.setCreateBy(SecurityUtils.getUsername());
+                            stockInfoService.insertStockInfo(StockInfo);
+
+                        }*/
+                        StockInfo = null;
+                    }
                 }
                 child=null;
             }else{
@@ -300,6 +337,26 @@ public class PurchaseWareController extends BaseController
                 info.setStatus(0);
                 info.setFlowNo("-1");
                 info.setNodeNo(0);
+                stockInfoService.deleteStockInfoBydjNumber(info.getDjNumber());
+                //查询明细 修改库存
+                /*PurchaseWareChild PurchaseWareChild=new PurchaseWareChild();
+                PurchaseWareChild.setDjNumber(info.getDjNumber());
+                List<PurchaseWareChild> childList=PurchaseWareChildService.selectPurchaseWareChildList(PurchaseWareChild);
+                for(PurchaseWareChild purchaseWareChild:childList){
+                    //库管型
+                    if("1".equals(purchaseWareChild.getOrderDjType())) {
+
+                        //减去库存
+                        StockInfo StockInfo=new StockInfo();
+                        StockInfo.setDjType(1);
+                        StockInfo.setRkOrderId(purchaseWareChild.getId());
+                        StockInfo.setGoodsCode(purchaseWareChild.getGoodsCode());
+                        StockInfo.setGoodsNum(purchaseWareChild.getGoodsNum());
+                        stockInfoService.updateStockInfoByGoodsCode(StockInfo);
+                        StockInfo=null;
+                    }
+                }
+                PurchaseWareChild=null;*/
             }else{
                 //判断是否审批中
                 if(info.getNodeNo()==1){
@@ -388,23 +445,58 @@ public class PurchaseWareController extends BaseController
                 child.setDjNumber(info.getDjNumber());
                 List<PurchaseWareChild> purchaseWareChildList=PurchaseWareChildService.selectPurchaseWareChildList(child);
                 for(PurchaseWareChild pwChild:purchaseWareChildList){
-                    //添加库存
-                    StockInfo StockInfo=new StockInfo();
-                    StockInfo.setDjNumber(info.getDjNumber());
-                    StockInfo.setProjectCode(info.getProjectCode());
-                    StockInfo.setProjectName(info.getProjectName());
-                    StockInfo.setDjTime(info.getDjTime());
-                    StockInfo.setRkTime(DateUtils.getTime());
-                    StockInfo.setGoodsCode(pwChild.getGoodsCode());
-                    StockInfo.setGoodsName(pwChild.getGoodsName());
-                    StockInfo.setGoodsDw(pwChild.getGoodsDw());
-                    StockInfo.setGoodsGg(pwChild.getGoodsGg());
-                    StockInfo.setGoodsNum(pwChild.getGoodsNum());
-                    StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
-                    StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
-                    StockInfo.setCreateBy(SecurityUtils.getUsername());
-                    stockInfoService.insertStockInfo(StockInfo);
-                    StockInfo=null;
+                    //库管型
+                    if("1".equals(pwChild.getOrderDjType())) {
+                        StockInfo StockInfo = new StockInfo();
+                        StockInfo.setDjType(0);//入库
+                        StockInfo.setKhCode(info.getKhCode());
+                        StockInfo.setKhName(info.getKhName());
+                        StockInfo.setDjNumber(info.getDjNumber());
+                        StockInfo.setProjectCode(info.getProjectCode());
+                        StockInfo.setProjectName(info.getProjectName());
+                        StockInfo.setDjTime(info.getDjTime());
+                        StockInfo.setRkTime(DateUtils.getTime());
+                        StockInfo.setGoodsCode(pwChild.getGoodsCode());
+                        StockInfo.setGoodsName(pwChild.getGoodsName());
+                        StockInfo.setGoodsDw(pwChild.getGoodsDw());
+                        StockInfo.setGoodsGg(pwChild.getGoodsGg());
+                        StockInfo.setGoodsNum(pwChild.getGoodsDhNum());
+                        StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
+                        StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
+                        StockInfo.setCreateBy(SecurityUtils.getUsername());
+                        stockInfoService.insertStockInfo(StockInfo);
+                        //查询是否存在库存
+                       /* int goodsCount = stockInfoService.checkStockByGoodsCode(pwChild.getGoodsCode());
+                        StockInfo StockInfo = new StockInfo();
+                        StockInfo.setRkOrderId(pwChild.getId());
+                        if (goodsCount > 0) {
+                            //增加库存
+                            StockInfo.setDjType(0);
+                            StockInfo.setGoodsNum(pwChild.getGoodsNum());
+                            stockInfoService.updateStockInfoByGoodsCode(StockInfo);
+                        } else {
+                            //添加库存
+                            StockInfo.setDjType(0);//入库
+                            StockInfo.setKhCode(info.getKhCode());
+                            StockInfo.setKhName(info.getKhName());
+                            StockInfo.setDjNumber(info.getDjNumber());
+                            StockInfo.setProjectCode(info.getProjectCode());
+                            StockInfo.setProjectName(info.getProjectName());
+                            StockInfo.setDjTime(info.getDjTime());
+                            StockInfo.setRkTime(DateUtils.getTime());
+                            StockInfo.setGoodsCode(pwChild.getGoodsCode());
+                            StockInfo.setGoodsName(pwChild.getGoodsName());
+                            StockInfo.setGoodsDw(pwChild.getGoodsDw());
+                            StockInfo.setGoodsGg(pwChild.getGoodsGg());
+                            StockInfo.setGoodsNum(pwChild.getGoodsNum());
+                            StockInfo.setGoodsPrice(pwChild.getGoodsPrice());
+                            StockInfo.setGoodsMoney(pwChild.getGoodsMoney());
+                            StockInfo.setCreateBy(SecurityUtils.getUsername());
+                            stockInfoService.insertStockInfo(StockInfo);
+
+                        }*/
+                        StockInfo = null;
+                    }
                 }
                 child=null;
                 ware=null;
@@ -430,6 +522,11 @@ public class PurchaseWareController extends BaseController
             }
             //允许结束
             if(item.getIsEnd()==1){
+                //查看是否被引用
+                int result=purchaseWareService.checkWageOnSettlement(item.getDjId());
+                if(result>0){
+                    return toAjaxByError("单据:"+item.getDjId()+"被引用,取消失败!");
+                }
                 lag=true;
             }else{
                 //查询末级节点
@@ -462,9 +559,29 @@ public class PurchaseWareController extends BaseController
             purchaseWareService.updatetPurchaseWareStatusOrNodeNo(djIds[i],(nodeNos[i]-1),0);
             //如果已经生效则改变状态为待审核
             if(lag){
+                //修改库存
+                //查询明细 修改库存
+               /* PurchaseWareChild PurchaseWareChild=new PurchaseWareChild();
+                PurchaseWareChild.setDjNumber(djIds[i]);
+                List<PurchaseWareChild> childList=PurchaseWareChildService.selectPurchaseWareChildList(PurchaseWareChild);
+                for(PurchaseWareChild purchaseWareChild:childList){
+                    //库管型
+                    if("1".equals(purchaseWareChild.getOrderDjType())) {
+                        //减去库存
+                        StockInfo StockInfo = new StockInfo();
+                        StockInfo.setDjType(1);
+                        StockInfo.setRkOrderId(purchaseWareChild.getId());
+                        StockInfo.setGoodsCode(purchaseWareChild.getGoodsCode());
+                        StockInfo.setRkOrderId(purchaseWareChild.getId());
+                        StockInfo.setGoodsNum(purchaseWareChild.getGoodsNum());
+                        stockInfoService.updateStockInfoByGoodsCode(StockInfo);
+                        StockInfo = null;
+                    }
+                }
+                PurchaseWareChild=null;*/
                 //修改单据状态为待审核
-                stockInfoService.deleteStockInfoBydjNumber(djIds[i]);
                 purchaseWareService.updatetPurchaseWareStatusOrNodeNo(djIds[i],1,1);
+                stockInfoService.deleteStockInfoBydjNumber(djIds[i]);
             }
         }
         return toAjaxBySuccess("取消成功!");

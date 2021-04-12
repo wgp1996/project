@@ -190,15 +190,17 @@ public class PurchaseOrderController extends BaseController
     }
 
     /**
-     * 审核时修改采购订单
+     * 批复采购订单
      */
-    @Log(title = "审核时修改采购订单", businessType = BusinessType.UPDATE)
-    @PutMapping("/shEdit")
-    public AjaxResult shEdit(@RequestBody PurchaseOrder purchaseOrder)
+    @Log(title = "批复采购订单", businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:reply')")
+    @PutMapping("/reply")
+    public AjaxResult reply(@RequestBody PurchaseOrder purchaseOrder)
     {
-        if(purchaseOrder.getStatus()!=2){
-            return toAjaxByError("禁止修改!");
+        if(purchaseOrder.getStatus()!=1){
+            return toAjaxByError("禁止操作!");
         }
+        //修改单价
         purchaseOrder.setUpdateBy(SecurityUtils.getUsername());
         if(purchaseOrder.getRows()!=null&&purchaseOrder.getRows()!="") {
             List<PurchaseOrderChild> childList = JSONArray.parseArray(purchaseOrder.getRows(), PurchaseOrderChild.class);
@@ -206,13 +208,132 @@ public class PurchaseOrderController extends BaseController
                 if (child.getId() != null) {
                     child.setDjNumber(purchaseOrder.getDjNumber());
                     child.setUpdateBy(SecurityUtils.getUsername());
+                    //child.setGoodsPrice(child.getGoodsSpPrice());
                     purchaseOrderChildService.updatePurchaseOrderChild(child);
                 }
             }
         }
-        return toAjax(purchaseOrderService.updatePurchaseOrder(purchaseOrder));
+        purchaseOrderService.updatePurchaseOrder(purchaseOrder);
+        boolean lag=false;
+        //获取当前节点信息
+        FlowAudit item=flowAuditService.selectFlowAuditNoAndDjId(purchaseOrder.getDjNumber(),purchaseOrder.getNodeNo());
+        if(item.getStatus()>0){
+            return toAjaxByError("重复审批!");
+        }
+        //判断是否退回
+        if(purchaseOrder.getSpStatus()==2){
+            //状态
+            item.setStatus(2);
+            //审核意见
+            item.setAuditInfo(purchaseOrder.getAuditInfo());
+            //审核时间
+            item.setAuditTime(DateUtils.getTime());
+            //审核人员
+            item.setUserName(SecurityUtils.getUsername());
+            //修改节点状态
+            flowAuditService.updateFlowAudit(item);
+            //修改单据状态为被退回
+            purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(purchaseOrder.getDjNumber(), -1, 1);
+        }else {
+            //允许结束
+            if (item.getIsEnd() == 1) {
+                lag = true;
+            } else {
+                //查询末级节点
+                int nodeNo = flowAuditService.getEndNode(purchaseOrder.getDjNumber());
+                //末级结束
+                if (nodeNo == item.getNodeNo()) {
+                    lag = true;
+                } else {
+                    lag = false;
+                }
+            }
+            //状态
+            item.setStatus(purchaseOrder.getSpStatus());
+            //是否历史流程 0 否 -1 是
+            item.setFlowStatus(0);
+            //审核意见
+            item.setAuditInfo(purchaseOrder.getAuditInfo());
+            //审核时间
+            item.setAuditTime(DateUtils.getTime());
+            //审核人员
+            item.setUserName(SecurityUtils.getUsername());
+            //修改节点状态
+            flowAuditService.updateFlowAudit(item);
+            //修改单据下一级节点
+            purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(purchaseOrder.getDjNumber(), purchaseOrder.getNodeNo() + 1, 0);
+            //流程结束
+            if (lag) {
+                //修改单据状态为已生效
+                purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(purchaseOrder.getDjNumber(), 2, 1);
+            }
+        }
+        return toAjaxBySuccess("批复成功!");
     }
 
+
+    /**
+     * 取消批复采购订单
+     */
+    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:cancelReply')")
+    @Log(title = "取消审核采购订单", businessType = BusinessType.CANCEL)
+    @DeleteMapping("/cancelReply/{djIds}/{nodeNos}")
+    public AjaxResult cancelReply(@PathVariable String[] djIds,@PathVariable Integer[] nodeNos)
+    {
+        for(int i=0;i<djIds.length;i++){
+            boolean lag=false;
+            //获取上级节点信息
+            FlowAudit item=flowAuditService.selectFlowAuditNoAndDjId(djIds[i],nodeNos[i]-1);
+            if(item!=null&&item.getStatus()==0){
+                continue;
+            }
+            //允许结束
+            if(item.getIsEnd()==1){
+                //查看是否被引用
+                int result=purchaseOrderService.checkOrderOnWage(item.getDjId());
+                if(result>0){
+                    return toAjaxByError("单据:"+item.getDjId()+"被引用,取消失败!");
+                }
+                lag=true;
+            }else{
+                //查询末级节点
+                int nodeNo=flowAuditService.getEndNode(djIds[i]);
+                //末级结束
+                if(nodeNo==item.getNodeNo()){
+                    //查看是否被引用
+                    int result=purchaseOrderService.checkOrderOnWage(item.getDjId());
+                    if(result>0){
+                        return toAjaxByError("单据:"+item.getDjId()+"被引用,取消失败!");
+                    }
+                    lag=true;
+                }else{
+                    lag=false;
+                }
+            }
+            //批复价格改回原始单价
+            purchaseOrderChildService.updateOrderPriceByReply(djIds[i]);
+            //状态
+            item.setFlowStatus(0);
+            //状态
+            item.setStatus(0);
+            //审核意见
+            item.setAuditInfo(" ");
+            //审核时间
+            item.setAuditTime(" ");
+            //审核人员
+            item.setUserName(" ");
+            //回退节点状态
+            flowAuditService.updateFlowAudit(item);
+            //修改单据上一级节点
+            purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(djIds[i],(nodeNos[i]-1),0);
+            //如果已经生效则改变状态为待审核
+            if(lag){
+                //修改单据状态为待审核
+                purchaseOrderService.updatetPurchaseOrderStatusOrNodeNo(djIds[i],1,1);
+            }
+        }
+        return toAjaxBySuccess("取消成功!");
+    }
 
     /**
      * 提交采购订单
@@ -397,11 +518,16 @@ public class PurchaseOrderController extends BaseController
             boolean lag=false;
             //获取上级节点信息
             FlowAudit item=flowAuditService.selectFlowAuditNoAndDjId(djIds[i],nodeNos[i]-1);
-            if(item.getStatus()==0){
+            if(item!=null&&item.getStatus()==0){
                 continue;
             }
             //允许结束
             if(item.getIsEnd()==1){
+                //查看是否被引用
+                int result=purchaseOrderService.checkOrderOnWage(item.getDjId());
+                if(result>0){
+                    return toAjaxByError("单据:"+item.getDjId()+"被引用,取消失败!");
+                }
                 lag=true;
             }else{
                 //查询末级节点

@@ -77,7 +77,51 @@ public class StockInfo extends BaseEntity
     /** 入库单 ID */
     private String rkOrderId;
 
-    public void setId(Integer id) 
+    @Excel(name = "类型")
+    private Integer djType;
+    /** 供货商编码 */
+    @Excel(name = "供货商编码")
+    private String khCode;
+
+    /** 供货商名称 */
+    @Excel(name = "供货商名称")
+    private String khName;
+
+    private String surplusNum;
+
+    public String getSurplusNum() {
+        return surplusNum;
+    }
+
+    public void setSurplusNum(String surplusNum) {
+        this.surplusNum = surplusNum;
+    }
+
+    public String getKhCode() {
+        return khCode;
+    }
+
+    public void setKhCode(String khCode) {
+        this.khCode = khCode;
+    }
+
+    public String getKhName() {
+        return khName;
+    }
+
+    public void setKhName(String khName) {
+        this.khName = khName;
+    }
+
+    public Integer getDjType() {
+        return djType;
+    }
+
+    public void setDjType(Integer djType) {
+        this.djType = djType;
+    }
+
+    public void setId(Integer id)
     {
         this.id = id;
     }
