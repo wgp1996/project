@@ -29,7 +29,7 @@ public interface PurchaseWareChildMapper
 
     /**
      * 采购接收单查询采购入库单列表
-     *
+     *selectPickingDeliveryListByReturn
      * @param PurchaseWareChild 采购入库子表
      * @return 采购入库子表集合
      */

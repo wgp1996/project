@@ -3,6 +3,7 @@ package com.ruoyi.project.system.service.impl;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.project.system.domain.PickingReturnChild;
 import com.ruoyi.project.system.domain.StockInfo;
 import com.ruoyi.project.system.mapper.StockInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,16 @@ public class PickingDeliveryChildServiceImpl implements IPickingDeliveryChildSer
         return pickingDeliveryChildMapper.selectPickingDeliveryChildList(pickingDeliveryChild);
     }
 
+    /**
+     * 借还单查询出库单列表
+     *
+     * @param pickingReturnChild 子表
+     * @return 表集合
+     */
+    @Override
+    public List<PickingReturnChild> selectPickingDeliveryListByReturn(PickingDeliveryChild pickingDeliveryChild){
+        return pickingDeliveryChildMapper.selectPickingDeliveryListByReturn(pickingDeliveryChild);
+    }
     /**
      * 新增领料出库单子表
      * 

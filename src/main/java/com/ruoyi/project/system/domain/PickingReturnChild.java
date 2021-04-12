@@ -6,12 +6,12 @@ import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
 
 /**
- * 领料出库单子表对象 picking_delivery_child
+ * 借用归还单子表对象 picking_return_child
  * 
- * @author ruoyi
- * @date 2021-04-07
+ * @author yu
+ * @date 2021-04-12
  */
-public class PickingDeliveryChild extends BaseEntity
+public class PickingReturnChild extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -30,8 +30,8 @@ public class PickingDeliveryChild extends BaseEntity
     @Excel(name = "物资名称")
     private String goodsName;
 
-    /** 发起数量 */
-    @Excel(name = "发起数量")
+    /** 归还数量 */
+    @Excel(name = "归还数量")
     private Integer goodsNum;
 
     /** 单价 */
@@ -49,80 +49,27 @@ public class PickingDeliveryChild extends BaseEntity
     /** 单位 */
     @Excel(name = "单位")
     private String goodsDw;
-    /** 单位 */
-    @Excel(name = "入库单号")
-    private String rkDjNumber;
-    /** 单位 */
-    @Excel(name = "入库明细ID")
-    private String rkOrderId;
 
-    private Integer oldGoodsNum;
+    /** 出库明细ID */
+    @Excel(name = "出库明细ID")
+    private String ckOrderId;
 
-    private Integer surplusNum;
+    /** 出库单号 */
+    @Excel(name = "出库单号")
+    private String ckDjNumber;
 
-    private String projectCode;
+    private String surplusNum;
 
-    private String storeCode;
 
-    private String khCode;
-
-    public String getKhCode() {
-        return khCode;
-    }
-
-    public void setKhCode(String khCode) {
-        this.khCode = khCode;
-    }
-
-    public String getProjectCode() {
-        return projectCode;
-    }
-
-    public void setProjectCode(String projectCode) {
-        this.projectCode = projectCode;
-    }
-
-    public String getStoreCode() {
-        return storeCode;
-    }
-
-    public void setStoreCode(String storeCode) {
-        this.storeCode = storeCode;
-    }
-
-    public String getRkDjNumber() {
-        return rkDjNumber;
-    }
-
-    public void setRkDjNumber(String rkDjNumber) {
-        this.rkDjNumber = rkDjNumber;
-    }
-
-    public String getRkOrderId() {
-        return rkOrderId;
-    }
-
-    public void setRkOrderId(String rkOrderId) {
-        this.rkOrderId = rkOrderId;
-    }
-
-    public Integer getSurplusNum() {
+    public String getSurplusNum() {
         return surplusNum;
     }
 
-    public void setSurplusNum(Integer surplusNum) {
+    public void setSurplusNum(String surplusNum) {
         this.surplusNum = surplusNum;
     }
-    public Integer getOldGoodsNum() {
-        return oldGoodsNum;
-    }
 
-    public void setOldGoodsNum(Integer oldGoodsNum) {
-        this.oldGoodsNum = oldGoodsNum;
-    }
-
-
-    public void setId(String id) 
+    public void setId(String id)
     {
         this.id = id;
     }
@@ -203,6 +150,24 @@ public class PickingDeliveryChild extends BaseEntity
     {
         return goodsDw;
     }
+    public void setCkOrderId(String ckOrderId) 
+    {
+        this.ckOrderId = ckOrderId;
+    }
+
+    public String getCkOrderId() 
+    {
+        return ckOrderId;
+    }
+    public void setCkDjNumber(String ckDjNumber) 
+    {
+        this.ckDjNumber = ckDjNumber;
+    }
+
+    public String getCkDjNumber() 
+    {
+        return ckDjNumber;
+    }
 
     @Override
     public String toString() {
@@ -221,6 +186,8 @@ public class PickingDeliveryChild extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("ckOrderId", getCkOrderId())
+            .append("ckDjNumber", getCkDjNumber())
             .toString();
     }
 }

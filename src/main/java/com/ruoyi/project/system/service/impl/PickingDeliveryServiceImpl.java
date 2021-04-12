@@ -63,6 +63,16 @@ public class PickingDeliveryServiceImpl implements IPickingDeliveryService
     }
 
     /**
+     * 检测是否被引用
+     * @param djNumber
+     * @return
+     */
+    @Override
+    public int checkDeliveryOnReturn(String djNumber){
+        return pickingDeliveryMapper.checkDeliveryOnReturn(djNumber);
+    }
+
+    /**
      * 查询领料出库单审核列表
      *
      * @param pickingDelivery 领料出库单
@@ -73,6 +83,7 @@ public class PickingDeliveryServiceImpl implements IPickingDeliveryService
     {
         return pickingDeliveryMapper.selectPickingDeliveryShList(pickingDelivery);
     }
+
 
     /**
      * 修改审核状态
@@ -306,6 +317,11 @@ public class PickingDeliveryServiceImpl implements IPickingDeliveryService
                 info.setStatus(0);
                 info.setFlowNo("-1");
                 info.setNodeNo(0);
+                //查看是否被引用
+                int result=pickingDeliveryMapper.checkDeliveryOnReturn(info.getDjNumber());
+                if(result>0){
+                    return -1;
+                }
             }else{
                 //判断是否审批中
                 if(info.getNodeNo()==1){
@@ -438,12 +454,22 @@ public class PickingDeliveryServiceImpl implements IPickingDeliveryService
             }
             //允许结束
             if(item.getIsEnd()==1){
+                //查看是否被引用
+                int result=pickingDeliveryMapper.checkDeliveryOnReturn(item.getDjId());
+                if(result>0){
+                    return -1;
+                }
                 lag=true;
             }else{
                 //查询末级节点
                 int nodeNo=flowAuditMapper.getEndNode(djIds[i]);
                 //末级结束
                 if(nodeNo==item.getNodeNo()){
+                    //查看是否被引用
+                    int result=pickingDeliveryMapper.checkDeliveryOnReturn(item.getDjId());
+                    if(result>0){
+                        return -1;
+                    }
                     lag=true;
                 }else{
                     lag=false;

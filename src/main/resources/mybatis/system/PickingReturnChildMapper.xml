@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.project.system.mapper.PickingDeliveryChildMapper">
+<mapper namespace="com.ruoyi.project.system.mapper.PickingReturnChildMapper">
     
-    <resultMap type="PickingDeliveryChild" id="PickingDeliveryChildResult">
+    <resultMap type="PickingReturnChild" id="PickingReturnChildResult">
         <result property="id"    column="id"    />
         <result property="djNumber"    column="dj_number"    />
         <result property="goodsCode"    column="goods_code"    />
@@ -19,44 +19,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
-        <result property="surplusNum"    column="surplus_num"    />
-        <result property="rkOrderId"    column="rk_order_id"    />
-        <result property="rkDjNumber"    column="rk_dj_number"    />
-
+        <result property="ckOrderId"    column="ck_order_id"    />
+        <result property="ckDjNumber"    column="ck_dj_number"    />
     </resultMap>
 
-    <sql id="selectPickingDeliveryChildVo">
-        select a.*,(select goods_num from stock_info where  rk_order_id=a.rk_order_id) as surplus_num from picking_delivery_child a
+    <sql id="selectPickingReturnChildVo">
+        select id, dj_number, goods_code, goods_name, goods_num, goods_price, goods_money, goods_gg, goods_dw, create_by, create_time, update_by, update_time, remark, ck_order_id, ck_dj_number from picking_return_child
     </sql>
 
-    <select id="selectPickingDeliveryChildList" parameterType="PickingDeliveryChild" resultMap="PickingDeliveryChildResult">
-        <include refid="selectPickingDeliveryChildVo"/>
-
-        where dj_number = #{djNumber} order by create_time desc
-
+    <select id="selectPickingReturnChildList" parameterType="PickingReturnChild" resultMap="PickingReturnChildResult">
+        <include refid="selectPickingReturnChildVo"/>
+        <where>
+            and dj_number = #{djNumber}
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsNum != null "> and goods_num = #{goodsNum}</if>
+            <if test="goodsPrice != null  and goodsPrice != ''"> and goods_price = #{goodsPrice}</if>
+            <if test="goodsMoney != null  and goodsMoney != ''"> and goods_money = #{goodsMoney}</if>
+            <if test="goodsGg != null  and goodsGg != ''"> and goods_gg = #{goodsGg}</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="ckOrderId != null  and ckOrderId != ''"> and ck_order_id = #{ckOrderId}</if>
+            <if test="ckDjNumber != null  and ckDjNumber != ''"> and ck_dj_number = #{ckDjNumber}</if>
+        </where>
     </select>
     
-    <select id="selectPickingDeliveryChildById" parameterType="String" resultMap="PickingDeliveryChildResult">
-        <include refid="selectPickingDeliveryChildVo"/>
+    <select id="selectPickingReturnChildById" parameterType="String" resultMap="PickingReturnChildResult">
+        <include refid="selectPickingReturnChildVo"/>
         where id = #{id}
     </select>
-
-    <select id="selectPickingDeliveryListByReturn" parameterType="PickingDeliveryChild" resultMap="PickingDeliveryChildResult">
-        select t.*,(IFNULL(t.goods_num,0)-IFNULL(f.goods_num,0)) as surplus_num from
-        (
-        select a.* from picking_delivery_child a,picking_delivery b where a.dj_number=b.dj_number and b.`status`=2  and a.create_by=#{createBy}
-            <if test="goodsCode != null  and goodsCode != ''"> and a.goods_code = #{goodsCode}</if>
-            <if test="goodsName != null  and goodsName != ''"> and a.goods_name like concat('%', #{goodsName}, '%')</if>
-            and b.kh_code=#{khCode}
-            and b.project_code=#{projectCode}
-            and b.store_code=#{storeCode}
-            and b.pack_type=0
-        ) t left join
-        (select sum(goods_num) as goods_num,ck_order_id from picking_return_child where create_by=#{createBy} GROUP BY ck_order_id) f on f.ck_order_id=t.id where IFNULL(t.goods_num,0)-IFNULL(f.goods_num,0)>0
-    </select>
         
-    <insert id="insertPickingDeliveryChild" parameterType="PickingDeliveryChild">
-        insert into picking_delivery_child
+    <insert id="insertPickingReturnChild" parameterType="PickingReturnChild">
+        insert into picking_return_child
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">id,</if>
             <if test="djNumber != null  and djNumber != ''">dj_number,</if>
@@ -72,8 +65,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
-            <if test="rkOrderId != null  and rkOrderId != ''">rk_order_id,</if>
-            <if test="rkDjNumber != null  and rkDjNumber != ''">rk_dj_number,</if>
+            <if test="ckOrderId != null  and ckOrderId != ''">ck_order_id,</if>
+            <if test="ckDjNumber != null  and ckDjNumber != ''">ck_dj_number,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">#{id},</if>
@@ -90,17 +83,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
-            <if test="rkOrderId != null  and rkOrderId != ''">#{rkOrderId},</if>
-            <if test="rkDjNumber != null  and rkDjNumber != ''">#{rkDjNumber},</if>
+            <if test="ckOrderId != null  and ckOrderId != ''">#{ckOrderId},</if>
+            <if test="ckDjNumber != null  and ckDjNumber != ''">#{ckDjNumber},</if>
          </trim>
     </insert>
 
-
-    <update id="updatePickingDeliveryChild" parameterType="PickingDeliveryChild">
-        update picking_delivery_child
+    <update id="updatePickingReturnChild" parameterType="PickingReturnChild">
+        update picking_return_child
         <trim prefix="SET" suffixOverrides=",">
-            <if test="rkOrderId != null  and rkOrderId != ''">rk_order_id=#{rkOrderId},</if>
-            <if test="rkDjNumber != null  and rkDjNumber != ''">rk_dj_number=#{rkDjNumber},</if>
             <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
             <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
             <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
@@ -114,24 +104,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="ckOrderId != null  and ckOrderId != ''">ck_order_id = #{ckOrderId},</if>
+            <if test="ckDjNumber != null  and ckDjNumber != ''">ck_dj_number = #{ckDjNumber},</if>
         </trim>
         where id = #{id}
     </update>
 
-    <delete id="deletePickingDeliveryChildById" parameterType="String">
-        delete from picking_delivery_child where id = #{id}
+    <delete id="deletePickingReturnChildById" parameterType="String">
+        delete from picking_return_child where id = #{id}
     </delete>
 
-    <delete id="deletePickingDeliveryChildByIds" parameterType="String">
-        delete from picking_delivery_child where id in 
+    <delete id="deletePickingReturnChildByIds" parameterType="String">
+        delete from picking_return_child where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
-    <delete id="deletePickingDeliveryChildByPIds" parameterType="Integer">
-        delete from picking_delivery_child where dj_number in(
-        select dj_number from picking_delivery where id in
+    <delete id="deletePickingReturnChildByPIds" parameterType="Integer">
+        delete from picking_return_child where dj_number in(
+        select dj_number from picking_return where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

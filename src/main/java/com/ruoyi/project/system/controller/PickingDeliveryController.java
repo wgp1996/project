@@ -81,6 +81,18 @@ public class PickingDeliveryController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 借还单选择出库单列表
+     */
+    @GetMapping("/returnSelectList")
+    public TableDataInfo returnSelectList(PickingDeliveryChild pickingDeliveryChild)
+    {
+        startPage();
+        pickingDeliveryChild.setCreateBy(SecurityUtils.getUsername());
+        List<PickingReturnChild> list = pickingDeliveryChildService.selectPickingDeliveryListByReturn(pickingDeliveryChild);
+        return getDataTable(list);
+    }
+
 
     /**
      * 导出领料出库单列表
@@ -191,6 +203,8 @@ public class PickingDeliveryController extends BaseController
     {
         if(pickingDeliveryService.cancelAudit(djIds,nodeNos)>0){
             return toAjaxBySuccess("取消审核成功!");
+        }else if(pickingDeliveryService.cancelAudit(djIds,nodeNos)==-1){
+            return toAjaxByError("单据被引用!");
         }else{
             return toAjaxByError("取消审核失败!");
         }

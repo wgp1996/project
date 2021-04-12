@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.project.system.mapper.PickingDeliveryMapper">
+<mapper namespace="com.ruoyi.project.system.mapper.PickingReturnMapper">
     
-    <resultMap type="PickingDelivery" id="PickingDeliveryResult">
+    <resultMap type="PickingReturn" id="PickingReturnResult">
         <result property="id"    column="id"    />
         <result property="djNumber"    column="dj_number"    />
         <result property="djTime"    column="dj_time"    />
@@ -14,8 +14,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="projectName"    column="project_name"    />
         <result property="khCode"    column="kh_code"    />
         <result property="khName"    column="kh_name"    />
-        <result property="storeCode"    column="store_code"    />
-        <result property="storeName"    column="store_name"    />
+        <result property="returnStoreCode"    column="return_store_code"    />
+        <result property="returnStoreName"    column="return_store_name"    />
         <result property="flowNo"    column="flow_no"    />
         <result property="nodeNo"    column="node_no"    />
         <result property="createBy"    column="create_by"    />
@@ -24,20 +24,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="isSp"    column="is_sp"    />
+        <result property="storeCode"    column="store_code"    />
+        <result property="storeName"    column="store_name"    />
         <result property="statusName"    column="status_name"    />
+
+
     </resultMap>
 
-    <sql id="selectPickingDeliveryVo">
-        select * from picking_delivery
+    <sql id="selectPickingReturnVo">
+        select * from picking_return
     </sql>
-    <sql id="selectPickingDeliveryVoByRole">
-        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name  from picking_delivery a
+
+    <sql id="selectPickingReturnVoByRole">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from picking_return a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
-
-    <select id="selectPickingDeliveryList" parameterType="PickingDelivery" resultMap="PickingDeliveryResult">
-        <include refid="selectPickingDeliveryVoByRole"/>
+    <select id="selectPickingReturnList" parameterType="PickingReturn" resultMap="PickingReturnResult">
+        <include refid="selectPickingReturnVoByRole"/>
         <where>  
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
             <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
@@ -47,94 +51,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
             <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
             <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
-            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
-            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="returnStoreCode != null  and returnStoreCode != ''"> and return_store_code = #{returnStoreCode}</if>
+            <if test="returnStoreName != null  and returnStoreName != ''"> and return_store_name like concat('%', #{returnStoreName}, '%')</if>
             <if test="flowNo != null  and flowNo != ''"> and flow_no = #{flowNo}</if>
             <if test="nodeNo != null "> and node_no = #{nodeNo}</if>
             <if test="isSp != null "> and is_sp = #{isSp}</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
             ${dataScope}
         </where>
         order by a.create_time desc
     </select>
-    
-    <select id="selectPickingDeliveryById" parameterType="Integer" resultMap="PickingDeliveryResult">
-        <include refid="selectPickingDeliveryVo"/>
-        where id = #{id}
-    </select>
-        
-    <insert id="insertPickingDelivery" parameterType="PickingDelivery" useGeneratedKeys="true" keyProperty="id">
-        insert into picking_delivery
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
-            <if test="djTime != null  and djTime != ''">dj_time,</if>
-            <if test="status != null ">status,</if>
-            <if test="packType != null ">pack_type,</if>
-            <if test="projectCode != null  and projectCode != ''">project_code,</if>
-            <if test="projectName != null  and projectName != ''">project_name,</if>
-            <if test="khCode != null  and khCode != ''">kh_code,</if>
-            <if test="khName != null  and khName != ''">kh_name,</if>
-            <if test="storeCode != null  and storeCode != ''">store_code,</if>
-            <if test="storeName != null  and storeName != ''">store_name,</if>
-            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
-            <if test="nodeNo != null ">node_no,</if>
-            <if test="createBy != null  and createBy != ''">create_by,</if>
-            <if test="createTime != null ">create_time,</if>
-            <if test="updateBy != null  and updateBy != ''">update_by,</if>
-            <if test="updateTime != null ">update_time,</if>
-            <if test="remark != null  and remark != ''">remark,</if>
-            <if test="isSp != null ">is_sp,</if>
-         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
-            <if test="djTime != null  and djTime != ''">#{djTime},</if>
-            <if test="status != null ">#{status},</if>
-            <if test="packType != null ">#{packType},</if>
-            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
-            <if test="projectName != null  and projectName != ''">#{projectName},</if>
-            <if test="khCode != null  and khCode != ''">#{khCode},</if>
-            <if test="khName != null  and khName != ''">#{khName},</if>
-            <if test="storeCode != null  and storeCode != ''">#{storeCode},</if>
-            <if test="storeName != null  and storeName != ''">#{storeName},</if>
-            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
-            <if test="nodeNo != null ">#{nodeNo},</if>
-            <if test="createBy != null  and createBy != ''">#{createBy},</if>
-            <if test="createTime != null ">#{createTime},</if>
-            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
-            <if test="updateTime != null ">#{updateTime},</if>
-            <if test="remark != null  and remark != ''">#{remark},</if>
-            <if test="isSp != null ">#{isSp},</if>
-         </trim>
-    </insert>
 
-    <update id="updatePickingDelivery" parameterType="PickingDelivery">
-        update picking_delivery
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
-            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
-            <if test="status != null ">status = #{status},</if>
-            <if test="packType != null ">pack_type = #{packType},</if>
-            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
-            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
-            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
-            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
-            <if test="storeCode != null  and storeCode != ''">store_code = #{storeCode},</if>
-            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
-            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
-            <if test="nodeNo != null ">node_no = #{nodeNo},</if>
-            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
-            <if test="createTime != null ">create_time = #{createTime},</if>
-            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
-            <if test="updateTime != null ">update_time = #{updateTime},</if>
-            <if test="remark != null  and remark != ''">remark = #{remark},</if>
-            <if test="isSp != null ">is_sp = #{isSp},</if>
-        </trim>
-        where id = #{id}
-    </update>
-
-
-
-    <select id="selectPickingDeliveryShList" parameterType="PickingDelivery" resultMap="PickingDeliveryResult">
-        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from picking_delivery a
+    <select id="selectPickingReturnShList" parameterType="PickingReturn" resultMap="PickingReturnResult">
+        select a.*,case a.status when -1 then '被退回' when 0 then '正操作' when 1 then '待审核' when 2 then '已生效' end as status_name from picking_return a
         join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         <if test="type==0">
             and a.node_no=b.node_no
@@ -147,9 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             and (b.pr_id=#{userId} or b.pr_id=#{roleId})
             <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
-            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
             <if test="status != null ">status = #{status},</if>
-            <if test="djType != null ">dj_type = #{djType},</if>
             <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
             <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
             <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
@@ -158,15 +86,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by a.create_time desc
     </select>
 
-    <select id="checkDeliveryOnReturn" parameterType="String" resultType="Integer">
-       select count(id) from picking_return_child
-        where order_dj_number = #{djNumber}
-    </select>
 
-
-
-    <update id="updatetPickingDeliveryStatusOrNodeNo">
-        update picking_delivery
+    <update id="updatetPickingReturnStatusOrNodeNo">
+        update picking_return
         <if test="type==0">
             set node_no = #{status}
         </if>
@@ -175,14 +97,93 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         where dj_number = #{djNumber}
     </update>
+    
+    <select id="selectPickingReturnById" parameterType="Integer" resultMap="PickingReturnResult">
+        <include refid="selectPickingReturnVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPickingReturn" parameterType="PickingReturn" useGeneratedKeys="true" keyProperty="id">
+        insert into picking_return
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="status != null ">status,</if>
+            <if test="packType != null ">pack_type,</if>
+            <if test="projectCode != null  and projectCode != ''">project_code,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
+            <if test="returnStoreCode != null  and returnStoreCode != ''">return_store_code,</if>
+            <if test="returnStoreName != null  and returnStoreName != ''">return_store_name,</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
+            <if test="nodeNo != null ">node_no,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="isSp != null ">is_sp,</if>
+            <if test="storeCode != null  and storeCode != ''">store_code,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="packType != null ">#{packType},</if>
+            <if test="projectCode != null  and projectCode != ''">#{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
+            <if test="returnStoreCode != null  and returnStoreCode != ''">#{returnStoreCode},</if>
+            <if test="returnStoreName != null  and returnStoreName != ''">#{returnStoreName},</if>
+            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
+            <if test="nodeNo != null ">#{nodeNo},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="isSp != null ">#{isSp},</if>
+            <if test="storeCode != null  and storeCode != ''">#{storeCode},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
+         </trim>
+    </insert>
 
+    <update id="updatePickingReturn" parameterType="PickingReturn">
+        update picking_return
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="packType != null ">pack_type = #{packType},</if>
+            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
+            <if test="returnStoreCode != null  and returnStoreCode != ''">return_store_code = #{returnStoreCode},</if>
+            <if test="returnStoreName != null  and returnStoreName != ''">return_store_name = #{returnStoreName},</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
+            <if test="nodeNo != null ">node_no = #{nodeNo},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="isSp != null ">is_sp = #{isSp},</if>
+            <if test="storeCode != null  and storeCode != ''">store_code = #{storeCode},</if>
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
+        </trim>
+        where id = #{id}
+    </update>
 
-    <delete id="deletePickingDeliveryById" parameterType="Integer">
-        delete from picking_delivery where id = #{id}
+    <delete id="deletePickingReturnById" parameterType="Integer">
+        delete from picking_return where id = #{id}
     </delete>
 
-    <delete id="deletePickingDeliveryByIds" parameterType="String">
-        delete from picking_delivery where id in 
+    <delete id="deletePickingReturnByIds" parameterType="String">
+        delete from picking_return where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

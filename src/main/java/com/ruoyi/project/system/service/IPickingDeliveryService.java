@@ -28,6 +28,14 @@ public interface IPickingDeliveryService
      * @return 领料出库单集合
      */
     public List<PickingDelivery> selectPickingDeliveryList(PickingDelivery pickingDelivery);
+
+
+    /**
+     * 检测是否被引用
+     * @param djNumber
+     * @return
+     */
+    public int checkDeliveryOnReturn(String djNumber);
     /**
      * 查询领料出库单审核列表
      *
@@ -62,6 +70,7 @@ public interface IPickingDeliveryService
     public int examine(FlowAudit flowAudit);
     //取消提交
     public int cancelAudit(String[] djIds,Integer[] nodeNos);
+
     /**
      * 修改领料出库单
      * 

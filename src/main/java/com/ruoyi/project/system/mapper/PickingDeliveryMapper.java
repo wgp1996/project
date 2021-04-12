@@ -62,6 +62,13 @@ public interface PickingDeliveryMapper
     public int updatePickingDelivery(PickingDelivery pickingDelivery);
 
     /**
+     * 检测是否被引用
+     * @param djNumber
+     * @return
+     */
+    public int checkDeliveryOnReturn(String djNumber);
+
+    /**
      * 删除领料出库单
      * 
      * @param id 领料出库单ID
