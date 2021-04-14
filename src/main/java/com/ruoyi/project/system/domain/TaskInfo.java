@@ -82,6 +82,36 @@ public class TaskInfo extends BaseEntity
     @Excel(name = "是否已读")
     private Integer sendIsRead;
 
+    private Integer taskType;
+
+    private String userId;
+
+    private String roleId;
+
+    public Integer getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(Integer taskType) {
+        this.taskType = taskType;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
     public Integer getSendIsRead() {
         return sendIsRead;
     }

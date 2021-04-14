@@ -111,7 +111,7 @@ public class ProjectInventoryController extends BaseController
     /**
      * 新增编制清单
      */
-    @PreAuthorize("@ss.hasPermi('system:projectInventory:add')")
+    //@PreAuthorize("@ss.hasPermi('system:projectInventory:add')")
     @Log(title = "编制清单", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ProjectInventory projectInventory)
@@ -126,7 +126,7 @@ public class ProjectInventoryController extends BaseController
     /**
      * 修改编制清单
      */
-    @PreAuthorize("@ss.hasPermi('system:projectInventory:edit')")
+    //@PreAuthorize("@ss.hasPermi('system:projectInventory:edit')")
     @Log(title = "编制清单", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody ProjectInventory projectInventory)

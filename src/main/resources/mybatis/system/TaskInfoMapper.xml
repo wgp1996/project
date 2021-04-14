@@ -44,8 +44,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectTaskInfoList" parameterType="TaskInfo" resultMap="TaskInfoResult">
-        <include refid="selectTaskInfoVoByRole"/>
-        <where>  
+        select a.*,case a.status when 0 then '未开始' when 1 then '进行中' when -1 then '已超期'  when 3 then '待验收'  when 4 then '已完成' end as status_name,
+        case a.urgent_status when 0 then '普通' when 1 then '重要' when 2 then '紧急' end as urgent_status_name
+        from task_info a
+        <where>
             <if test="taskName != null  and taskName != ''"> and task_name like concat('%', #{taskName}, '%')</if>
             <if test="taskCode != null  and taskCode != ''"> and task_code = #{taskCode}</if>
             <if test="taskEndTime != null  and taskEndTime != ''"> and task_end_time = #{taskEndTime}</if>
@@ -59,6 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="urgentStatus != null "> and urgent_status = #{urgentStatus}</if>
             <if test="isRead != null "> and is_read = #{isRead}</if>
             <if test="sendIsRead != null  "> and send_is_read = #{sendIsRead}</if>
+            <if test="taskType != null  and taskType==1">and a.status in(0,1)</if>
             ${dataScope}
         </where>
         order by a.create_time desc
@@ -68,6 +71,72 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectTaskInfoVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectShMenuList" resultMap="TaskInfoResult">
+        select count(a.id) as task_num,'分包合同' as task_name,'FBHT' as task_code,b.dj_id as djNumber from project_contract a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'总包合同' as task_name,'ZBHT' as task_code,b.dj_id as djNumber from contract_genera a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'立项申请' as task_name,'LXSQ' as task_code,b.dj_id as djNumber from project_apply a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'产值提报' as task_name,'CZTB' as task_code,b.dj_id as djNumber from project_report a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'采购订单' as task_name,'CGDD' as task_code,b.dj_id as djNumber from purchase_order a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'入库单' as task_name,'RKD' as task_code,b.dj_id as djNumber from purchase_ware a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'采购结算单' as task_name,'CGJS' as task_code,b.dj_id as djNumber from purchase_settlement a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'领料出库单' as task_name,'LLCK' as task_code,b.dj_id as djNumber from picking_delivery a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+        union all
+        select count(a.id) as task_num,'借用归还单' as task_name,'JYGH' as task_code,b.dj_id as djNumber from picking_return a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.dj_id HAVING task_num>0
+    </select>
+
         
     <insert id="insertTaskInfo" parameterType="TaskInfo" useGeneratedKeys="true" keyProperty="id">
         insert into task_info

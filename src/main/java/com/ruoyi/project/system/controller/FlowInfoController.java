@@ -119,7 +119,7 @@ public class FlowInfoController extends BaseController
         if(flowInfo.getRows()==""){
             return  toAjaxByError("节点明细不能为空!");
         }
-        int result=flowInfoService.checkFlow(flowInfo.getFlowNo(),-1);
+        int result=flowInfoService.checkFlow(flowInfo.getFlowNo()+SecurityUtils.getUsername(),-1);
         if(result>0){
             return toAjaxByError("流程重复!");
         }

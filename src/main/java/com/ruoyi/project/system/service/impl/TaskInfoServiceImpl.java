@@ -21,6 +21,16 @@ public class TaskInfoServiceImpl implements ITaskInfoService
     private TaskInfoMapper taskInfoMapper;
 
     /**
+     * 查询审核菜单列表跟数量
+     *
+     * @return 菜单名称跟数量
+     */
+    @Override
+    public List<TaskInfo> selectShMenuList(String userId,String roleId){
+        return taskInfoMapper.selectShMenuList(userId,roleId);
+    }
+
+    /**
      * 查询任务管理
      * 
      * @param id 任务管理ID

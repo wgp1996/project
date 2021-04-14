@@ -28,6 +28,15 @@ public interface ITaskInfoService
     public List<TaskInfo> selectTaskInfoList(TaskInfo taskInfo);
 
     /**
+     * 查询审核菜单列表跟数量
+     *
+     * @return 菜单名称跟数量
+     */
+    public List<TaskInfo> selectShMenuList(String userId,String roleId);
+
+
+
+    /**
      * 新增任务管理
      * 
      * @param taskInfo 任务管理

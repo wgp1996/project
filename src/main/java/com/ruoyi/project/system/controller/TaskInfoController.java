@@ -47,9 +47,10 @@ public class TaskInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:taskInfo:list')")
     @GetMapping("/list")
-    @DataScope(deptAlias = "d", userAlias = "u")
+    //@DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(TaskInfo taskInfo)
     {
+        taskInfo.setCreateBy(SecurityUtils.getUsername());
         startPage();
         List<TaskInfo> list = taskInfoService.selectTaskInfoList(taskInfo);
         return getDataTable(list);
@@ -58,13 +59,34 @@ public class TaskInfoController extends BaseController
     /**
      * 查询派给我的任务管理列表
      */
-    @PreAuthorize("@ss.hasPermi('system:taskInfo:list')")
+    //@PreAuthorize("@ss.hasPermi('system:taskInfo:list')")
     @GetMapping("/sendList")
     public TableDataInfo sendList(TaskInfo taskInfo)
     {
         startPage();
         taskInfo.setImplementUserCode(SecurityUtils.getUsername());
         List<TaskInfo> list = taskInfoService.selectTaskInfoList(taskInfo);
+        return getDataTable(list);
+    }
+
+    //查询进行中的任务列表
+    @GetMapping("/sendAllList")
+    public TableDataInfo sendAllList(TaskInfo taskInfo)
+    {
+       // startPage();
+        //1 表示查询首页 未开始跟进行中的任务
+        taskInfo.setTaskType(1);
+        taskInfo.setImplementUserCode(SecurityUtils.getUsername());
+        List<TaskInfo> list = taskInfoService.selectTaskInfoList(taskInfo);
+        return getDataTable(list);
+    }
+
+    @GetMapping("/selectShMenuList")
+    public TableDataInfo selectShMenuList()
+    {
+        String userId= SecurityUtils.getUsername();
+        String roleId=SecurityUtils.getLoginUser().getUser().getRoles().get(0).getRoleId()+"";
+        List<TaskInfo> list =taskInfoService.selectShMenuList(userId,roleId);
         return getDataTable(list);
     }
 

@@ -9,8 +9,14 @@ import com.ruoyi.project.system.domain.TaskInfo;
  * @author ruoyi
  * @date 2021-03-09
  */
-public interface TaskInfoMapper 
+public interface TaskInfoMapper
 {
+    /**
+     * 查询审核菜单列表跟数量
+     *
+     * @return 菜单名称跟数量
+     */
+    public List<TaskInfo> selectShMenuList(String userId,String roleId);
     /**
      * 查询任务管理
      * 
