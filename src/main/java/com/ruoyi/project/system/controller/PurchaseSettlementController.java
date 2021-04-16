@@ -93,7 +93,7 @@ public class PurchaseSettlementController extends BaseController
     /**
      * 获取结算申请单详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseSettlement:query')")
+   //@PreAuthorize("@ss.hasPermi('system:purchaseSettlement:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
@@ -197,7 +197,13 @@ public class PurchaseSettlementController extends BaseController
     {
         //查询审批流程
         FlowInfo flowInfo=new FlowInfo();
-        flowInfo.setFlowNo("CGJS001"+SecurityUtils.getUsername());
+        //判断是否注册用户
+        SysUser user=SecurityUtils.getLoginUser().getUser();
+        if(user.getCreateBy().equals("admin")){
+            flowInfo.setFlowNo("CGJS001"+SecurityUtils.getUsername());
+        }else{
+            flowInfo.setFlowNo("CGJS001"+user.getCreateBy());
+        }
         flowInfo.setStatus(1);
         List<FlowInfo> list = flowInfoService.selectFlowInfoList(flowInfo);
         //查询审批节点

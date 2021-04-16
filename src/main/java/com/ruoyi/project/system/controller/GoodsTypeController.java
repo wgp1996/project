@@ -49,7 +49,7 @@ public class GoodsTypeController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:goodsType:list')")
     @GetMapping("/list")
-   // @DataScope(deptAlias = "d", userAlias = "u")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public AjaxResult list(GoodsType goodsType)
     {
         List<GoodsType> list = goodsTypeService.selectGoodsTypeList(goodsType);
@@ -72,7 +72,7 @@ public class GoodsTypeController extends BaseController
     /**
      * 获取商品分类详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:goodsType:query')")
+    //@PreAuthorize("@ss.hasPermi('system:goodsType:query')")
     @GetMapping(value = "/{goodsTypeId}")
     public AjaxResult getInfo(@PathVariable("goodsTypeId") Integer goodsTypeId)
     {

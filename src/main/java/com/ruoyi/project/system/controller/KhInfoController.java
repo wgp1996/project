@@ -40,7 +40,7 @@ public class KhInfoController extends BaseController
     /**
      * 查询客户建档列表
      */
-    @PreAuthorize("@ss.hasPermi('system:kh:list')")
+    //@PreAuthorize("@ss.hasPermi('system:kh:list')")
     @DataScope(deptAlias = "d", userAlias = "u")
     @GetMapping("/list")
     public TableDataInfo list(KhInfo khInfo)

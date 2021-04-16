@@ -110,7 +110,7 @@ public class PickingDeliveryController extends BaseController
     /**
      * 获取领料出库单详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:pickingDelivery:query')")
+    //@PreAuthorize("@ss.hasPermi('system:pickingDelivery:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
@@ -157,7 +157,6 @@ public class PickingDeliveryController extends BaseController
         }else{
             return toAjaxByError("提交失败!");
         }
-
     }
 
     /**

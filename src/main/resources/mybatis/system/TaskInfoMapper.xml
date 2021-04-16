@@ -78,63 +78,63 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'总包合同' as task_name,'ZBHT' as task_code,b.dj_id as djNumber from contract_genera a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'立项申请' as task_name,'LXSQ' as task_code,b.dj_id as djNumber from project_apply a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'产值提报' as task_name,'CZTB' as task_code,b.dj_id as djNumber from project_report a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'采购订单' as task_name,'CGDD' as task_code,b.dj_id as djNumber from purchase_order a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'入库单' as task_name,'RKD' as task_code,b.dj_id as djNumber from purchase_ware a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'采购结算单' as task_name,'CGJS' as task_code,b.dj_id as djNumber from purchase_settlement a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'领料出库单' as task_name,'LLCK' as task_code,b.dj_id as djNumber from picking_delivery a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
         union all
         select count(a.id) as task_num,'借用归还单' as task_name,'JYGH' as task_code,b.dj_id as djNumber from picking_return a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
         and a.node_no=b.node_no
         and a.status=1
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-        GROUP BY b.dj_id HAVING task_num>0
+        GROUP BY b.pr_id HAVING task_num>0
     </select>
 
         

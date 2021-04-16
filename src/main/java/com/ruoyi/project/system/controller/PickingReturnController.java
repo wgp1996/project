@@ -80,7 +80,7 @@ public class PickingReturnController extends BaseController
     /**
      * 获取借用归还单详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:pickingReturn:query')")
+   //@PreAuthorize("@ss.hasPermi('system:pickingReturn:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {

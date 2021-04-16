@@ -7,6 +7,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.domain.PurchaseOrderChild;
 import com.ruoyi.project.system.service.*;
@@ -108,7 +109,7 @@ public class PurchaseOrderController extends BaseController
     /**
      * 获取采购订单详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:purchaseOrder:query')")
+    //@PreAuthorize("@ss.hasPermi('system:purchaseOrder:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
@@ -345,7 +346,13 @@ public class PurchaseOrderController extends BaseController
     {
         //查询审批流程
         FlowInfo flowInfo=new FlowInfo();
-        flowInfo.setFlowNo("CGDD001"+SecurityUtils.getUsername());
+        //判断是否注册用户
+        SysUser user=SecurityUtils.getLoginUser().getUser();
+        if(user.getCreateBy().equals("admin")){
+            flowInfo.setFlowNo("CGDD001"+SecurityUtils.getUsername());
+        }else{
+            flowInfo.setFlowNo("CGDD001"+user.getCreateBy());
+        }
         flowInfo.setStatus(1);
         List<FlowInfo> list = flowInfoService.selectFlowInfoList(flowInfo);
         //查询审批节点

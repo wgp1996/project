@@ -164,7 +164,14 @@ public class PickingReturnServiceImpl implements IPickingReturnService
     {
         //查询审批流程
         FlowInfo flowInfo=new FlowInfo();
-        flowInfo.setFlowNo("JYGH001"+SecurityUtils.getUsername());
+       // flowInfo.setFlowNo("JYGH001"+SecurityUtils.getUsername());
+        //判断是否注册用户
+        SysUser user=SecurityUtils.getLoginUser().getUser();
+        if(user.getCreateBy().equals("admin")){
+            flowInfo.setFlowNo("JYGH001"+SecurityUtils.getUsername());
+        }else{
+            flowInfo.setFlowNo("JYGH001"+user.getCreateBy());
+        }
         flowInfo.setStatus(1);
         List<FlowInfo> list = flowInfoMapper.selectFlowInfoList(flowInfo);
         //查询审批节点

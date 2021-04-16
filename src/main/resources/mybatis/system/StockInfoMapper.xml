@@ -53,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
             ${dataScope}
         </where>
+        group by a.goods_code,a.kh_code,a.store_code
         order by a.create_time desc
     </select>
 

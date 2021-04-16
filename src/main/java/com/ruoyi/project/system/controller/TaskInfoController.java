@@ -81,6 +81,10 @@ public class TaskInfoController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 查询菜单跟数量列表
+     * @return
+     */
     @GetMapping("/selectShMenuList")
     public TableDataInfo selectShMenuList()
     {
