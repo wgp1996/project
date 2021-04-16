@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.FeeTypeMapper">
+    
+    <resultMap type="FeeType" id="FeeTypeResult">
+        <result property="feeTypeId"    column="fee_type_id"    />
+        <result property="feeTypePid"    column="fee_type_pid"    />
+        <result property="feeTypeName"    column="fee_type_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectFeeTypeVo">
+        select fee_type_id, fee_type_pid, fee_type_name, order_num, create_by, create_time, update_by, update_time, type from fee_type
+    </sql>
+
+    <select id="selectFeeTypeList" parameterType="FeeType" resultMap="FeeTypeResult">
+        <include refid="selectFeeTypeVo"/>
+        <where>  
+            <if test="feeTypePid != null "> and fee_type_pid = #{feeTypePid}</if>
+            <if test="feeTypeName != null  and feeTypeName != ''"> and fee_type_name like concat('%', #{feeTypeName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            <if test="type != null "> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectFeeTypeById" parameterType="Integer" resultMap="FeeTypeResult">
+        <include refid="selectFeeTypeVo"/>
+        where fee_type_id = #{feeTypeId}
+    </select>
+        
+    <insert id="insertFeeType" parameterType="FeeType" useGeneratedKeys="true" keyProperty="feeTypeId">
+        insert into fee_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="feeTypePid != null ">fee_type_pid,</if>
+            <if test="feeTypeName != null  and feeTypeName != ''">fee_type_name,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="type != null ">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="feeTypePid != null ">#{feeTypePid},</if>
+            <if test="feeTypeName != null  and feeTypeName != ''">#{feeTypeName},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="type != null ">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFeeType" parameterType="FeeType">
+        update fee_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="feeTypePid != null ">fee_type_pid = #{feeTypePid},</if>
+            <if test="feeTypeName != null  and feeTypeName != ''">fee_type_name = #{feeTypeName},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="type != null ">type = #{type},</if>
+        </trim>
+        where fee_type_id = #{feeTypeId}
+    </update>
+
+    <delete id="deleteFeeTypeById" parameterType="Integer">
+        delete from fee_type where fee_type_id = #{feeTypeId}
+    </delete>
+
+    <delete id="deleteFeeTypeByIds" parameterType="String">
+        delete from fee_type where fee_type_id in 
+        <foreach item="feeTypeId" collection="array" open="(" separator="," close=")">
+            #{feeTypeId}
+        </foreach>
+    </delete>
+    
+</mapper>

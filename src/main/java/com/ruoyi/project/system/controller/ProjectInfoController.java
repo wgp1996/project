@@ -80,6 +80,20 @@ public class ProjectInfoController extends BaseController
         List<ProjectInfo> list = projectInfoService.selectProjectInfoListByZb(projectInfo);
         return getDataTable(list);
     }
+
+    /**
+     * 项目下拉列表
+     *
+     * @param projectInfo 项目建档
+     * @return 项目建档集合
+     */
+    @GetMapping("/allList")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo allList(ProjectInfo projectInfo)
+    {
+        List<ProjectInfo> list = projectInfoService.selectProjectInfoListByZb(projectInfo);
+        return getDataTable(list);
+    }
     /**
      * 查询项目人员列表
      */

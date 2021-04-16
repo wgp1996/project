@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.FeeInfoMapper">
+    
+    <resultMap type="FeeInfo" id="FeeInfoResult">
+        <result property="id"    column="id"    />
+        <result property="feeName"    column="fee_name"    />
+        <result property="feeCode"    column="fee_code"    />
+        <result property="feeTypeCode"    column="fee_type_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="feeTypeName"    column="fee_type_name"    />
+    </resultMap>
+
+    <sql id="selectFeeInfoVo">
+        select * from fee_info
+    </sql>
+    <sql id="selectFeeInfoVoByRole">
+        select a.* from fee_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectFeeInfoList" parameterType="FeeInfo" resultMap="FeeInfoResult">
+        <include refid="selectFeeInfoVoByRole"/>
+        <where>  
+            <if test="feeName != null  and feeName != ''"> and fee_name like concat('%', #{feeName}, '%')</if>
+            <if test="feeCode != null  and feeCode != ''"> and fee_code = #{feeCode}</if>
+            <if test="feeTypeCode != null  and feeTypeCode != ''"> and fee_type_code = #{feeTypeCode}</if>
+            <if test="feeTypeName != null  and feeTypeName != ''"> and fee_type_name like concat('%', #{feeTypeName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectFeeInfoById" parameterType="Integer" resultMap="FeeInfoResult">
+        <include refid="selectFeeInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFeeInfo" parameterType="FeeInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into fee_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="feeName != null  and feeName != ''">fee_name,</if>
+            <if test="feeCode != null  and feeCode != ''">fee_code,</if>
+            <if test="feeTypeCode != null  and feeTypeCode != ''">fee_type_code,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="feeTypeName != null  and feeTypeName != ''">fee_type_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="feeName != null  and feeName != ''">#{feeName},</if>
+            <if test="feeCode != null  and feeCode != ''">#{feeCode},</if>
+            <if test="feeTypeCode != null  and feeTypeCode != ''">#{feeTypeCode},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="feeTypeName != null  and feeTypeName != ''">#{feeTypeName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFeeInfo" parameterType="FeeInfo">
+        update fee_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="feeName != null  and feeName != ''">fee_name = #{feeName},</if>
+            <if test="feeCode != null  and feeCode != ''">fee_code = #{feeCode},</if>
+            <if test="feeTypeCode != null  and feeTypeCode != ''">fee_type_code = #{feeTypeCode},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="feeTypeName != null  and feeTypeName != ''">fee_type_name = #{feeTypeName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFeeInfoById" parameterType="Integer">
+        delete from fee_info where id = #{id}
+    </delete>
+
+    <delete id="deleteFeeInfoByIds" parameterType="String">
+        delete from fee_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

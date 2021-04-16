@@ -37,6 +37,13 @@ public class TreeSelect implements Serializable
         this.children = dept.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
     }
 
+    public TreeSelect(FeeType dept)
+    {
+        this.id = dept.getFeeTypeId();
+        this.label = dept.getFeeTypeName();
+        this.children = dept.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
+    }
+
     public TreeSelect(GoodsType dept)
     {
         this.id = dept.getGoodsTypeId().longValue();
