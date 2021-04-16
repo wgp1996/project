@@ -2,8 +2,10 @@ package com.ruoyi.project.system.controller;
 
 import java.util.List;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.FlowAudit;
+import com.ruoyi.project.system.domain.PickingDelivery;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +48,22 @@ public class FeeApplyInfoController extends BaseController
     {
         startPage();
         List<FeeApplyInfo> list = feeApplyInfoService.selectFeeApplyInfoList(feeApplyInfo);
+        return getDataTable(list);
+    }
+
+
+    /**
+     * 查询采购入库审核列表
+     */
+    @GetMapping("/shList")
+    public TableDataInfo shList(FeeApplyInfo feeApplyInfo)
+    {
+        startPage();
+        String userId= SecurityUtils.getUsername();
+        String roleId=SecurityUtils.getLoginUser().getUser().getRoles().get(0).getRoleId()+"";
+        feeApplyInfo.setUserId(userId);
+        feeApplyInfo.setRoleId(roleId);
+        List<FeeApplyInfo> list = feeApplyInfoService.selectFeeApplyInfoShList(feeApplyInfo);
         return getDataTable(list);
     }
 

@@ -29,7 +29,7 @@ public interface FeeApplyInfoMapper
     public List<FeeApplyInfo> selectFeeApplyInfoList(FeeApplyInfo feeApplyInfo);
 
     /**
-     * 查询借用归还单审核列表
+     *查询费用报销单审核列表
      *
      * @param feeApplyInfo 借用归还单
      * @return 借用归还单集合

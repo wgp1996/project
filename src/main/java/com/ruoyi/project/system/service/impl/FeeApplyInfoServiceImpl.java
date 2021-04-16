@@ -61,6 +61,17 @@ public class FeeApplyInfoServiceImpl implements IFeeApplyInfoService
     }
 
     /**
+     * 查询费用报销单审核列表
+     *
+     * @param feeApplyInfo 借用归还单
+     * @return 借用归还单集合
+     */
+    @Override
+    public List<FeeApplyInfo> selectFeeApplyInfoShList(FeeApplyInfo feeApplyInfo){
+        return feeApplyInfoMapper.selectFeeApplyInfoShList(feeApplyInfo);
+    }
+
+    /**
      * 新增费用报销单
      * 
      * @param feeApplyInfo 费用报销单

@@ -62,12 +62,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <where>
             and (b.pr_id=#{userId} or b.pr_id=#{roleId})
-            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
-            <if test="status != null ">status = #{status},</if>
-            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
-            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
-            <if test="projectCode != null  and projectCode != ''">project_code = #{projectCode},</if>
-            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="status != null "> and status = #{status}</if>
         </where>
         order by a.create_time desc
     </select>

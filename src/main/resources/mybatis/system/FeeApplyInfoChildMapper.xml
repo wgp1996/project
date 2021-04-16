@@ -27,8 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFeeApplyInfoChildList" parameterType="FeeApplyInfoChild" resultMap="FeeApplyInfoChildResult">
         <include refid="selectFeeApplyInfoChildVo"/>
-        <where>  
-            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+        <where>
+            and dj_number = #{djNumber}
             <if test="feeName != null  and feeName != ''"> and fee_name like concat('%', #{feeName}, '%')</if>
             <if test="feeCode != null  and feeCode != ''"> and fee_code = #{feeCode}</if>
             <if test="applyContent != null  and applyContent != ''"> and apply_content = #{applyContent}</if>

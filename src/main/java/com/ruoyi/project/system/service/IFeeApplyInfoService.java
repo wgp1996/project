@@ -52,6 +52,13 @@ public interface IFeeApplyInfoService
     public int examine(FlowAudit flowAudit);
     //取消提交
     public int cancelAudit(String[] djIds,Integer[] nodeNos);
+    /**
+     * 查询费用报销单审核列表
+     *
+     * @param feeApplyInfo 借用归还单
+     * @return 借用归还单集合
+     */
+    public List<FeeApplyInfo> selectFeeApplyInfoShList(FeeApplyInfo feeApplyInfo);
 
 
     /**
