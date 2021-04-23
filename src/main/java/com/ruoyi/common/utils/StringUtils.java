@@ -460,4 +460,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
     public static String getRandomCode(String lag){
        return lag+DateUtils.dateNow()+(int)((Math.random()*9+1)*100000);
     }
+    public static String getRandomNum(String lag){
+        return lag+DateUtils.dateNow()+(int)((Math.random()*9+1)*100);
+    }
 }

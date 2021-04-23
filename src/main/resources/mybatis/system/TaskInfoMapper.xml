@@ -29,6 +29,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskNum"    column="task_num"    />
         <result property="message"    column="message"    />
         <result property="resultNum"    column="result_num"    />
+        <result property="userNum"    column="user_num"    />
+        <result property="sumMoney"    column="sum_money"    />
+        <result property="orderNum"    column="order_num"    />
     </resultMap>
 
     <sql id="selectTaskInfoVo">
@@ -135,6 +138,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and b.status=0
         and (b.pr_id=#{userId} or b.pr_id=#{roleId})
         GROUP BY b.pr_id HAVING task_num>0
+         union all
+        select count(a.id) as task_num,'费用报销单' as task_name,'FYBX' as task_code,b.dj_id as djNumber from fee_apply_info a join flow_audit b on a.dj_number=b.dj_id and b.flow_status=0
+        and a.node_no=b.node_no
+        and a.status=1
+        and b.status=0
+        and (b.pr_id=#{userId} or b.pr_id=#{roleId})
+        GROUP BY b.pr_id HAVING task_num>0
+    </select>
+
+    <select id="selectIndexCount" resultMap="TaskInfoResult" parameterType="String">
+        select
+        (select ifnull(count(user_id),0) from sys_user where create_by=#{createBy}) AS user_num,
+        (select ifnull(count(id),0) from task_info where create_by=#{createBy}) AS task_num,
+        (select ifnull(sum(goods_money),0) from purchase_order_child a,purchase_order b where a.dj_number=b.dj_number and b.status=1 and b.create_by=#{createBy}) AS sum_money,
+        (select ifnull(count(id),0) from purchase_order where create_by=#{createBy}) AS order_num
     </select>
 
         

@@ -81,6 +81,14 @@ public class TaskInfoController extends BaseController
         return getDataTable(list);
     }
 
+    //查询首页数量
+    @GetMapping("/selectIndexCount")
+    public AjaxResult selectIndexCount()
+    {
+        TaskInfo info = taskInfoService.selectIndexCount(SecurityUtils.getUsername());
+        return AjaxResult.success("操作成功",info);
+    }
+
     /**
      * 查询菜单跟数量列表
      * @return

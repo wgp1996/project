@@ -20,6 +20,14 @@ public interface ITaskInfoService
     public TaskInfo selectTaskInfoById(Integer id);
 
     /**
+     * 查询首页消息
+     *
+     * @param createBy 制单人
+     * @return 任务管理
+     */
+    public TaskInfo selectIndexCount(String createBy);
+
+    /**
      * 查询任务管理列表
      * 
      * @param taskInfo 任务管理

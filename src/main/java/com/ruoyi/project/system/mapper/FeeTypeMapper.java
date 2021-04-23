@@ -58,4 +58,13 @@ public interface FeeTypeMapper
      * @return 结果
      */
     public int deleteFeeTypeByIds(Integer[] feeTypeIds);
+
+    /**
+     * 是否存在子节点
+     *
+     * @param id 分类ID
+     * @return 结果
+     */
+    int hasChildTypeById(Integer id);
+
 }

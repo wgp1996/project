@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.domain.TreeSelect;
 import com.ruoyi.project.system.domain.FeeType;
 import com.ruoyi.project.system.domain.FeeType;
@@ -100,6 +101,10 @@ public class FeeTypeServiceImpl implements IFeeTypeService
     @Override
     public int deleteFeeTypeById(Integer feeTypeId)
     {
+        if (feeTypeMapper.hasChildTypeById(feeTypeId)>0)
+        {
+            return -1;
+        }
         return feeTypeMapper.deleteFeeTypeById(feeTypeId);
     }
     /**

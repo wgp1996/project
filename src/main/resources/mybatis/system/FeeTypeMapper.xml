@@ -34,6 +34,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFeeTypeVo"/>
         where fee_type_id = #{feeTypeId}
     </select>
+
+    <!--查询是否存在子类-->
+    <select id="hasChildTypeById" parameterType="int" resultType="int">
+		select count(1) from fee_type
+		where fee_type_pid = #{id}
+	</select>
         
     <insert id="insertFeeType" parameterType="FeeType" useGeneratedKeys="true" keyProperty="feeTypeId">
         insert into fee_type

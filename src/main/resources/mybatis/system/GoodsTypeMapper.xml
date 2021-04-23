@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsTypePid"    column="goods_type_pid"    />
         <result property="goodsTypeName"    column="goods_type_name"    />
         <result property="orderNum"    column="order_num"    />
-        <result property="createBy"    column="create_by"    />
+        <result property="createBy"    column="creathasChildGoodsTypeByIde_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />

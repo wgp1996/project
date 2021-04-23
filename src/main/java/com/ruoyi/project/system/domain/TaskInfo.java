@@ -87,6 +87,33 @@ public class TaskInfo extends BaseEntity
     private String userId;
 
     private String roleId;
+    private String userNum;
+    private String sumMoney;
+    private String orderNum;
+
+    public String getUserNum() {
+        return userNum;
+    }
+
+    public void setUserNum(String userNum) {
+        this.userNum = userNum;
+    }
+
+    public String getSumMoney() {
+        return sumMoney;
+    }
+
+    public void setSumMoney(String sumMoney) {
+        this.sumMoney = sumMoney;
+    }
+
+    public String getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(String orderNum) {
+        this.orderNum = orderNum;
+    }
 
     public Integer getTaskType() {
         return taskType;

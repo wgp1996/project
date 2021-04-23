@@ -2,6 +2,7 @@ package com.ruoyi.project.system.controller;
 
 import java.util.List;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.project.system.domain.GoodsType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,7 @@ public class FeeTypeController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody FeeType feeType)
     {
+        feeType.setCreateBy(SecurityUtils.getUsername());
         return toAjax(feeTypeService.insertFeeType(feeType));
     }
 
@@ -98,6 +100,7 @@ public class FeeTypeController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody FeeType feeType)
     {
+        feeType.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(feeTypeService.updateFeeType(feeType));
     }
 
@@ -109,6 +112,12 @@ public class FeeTypeController extends BaseController
 	@DeleteMapping("/{feeTypeIds}")
     public AjaxResult remove(@PathVariable Integer[] feeTypeIds)
     {
-        return toAjax(feeTypeService.deleteFeeTypeByIds(feeTypeIds));
+        int result=feeTypeService.deleteFeeTypeById(feeTypeIds[0]);
+        //存在子类
+        if(result==-1){
+            return toAjaxByError("请删除子类");
+        }
+        return toAjax(result);
     }
+
 }

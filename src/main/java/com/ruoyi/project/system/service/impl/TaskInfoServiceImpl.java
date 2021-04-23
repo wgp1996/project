@@ -43,6 +43,17 @@ public class TaskInfoServiceImpl implements ITaskInfoService
     }
 
     /**
+     * 查询首页消息
+     *
+     * @param createBy 制单人
+     * @return 任务管理
+     */
+    @Override
+    public TaskInfo selectIndexCount(String createBy){
+        return taskInfoMapper.selectIndexCount(createBy);
+    }
+
+    /**
      * 查询任务管理列表
      * 
      * @param taskInfo 任务管理

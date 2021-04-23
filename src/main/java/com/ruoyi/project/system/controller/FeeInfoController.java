@@ -3,6 +3,7 @@ package com.ruoyi.project.system.controller;
 import java.util.List;
 
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,7 @@ public class FeeInfoController extends BaseController
     public AjaxResult add(@RequestBody FeeInfo feeInfo)
     {
         feeInfo.setCreateBy(SecurityUtils.getUsername());
+        feeInfo.setFeeCode(StringUtils.getRandomNum("F"));
         return toAjax(feeInfoService.insertFeeInfo(feeInfo));
     }
 
